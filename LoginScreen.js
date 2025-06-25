@@ -12,20 +12,20 @@ export default function LoginScreen({ navigation }) {  // navigation을 받아�
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder="이메일"
+        placeholder="sample@gmail.com"
         onChangeText={setEmail}
         value={email}
         style={styles.input}
         autoCapitalize="none"
       />
       <TextInput
-        placeholder="비밀번호"
+        placeholder="영문,숫자,특수문자 포함 8자 이상"
         onChangeText={setPassword}
         value={password}
         secureTextEntry
         style={styles.input}
       />
-      <Button title="로그인" onPress={handleLogin} />
+      <Button title="로그인" onPress={handleLogin} color = "#f4a261"/>
 
       {/* 회원가입 버튼 추가 */}
       <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
@@ -44,6 +44,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     padding: 10,
     borderRadius: 5,
+    color: 'white', // 입력된 텍스트 색상
+    backgroundColor: 'rgba(255, 255, 255, 0.7)', // 💡 여기가 투명도 설정!s
   },
   signupText: {
     marginTop: 15,
