@@ -1,21 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react';    
 import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
 
+//모듈 외부로 넘기기, 이름은 자유로 설정 가능, 함수형(네비로 화면 이동 가능)
 export default function SignupScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(''); //useState로 빈문자열 생성, email에 넣고, setEmail함수 호출
+  const [password, setPassword] = useState(''); 
 
+  // async 비동기 함수시작 
   const handleSignup = async () => {
-    if (!email || !password) {
-      Alert.alert('입력 오류', '이메일과 비밀번호를 모두 입력하세요.');
+    if (!email || !password) {  //email, password 비었거나 null인지 판단
+      Alert.alert('입력 오류', '이메일과 비밀번호를 모두 입력하세요.'); //알람
       return;
     }
+
 
     try {
       const response = await fetch('http://192.168.29.245:8080/register', {
         method: 'POST',
          headers: {
-         'Content-Type': 'application/json',
+         'Content-Type': 'application/json',  //표준 MIME 에서 json 형태
          },
          body: JSON.stringify({ email, password }),
         });
