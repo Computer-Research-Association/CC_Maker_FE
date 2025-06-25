@@ -11,7 +11,6 @@ export default function LoginScreen({ navigation }) {  // navigation을 받아�
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>로그인</Text>
       <TextInput
         placeholder="이메일"
         onChangeText={setEmail}
@@ -37,12 +36,12 @@ export default function LoginScreen({ navigation }) {  // navigation을 받아�
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, marginTop: 80 },
+  container: {padding:50,flex:1, backgroundColor:'#ffe6cc',},
   title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    marginBottom: 15,
+    marginBottom: 20,
     padding: 10,
     borderRadius: 5,
   },
