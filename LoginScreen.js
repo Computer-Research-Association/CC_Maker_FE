@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     marginBottom: 20,
     padding: 10,
-    color: 'white', // 입력된 텍스트 색상
+    color: 'black', // 입력된 텍스트 색상
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     borderRadius:15,
   },
