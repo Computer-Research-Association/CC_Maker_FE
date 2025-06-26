@@ -15,11 +15,14 @@ export default function SignupScreen({ navigation }) {
   
   // async 비동기 함수시작 
   const handleSignup = async () => {
+  const email = emailId + emailDomain; //merge email
+  
     if (!email || !password) {  //email, password 비었거나 null인지 판단
       Alert.alert('입력 오류', '이메일과 비밀번호를 모두 입력하세요.'); //알람
       return;
     }
-const email = emailId + emailDomain;
+
+    
 
     try {
       const response = await fetch('http://192.168.29.245:8080/register', {
@@ -49,25 +52,28 @@ console.log('서버 응답:', json); //
     //여기서부터 UI
     <View style={styles.container}>
       <Text style={styles.title}>회원가입</Text>
-      <Text style={styles.label}>   이메일</Text>
-      <View style={styles.inputWithPicker}>
-       <TextInput           //email
-          placeholder="이메일"
-          onChangeText={setEmailId}
-          value={emailId}
-          style={[styles.input]}
-          autoCapitalize="none" 
-        />
-
+      <Text style={styles.label}>이메일</Text>
+      
+      <View style={styles.emailRow}>
+      <TextInput
+        placeholder="이메일 아이디"
+        onChangeText={setEmailId}
+        value={emailId}
+        style={styles.emailInput}
+        autoCapitalize="none"
+        keyboardType="email-address"
+      />
       <Picker
-          selectedValue={emailDomain}
-          onValueChange={(itemValue) => setEmailDomain(itemValue)}
-          style={styles.picker}
-        > <Picker.Item label="@naver.com" value="@naver.com" />
-          <Picker.Item label="@handong.ac.kr" value="@handong.ac.kr" />
-          <Picker.Item label="@gmail.com" value="@gmail.com" />
-        </Picker>
-      </View>
+        selectedValue={emailDomain}
+        onValueChange={(itemValue) => setEmailDomain(itemValue)}
+        style={styles.emailPicker}
+      >
+        <Picker.Item label="@naver.com" value="@naver.com" />
+        <Picker.Item label="@handong.ac.kr" value="@handong.ac.kr" />
+        <Picker.Item label="@gmail.com" value="@gmail.com" />
+      </Picker>
+    </View>
+
       <TextInput
         placeholder="비밀번호"
         onChangeText={setPassword}
@@ -93,5 +99,24 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     borderRadius:15,
   },
-  
+  emailRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 5,
+  marginBottom: 15,
+  overflow: 'hidden'
+},
+emailInput: {
+  flex: 2,
+  padding: 10,
+  borderRightWidth: 1,
+  borderRightColor: '#ccc'
+},
+emailPicker: {
+  flex: 1,
+  height: 50
+}
+
 });
