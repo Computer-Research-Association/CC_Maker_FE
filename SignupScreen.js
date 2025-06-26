@@ -1,9 +1,15 @@
 import React, { useState } from 'react';    
 import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
+import { Picker } from '@react-native-picker/picker'; //import select box
 
 //모듈 외부로 넘기기, 이름은 자유로 설정 가능, 함수형(네비로 화면 이동 가능)
 export default function SignupScreen({ navigation }) {
-  const [email, setEmail] = useState(''); //useState로 빈문자열 생성, email에 넣고, setEmail함수 호출
+  
+  //여기서부터는 Backend 처리부분
+  //useState로 빈문자열 생성, email에 넣고, setEmail함수 호출
+  const [name,setName] = useState('');  //name
+  const [emailId, setEmailId] = useState(''); // 아이디 부분
+  const [emailDomain, setEmailDomain] = useState('@gmail.com'); // 도메인 부분 (naver.com이 초기값)
   const [password, setPassword] = useState(''); 
 
   
@@ -14,6 +20,7 @@ export default function SignupScreen({ navigation }) {
       return;
     }
 
+    const email = emailId + emailDomain; //merge email
 
     try {
       const response = await fetch('http://192.168.29.245:8080/register', {
@@ -21,9 +28,8 @@ export default function SignupScreen({ navigation }) {
          headers: {
          'Content-Type': 'application/json',  //표준 MIME 에서 json 형태
          },
-         body: JSON.stringify({ email, password }),
+         body: JSON.stringify({ email, password }), 
         });
-
 
         const json = await response.json();
 console.log('서버 응답:', json); // 
@@ -48,7 +54,9 @@ if (response.ok) {
   };
 
   return (
+    //여기서부터 UI
     <View style={styles.container}>
+<<<<<<< HEAD
       {/* <Text style={styles.title}>회원가입</Text> */}
       <TextInput
         placeholder="이름"
@@ -58,6 +66,30 @@ if (response.ok) {
         autoCapitalize="none"
       />
       
+=======
+      <Text style={styles.title}>회원가입</Text>
+      <Text style={styles.label}>이메일</Text>
+      
+      <View style={styles.emailContainer}>
+       <TextInput           //email
+          placeholder="이메일"
+          onChangeText={setEmailId}
+          value={emailId}
+          style={[styles.input, styles.emailInput]}
+          autoCapitalize="none"
+        />
+     
+      <Picker
+          selectedValue={emailDomain}
+          onValueChange={(itemValue) => setEmailDomain(itemValue)}
+          style={styles.picker}
+        > <Picker.Item label="@naver.com" value="@naver.com" />
+          <Picker.Item label="@handong.ac.kr" value="@handong.ac.kr" />
+          <Picker.Item label="@gmail.com" value="@gmail.com" />
+        </Picker>
+      </View>
+
+>>>>>>> 3e0f51ca3b2e023fcfdfcc959bc6efec4b4624a5
       <TextInput
         placeholder="비밀번호"
         onChangeText={setPassword}
@@ -69,6 +101,7 @@ if (response.ok) {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: { padding: 50 ,flex:1, backgroundColor:'#ffe6cc'},
