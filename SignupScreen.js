@@ -9,9 +9,10 @@ export default function SignupScreen({ navigation }) {
   //useState로 빈문자열 생성, email에 넣고, setEmail함수 호출
   const [name,setName] = useState('');  //name
   const [emailId, setEmailId] = useState(''); // 아이디 부분
-  const [emailDomain, setEmailDomain] = useState('@gmail.com'); // 도메인 부분 (naver.com이 초기값)
+  const [emailDomain, setEmailDomain] = useState('@gmail.com'); // 도메인 부분 (.com이 초기값)
   const [password, setPassword] = useState(''); 
 
+  
   // async 비동기 함수시작 
   const handleSignup = async () => {
   const email = emailId + emailDomain; //merge email
@@ -33,7 +34,7 @@ export default function SignupScreen({ navigation }) {
         });
 
         const json = await response.json();
-        console.log('서버 응답:', json); // 
+console.log('서버 응답:', json); // 
 
       if (response.ok) {
         Alert.alert('회원가입 성공', '로그인 화면으로 이동합니다.');
@@ -87,14 +88,16 @@ export default function SignupScreen({ navigation }) {
 
 
 const styles = StyleSheet.create({
-  container: { padding: 20, marginTop: 80 },
+  container: { padding: 50 ,flex:1, backgroundColor:'#ffe6cc'},
   title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    marginBottom: 15,
+    marginBottom: 20,
     padding: 10,
-    borderRadius: 5,
+    color: 'black', // 입력된 텍스트 색상
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius:15,
   },
   emailRow: {
   flexDirection: 'row',
