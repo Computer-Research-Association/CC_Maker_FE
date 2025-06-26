@@ -14,15 +14,17 @@ export default function SignupScreen({ navigation }) {
 
   // async 비동기 함수시작 
   const handleSignup = async () => {
+  const email = emailId + emailDomain; //merge email
+  
     if (!email || !password) {  //email, password 비었거나 null인지 판단
       Alert.alert('입력 오류', '이메일과 비밀번호를 모두 입력하세요.'); //알람
       return;
     }
 
-    const email = emailId + emailDomain; //merge email
+    
 
     try {
-      const response = await fetch('http://172.17.128.94:8080/register', {
+      const response = await fetch('http://192.168.29.245:8080/register', {
         method: 'POST',
          headers: {
          'Content-Type': 'application/json',  //표준 MIME 에서 json 형태
@@ -51,24 +53,25 @@ export default function SignupScreen({ navigation }) {
       <Text style={styles.title}>회원가입</Text>
       <Text style={styles.label}>이메일</Text>
       
-      <View style={styles.emailContainer}>
-       <TextInput           //email
-          placeholder="이메일"
-          onChangeText={setEmailId}
-          value={emailId}
-          style={[styles.input, styles.emailInput]}
-          autoCapitalize="none"
-        />
-     
+      <View style={styles.emailRow}>
+      <TextInput
+        placeholder="이메일 아이디"
+        onChangeText={setEmailId}
+        value={emailId}
+        style={styles.emailInput}
+        autoCapitalize="none"
+        keyboardType="email-address"
+      />
       <Picker
-          selectedValue={emailDomain}
-          onValueChange={(itemValue) => setEmailDomain(itemValue)}
-          style={styles.picker}
-        > <Picker.Item label="@naver.com" value="@naver.com" />
-          <Picker.Item label="@handong.ac.kr" value="@handong.ac.kr" />
-          <Picker.Item label="@gmail.com" value="@gmail.com" />
-        </Picker>
-      </View>
+        selectedValue={emailDomain}
+        onValueChange={(itemValue) => setEmailDomain(itemValue)}
+        style={styles.emailPicker}
+      >
+        <Picker.Item label="@naver.com" value="@naver.com" />
+        <Picker.Item label="@handong.ac.kr" value="@handong.ac.kr" />
+        <Picker.Item label="@gmail.com" value="@gmail.com" />
+      </Picker>
+    </View>
 
       <TextInput
         placeholder="비밀번호"
@@ -93,4 +96,24 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
+  emailRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 5,
+  marginBottom: 15,
+  overflow: 'hidden'
+},
+emailInput: {
+  flex: 2,
+  padding: 10,
+  borderRightWidth: 1,
+  borderRightColor: '#ccc'
+},
+emailPicker: {
+  flex: 1,
+  height: 50
+}
+
 });
