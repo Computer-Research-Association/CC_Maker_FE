@@ -1,9 +1,15 @@
 import React, { useState } from 'react';    
 import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
+import { Picker } from '@react-native-picker/picker'; //import select box
 
 //모듈 외부로 넘기기, 이름은 자유로 설정 가능, 함수형(네비로 화면 이동 가능)
 export default function SignupScreen({ navigation }) {
-  const [email, setEmail] = useState(''); //useState로 빈문자열 생성, email에 넣고, setEmail함수 호출
+  
+  //여기서부터는 Backend 처리부분
+  //useState로 빈문자열 생성, email에 넣고, setEmail함수 호출
+  const [name,setName] = useState('');  //name
+  const [emailId, setEmailId] = useState(''); // 아이디 부분
+  const [emailDomain, setEmailDomain] = useState('@gmail.com'); // 도메인 부분 (naver.com이 초기값)
   const [password, setPassword] = useState(''); 
 
   // async 비동기 함수시작 
@@ -13,6 +19,7 @@ export default function SignupScreen({ navigation }) {
       return;
     }
 
+    const email = emailId + emailDomain; //merge email
 
     try {
       const response = await fetch('http://172.17.128.94:8080/register', {
@@ -20,7 +27,7 @@ export default function SignupScreen({ navigation }) {
          headers: {
          'Content-Type': 'application/json',  //표준 MIME 에서 json 형태
          },
-         body: JSON.stringify({ email, password }),
+         body: JSON.stringify({ email, password }), 
         });
 
 
@@ -40,6 +47,7 @@ export default function SignupScreen({ navigation }) {
   };
 
   return (
+    //여기서부터 UI
     <View style={styles.container}>
       <Text style={styles.title}>회원가입</Text>
       <TextInput
