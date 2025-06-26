@@ -29,14 +29,14 @@ export default function LoginScreen({ navigation }) {  // navigation을 받아�
 
       {/* 회원가입 버튼 추가 */}
       <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-        <Text style={styles.signupText}>회원가입 하러 가기</Text>
+        <Text style={styles.signupText}>회원가입</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {padding:50,flex:1, backgroundColor:'#ffe6cc',},
+  container: {padding:50,flex:1, backgroundColor:'#ffe6cc',justifyContent: 'center'},
   title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
   input: {
     borderWidth: 1,
@@ -49,8 +49,10 @@ const styles = StyleSheet.create({
   },
   signupText: {
     marginTop: 15,
-    color: 'blue',
-    textAlign: 'center',
-    textDecorationLine: 'underline',
+    color: 'black',
+    textAlign: 'right',
+    opacity :0.7
+
+    
   },
 });
