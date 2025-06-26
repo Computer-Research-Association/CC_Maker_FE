@@ -15,7 +15,7 @@ export default function SignupScreen({ navigation }) {
 
 
     try {
-      const response = await fetch('http://192.168.29.245:8080/register', {
+      const response = await fetch('http://172.17.128.94:8080/register', {
         method: 'POST',
          headers: {
          'Content-Type': 'application/json',  //표준 MIME 에서 json 형태
@@ -25,14 +25,7 @@ export default function SignupScreen({ navigation }) {
 
 
         const json = await response.json();
-console.log('서버 응답:', json); // 
-
-if (response.ok) {
-  Alert.alert('회원가입 성공');
-} else {
-  Alert.alert('회원가입 실패', json.message ?? '서버 오류');
-}
-
+        console.log('서버 응답:', json); // 
 
       if (response.ok) {
         Alert.alert('회원가입 성공', '로그인 화면으로 이동합니다.');
