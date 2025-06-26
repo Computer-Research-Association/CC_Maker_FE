@@ -4,6 +4,7 @@ import { View, TextInput, Button, StyleSheet, Alert, Text, TouchableOpacity } fr
 export default function LoginScreen({ navigation }) {  // navigation을 받아옵니다
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [autoLogin, setAutoLogin] = useState(false);
 
   const handleLogin = async () => {
     // 로그인 처리 기존 코드
@@ -25,10 +26,12 @@ export default function LoginScreen({ navigation }) {  // navigation을 받아�
         secureTextEntry
         style={styles.input}
       />
-      <Button title="로그인" onPress={handleLogin} color = "#f4a261"/>
+      <TouchableOpacity style={styles.roundButton} onPress={handleLogin}>
+          <Text style={styles.roundButtonText}>로그인</Text>
+      </TouchableOpacity>
 
       {/* 회원가입 버튼 추가 */}
-      <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Signup')} >
         <Text style={styles.signupText}>회원가입</Text>
       </TouchableOpacity>
     </View>
@@ -43,16 +46,27 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     marginBottom: 20,
     padding: 10,
-    borderRadius: 5,
     color: 'white', // 입력된 텍스트 색상
-    backgroundColor: 'rgba(255, 255, 255, 0.7)', // 💡 여기가 투명도 설정!s
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius:15,
   },
   signupText: {
     marginTop: 15,
     color: 'black',
     textAlign: 'right',
-    opacity :0.7
-
-    
+    opacity :0.7,
   },
+  roundButton: {
+  backgroundColor: '#f4a261',
+  paddingVertical: 12,
+  paddingHorizontal: 30,
+  borderRadius: 15,          // ← 요게 버튼을 둥글게 만듭니다!
+  alignItems: 'center',
+  marginBottom: 10,
+},
+roundButtonText: {
+  color: 'white',
+  fontSize: 16,
+  fontWeight: 'bold',
+},
 });
