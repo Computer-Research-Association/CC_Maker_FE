@@ -30,7 +30,6 @@ export default function SignupScreen({ navigation }) {
          body: JSON.stringify({ email, password }), 
         });
 
-
         const json = await response.json();
         console.log('서버 응답:', json); // 
 
