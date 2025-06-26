@@ -50,13 +50,27 @@ export default function SignupScreen({ navigation }) {
     //여기서부터 UI
     <View style={styles.container}>
       <Text style={styles.title}>회원가입</Text>
-      <TextInput
-        placeholder="이메일"
-        onChangeText={setEmail}
-        value={email}
-        style={styles.input}
-        autoCapitalize="none"
-      />
+      <Text style={styles.label}>이메일</Text>
+      
+      <View style={styles.emailContainer}>
+       <TextInput           //email
+          placeholder="이메일"
+          onChangeText={setEmailId}
+          value={emailId}
+          style={[styles.input, styles.emailInput]}
+          autoCapitalize="none"
+        />
+     
+      <Picker
+          selectedValue={emailDomain}
+          onValueChange={(itemValue) => setEmailDomain(itemValue)}
+          style={styles.picker}
+        > <Picker.Item label="@naver.com" value="@naver.com" />
+          <Picker.Item label="@handong.ac.kr" value="@handong.ac.kr" />
+          <Picker.Item label="@gmail.com" value="@gmail.com" />
+        </Picker>
+      </View>
+
       <TextInput
         placeholder="비밀번호"
         onChangeText={setPassword}
@@ -68,6 +82,7 @@ export default function SignupScreen({ navigation }) {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: { padding: 20, marginTop: 80 },
