@@ -1,4 +1,4 @@
-import React, { useState } from 'react';    
+import  { useState } from 'react';    
 import { View, TextInput, Button, StyleSheet, Alert, Text,TouchableOpacity} from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
