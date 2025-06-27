@@ -1,8 +1,7 @@
 import React, { useState } from 'react';    
 import { View, TextInput, Button, StyleSheet, Alert, Text,TouchableOpacity} from 'react-native';
-import { Picker } from '@react-native-picker/picker'; //import select box
 import { RadioButton } from 'react-native-paper';
-
+import DropDownPicker from 'react-native-dropdown-picker';
 
 
 
@@ -16,6 +15,13 @@ export default function SignupScreen({ navigation }) {
   const [emailDomain, setEmailDomain] = useState('@gmail.com'); // 도메인 부분 (.com이 초기값)
   const [password, setPassword] = useState(''); 
   const [gender, setGender] = useState('male'); // 기본값: 남성
+const [open, setOpen] = useState(false);
+const [domainItems, setDomainItems] = useState([
+  { label: '@naver.com', value: '@naver.com' },
+  { label: '@handong.ac.kr', value: '@handong.ac.kr' },
+  { label: '@gmail.com', value: '@gmail.com' },
+]);
+
 
   
   // async 비동기 함수시작 
@@ -63,26 +69,29 @@ console.log('서버 응답:', json); //
         value={name}
         style={styles.input}
       />
-      <Text style={styles.label}>이메일</Text>
-      <View style={styles.emailRow}>
-      <TextInput
-        placeholder="이메일 "
-        onChangeText={setEmailId}
-        value={emailId}
-        style={styles.emailInput}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      <Picker
-        selectedValue={emailDomain}
-        onValueChange={(itemValue) => setEmailDomain(itemValue)}
-        style={styles.emailPicker}
-      >
-        <Picker.Item label="@naver.com" value="@naver.com" />
-        <Picker.Item label="@handong.ac.kr" value="@handong.ac.kr" />
-        <Picker.Item label="@gmail.com" value="@gmail.com" />
-      </Picker>
-    </View>
+<Text style={styles.label}>이메일</Text>
+<View style={styles.emailRow}>
+  <TextInput
+    placeholder="이메일 아이디"
+    onChangeText={setEmailId}
+    value={emailId}
+    style={styles.emailInput}
+    autoCapitalize="none"
+    keyboardType="email-address"
+  />
+  <DropDownPicker
+    open={open}
+    value={emailDomain}
+    items={domainItems}
+    setOpen={setOpen}
+    setValue={setEmailDomain}
+    // setItems={setDomainItems}
+    style={styles.dropdown}
+    dropDownContainerStyle={styles.dropdownContainer}
+    containerStyle={styles.dropdownWrapper}
+  />
+</View>
+
       <Text style={styles.label}>비밀번호</Text>
       <TextInput
         placeholder="비밀번호"
@@ -136,26 +145,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     borderRadius:15,
   },
-  emailRow: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  borderWidth: 1,
-  borderColor: '#ccc',
-  borderRadius: 15,
-  marginBottom: 15,
-  // overflow: 'hidden',
-  backgroundColor: 'rgba(255, 255, 255, 0.7)',
-},
-emailInput: {
-  flex: 4,
-  padding: 10,
-  borderRightWidth: 1,
-  borderRightColor: '#ccc'
-},
-emailPicker: {
-  flex: 6,
-  height: 60
-},
 radioGroup: {
   flexDirection: 'column',
   justifyContent: 'space-around',
@@ -186,4 +175,43 @@ roundButtonText: {
   fontSize: 16,
   fontWeight: 'bold',
 },
+emailRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 20,
+  zIndex: 1000, // DropDown이 겹치지 않도록 높게
+},
+emailInput: {
+  flex: 5,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  padding: 14,
+  borderTopLeftRadius: 15,
+  borderBottomLeftRadius: 15,
+  borderRightWidth:0,
+  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+},
+
+dropdownWrapper: {
+  flex: 6,
+  zIndex: 1000,
+},
+
+dropdown: {
+  padding:10,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderTopRightRadius: 15,
+  borderBottomRightRadius: 15,
+  borderTopLeftRadius: 0,
+  borderBottomLeftRadius: 0,
+  borderLeftWidth:0,
+  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+},
+
+dropdownContainer: {
+  borderWidth: 1,
+  borderColor: '#ccc',
+  zIndex: 1000,
+}
 });
