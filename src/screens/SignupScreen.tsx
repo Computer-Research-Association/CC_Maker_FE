@@ -100,7 +100,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
 
       <Text style={styles.label}>비밀번호</Text>
       <TextInput
-        placeholder="비밀번호"
+        placeholder="비밀번호는8자이상"
         onChangeText={setPassword}
         value={password}
         secureTextEntry
