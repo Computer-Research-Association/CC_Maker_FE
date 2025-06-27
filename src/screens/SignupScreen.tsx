@@ -5,6 +5,8 @@ import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { signup } from '../api/authApi';  // api 함수 import
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+
 
 
 type SignupScreenProps = {
@@ -22,6 +24,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   const [emailDomain, setEmailDomain] = useState<string>('@gmail.com');
   const [password, setPassword] = useState<string>('');
   const [gender, setGender] = useState<'male' | 'female'>('male');
+  const [teamSelect, setTeamSelect] = useState<'TeamLeader' | 'TeamMember'>('TeamLeader');
 
   const [open, setOpen] = useState<boolean>(false);
   const [domainItems, setDomainItems] = useState<ItemType<string>[]>([
@@ -30,7 +33,28 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
     { label: '@gmail.com', value: '@gmail.com' },
   ]);
 
+  const [year, setYear] = useState<string>('2000');
+const [month, setMonth] = useState<string>('01');
+const [day, setDay] = useState<string>('01');
 
+const yearItems = Array.from({ length: 100 }, (_, i) => {
+  const y = `${2024 - i}`;
+  return { label: y, value: y };
+});
+
+const monthItems = Array.from({ length: 12 }, (_, i) => {
+  const m = (i + 1).toString().padStart(2, '0');
+  return { label: m, value: m };
+});
+
+const dayItems = Array.from({ length: 31 }, (_, i) => {
+  const d = (i + 1).toString().padStart(2, '0');
+  return { label: d, value: d };
+});
+
+const [openYear, setOpenYear] = useState(false);
+const [openMonth, setOpenMonth] = useState(false);
+const [openDay, setOpenDay] = useState(false);
   
   // async 비동기 함수시작 
   const handleSignup = async () => {
@@ -65,13 +89,62 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
         style={styles.input}
       />
 
-      <Text style={styles.label}>생년월일 (예: 1990-01-01)</Text>
-      <TextInput
-        placeholder="YYYY-MM-DD"
-        onChangeText={setBirthDate}
-        value={birthDate}
-        style={styles.input}
-      />
+      <Text style={styles.label}>생년월일</Text>
+<View style={styles.birthRow}>
+  <View style={styles.birthDropdown}>
+    <DropDownPicker
+      open={openYear}
+      value={year}
+      items={yearItems}
+      setOpen={setOpenYear}
+      setValue={setYear}
+      // setItems={() => {}} // 고정 리스트라 생략 가능
+      placeholder="년도"
+      style={[styles.dropdown, styles.birthDropdownLeft]}
+      dropDownContainerStyle={[styles.dropdownContainer,{maxHeight: 220}]}
+      listMode="FLATLIST"
+      scrollViewProps={{
+      nestedScrollEnabled: true,   // ✅ 내부 스크롤 허용
+    }}
+      zIndex={3000}
+      zIndexInverse={1000}
+    />
+  </View>
+  <View style={styles.birthDropdown}>
+    <DropDownPicker
+      open={openMonth}
+      value={month}
+      items={monthItems}
+      setOpen={setOpenMonth}
+      setValue={setMonth}
+      setItems={() => {}}
+      placeholder="월"
+      style={[styles.dropdown, styles.birthDropdownMiddle]}
+      dropDownContainerStyle={styles.dropdownContainer}
+      zIndex={2000}
+      zIndexInverse={2000}
+    />
+  </View>
+  <View style={styles.birthDropdown}>
+    <DropDownPicker
+      open={openDay}
+      value={day}
+      items={dayItems}
+      setOpen={setOpenDay}
+      setValue={setDay}
+      setItems={() => {}}
+      placeholder="일"
+      style={[styles.dropdown, styles.birthDropdownRight]}
+      dropDownContainerStyle={[styles.dropdownContainer,]}
+      zIndex={1000}
+      zIndexInverse={3000}
+      listMode="SCROLLVIEW"
+              scrollViewProps={{
+                nestedScrollEnabled: true,
+              }}
+    />
+  </View>
+</View>
 
       <Text style={styles.label}>이메일</Text>
       <View style={styles.emailRow}>
@@ -128,7 +201,27 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
           </View>
         </View>
       </View>
-
+     <Text style={styles.label}>선택</Text>           
+      <View style={styles.genderBox}>
+        <View style={styles.radioGroup}>
+          <View style={styles.radioOption}>
+            <RadioButton
+              value="TeamLeader"
+              status={teamSelect === 'TeamLeader' ? 'checked' : 'unchecked'}
+              onPress={() => setTeamSelect('TeamLeader')}
+            />
+            <Text>팀장</Text>
+          </View>
+          <View style={styles.radioOption}>
+            <RadioButton
+              value="TeamMember"
+              status={teamSelect === 'TeamMember' ? 'checked' : 'unchecked'}
+              onPress={() => setTeamSelect('TeamMember')}
+            />
+            <Text>팀원</Text>
+          </View>
+        </View>
+      </View>
       <TouchableOpacity style={styles.roundButton} onPress={handleSignup}>
         <Text style={styles.roundButtonText}>회원가입</Text>
       </TouchableOpacity>
@@ -218,5 +311,47 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     zIndex: 1000,
+    maxHeight: 200,
   },
+  birthRow: {
+  flexDirection: 'row',
+  marginBottom: 20,
+  zIndex: 3000,
+},
+birthDropdown: {
+  flex: 1,
+  zIndex: 3000,
+},
+dropdown2:{
+   padding: 15,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderTopLeftRadius: 15,
+    borderBottomLeftRadius: 15,
+
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+},
+birthDropdownLeft: {
+  borderTopLeftRadius: 10,
+  borderBottomLeftRadius: 10,
+  borderRightWidth: 0,
+  borderLeftWidth: 1,
+  borderTopRightRadius: 0,
+  borderBottomRightRadius: 0,
+
+},
+
+birthDropdownMiddle: {
+  borderRadius: 0, // 네 모서리 모두 0
+  borderLeftWidth: 0,
+  borderRightWidth: 0,
+  borderTopRightRadius: 0,
+  borderBottomRightRadius: 0,
+},
+
+birthDropdownRight: {
+  borderTopRightRadius: 10,
+  borderBottomRightRadius: 10,
+  borderLeftWidth: 0,
+},
 });
