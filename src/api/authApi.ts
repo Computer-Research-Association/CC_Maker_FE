@@ -1,9 +1,9 @@
-const BASE_URL = 'http://192.168.29.245:8080';
+const BASE_URL = 'http://172.17.128.94:8080';
 
 //회원가입에 필요한 정보들
 interface SignupParams {
   name: string;
-  birthDate: string;
+  birthdate: string;
   email: string;
   password: string;
   gender: 'male' | 'female' ; 
@@ -33,7 +33,7 @@ export async function signup(params: SignupParams): Promise<any> {
 
     return data;
   } catch (error) {
-    
+    console.error('회원가입 에러:', error); //나중에 지우기
     throw new Error('서버와 통신할 수 없습니다.');
   }
 }

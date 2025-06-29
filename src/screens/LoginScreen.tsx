@@ -16,12 +16,12 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   const handleLogin = async () => {
     try {
       const response = await login({ email, password });
-      console.log('로그인 성공!', response.accessToken);
+      console.log('로그인 성공!', response.accessToken);  //나중에 로그 지우기
       Alert.alert('로그인 성공', '환영합니다!');
       // navigation.navigate('Home'); // 필요 시 활성화
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
-      Alert.alert('로그인 실패', errorMessage);
+      Alert.alert('로그인 실패', errorMessage); //팝업 에러 메세지
     }
   };
 
