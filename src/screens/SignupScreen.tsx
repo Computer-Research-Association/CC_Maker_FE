@@ -37,38 +37,32 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
     { label: '@gmail.com', value: '@gmail.com' },
   ]);
 
-  //년
-   const validateYear = (y: string) => {
-    const year = Number(y);
-    if (!y || !Number.isInteger(year) || year < 1900 || year > new Date().getFullYear()) {
-      setBirthError('올바른 생년월일을 입력하세요.');
-    } else {
-      setBirthError('');
-    }
-  };
-  //월
-  const validateMonth = (m: string) => {
-    const month = Number(m);
-    if (!m || !Number.isInteger(month) || month < 1 || month > 12) {
-      setBirthError('올바른 생년월일을 입력하세요.');
-    } else {
-      setBirthError('');
-    }
-  };
-     
-  //일 (2월29,2월 28일 차이때문에 년월일 다 들고 와야함)
-  const validateDay = (d: string, y: string, m: string) => {
-    const day = Number(d);
-    const year = Number(y);
-    const month = Number(m);
-    const maxDay = new Date(year || 2000, month || 1, 0).getDate();
+  //년월일 검사기
+  const validateFullDate = (y: string, m: string, d: string) => {
+  const year = Number(y);
+  const month = Number(m);
+  const day = Number(d);
 
-    if (!d || !Number.isInteger(day) || day < 1 || day > maxDay) {
-      setBirthError(`올바른 생년월일을 입력하세요.`);
-    } else {
-      setBirthError('');
-    }
-  };
+  if (!y || !m || !d ||
+    isNaN(year) || isNaN(month) || isNaN(day) ||
+    year < 1900 || year > new Date().getFullYear() ||
+    month < 1 || month > 12 || day < 1 || day > 31
+  ) 
+  {
+    setBirthError('올바른 생년월일을 입력하세요.');
+    return;
+  }
+  const date = new Date(year, month - 1, day);
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() + 1 !== month ||
+    date.getDate() !== day
+  ) {
+    setBirthError('올바른 생년월일을 입력하세요.');
+  } else {
+    setBirthError('');
+  }
+};
 
   
   // async 비동기 함수시작 
@@ -120,7 +114,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
           onChangeText={text => {
             const val = onlyNumber(text);
             setBirthYear(val);
-            validateYear(val);
+            validateFullDate(val, birthMonth, birthDay);
           }}
           keyboardType="numeric"
           maxLength={4}
@@ -132,7 +126,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
           onChangeText={text => {
             const val = onlyNumber(text);
             setBirthMonth(val);
-            validateMonth(val);  
+            validateFullDate(birthYear, val, birthDay);
           }}
           keyboardType="numeric"
           maxLength={2}
@@ -144,18 +138,19 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
           onChangeText={text => {
             const val = onlyNumber(text);
             setBirthDay(val);
-            validateDay(val, birthYear, birthMonth);
+            validateFullDate(birthYear, birthMonth, val);
           }}
           keyboardType="numeric"
           maxLength={2}
           style={[styles.input, { flex: 2, marginLeft: 5 }]}
         />
       </View>
-      {birthError !== '' && (
-        <Text style={{ color: 'red', fontSize: 12, marginBottom: 10, marginLeft: 4 }}>
-          {birthError}
+
+      <View style={{marginBottom: 10, marginVertical:-20}}>
+        <Text style={{ color: birthError ? 'red' : 'transparent', fontSize: 12 }}>
+          {birthError || '올바른 생년월일을 입력하세요.'}
         </Text>
-      )}
+      </View>
 
       <Text style={styles.label}>이메일</Text>
       <View style={styles.emailRow}>
