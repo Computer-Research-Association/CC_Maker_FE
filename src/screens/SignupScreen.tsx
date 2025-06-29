@@ -11,9 +11,6 @@ type SignupScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Signup'>;
 };
 
-
-
-
 //모듈 외부로 넘기기, 이름은 자유로 설정 가능, 함수형(네비로 화면 이동 가능)
 export default function SignupScreen({ navigation }: SignupScreenProps) {
   const [name, setName] = useState<string>('');
@@ -22,12 +19,17 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   const [birthMonth, setBirthMonth] = useState<string>('');
   const [birthDay, setBirthDay] = useState<string>('');
 
+  //생년월일 에러메세지
+  const [birthError, setBirthError] = useState('');
 
+
+  //이메일
   const [emailId, setEmailId] = useState<string>('');
   const [emailDomain, setEmailDomain] = useState<string>('@gmail.com');
+  //비밀번호
   const [password, setPassword] = useState<string>('');
+  //성별
   const [gender, setGender] = useState<'male' | 'female'>('male');
-
   const [open, setOpen] = useState<boolean>(false);
   const [domainItems, setDomainItems] = useState<ItemType<string>[]>([
     { label: '@naver.com', value: '@naver.com' },
@@ -35,6 +37,38 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
     { label: '@gmail.com', value: '@gmail.com' },
   ]);
 
+  //년
+   const validateYear = (y: string) => {
+    const year = Number(y);
+    if (!y || !Number.isInteger(year) || year < 1900 || year > new Date().getFullYear()) {
+      setBirthError('올바른 생년월일을 입력하세요.');
+    } else {
+      setBirthError('');
+    }
+  };
+  //월
+  const validateMonth = (m: string) => {
+    const month = Number(m);
+    if (!m || !Number.isInteger(month) || month < 1 || month > 12) {
+      setBirthError('올바른 생년월일을 입력하세요.');
+    } else {
+      setBirthError('');
+    }
+  };
+     
+  //일 (2월29,2월 28일 차이때문에 년월일 다 들고 와야함)
+  const validateDay = (d: string, y: string, m: string) => {
+    const day = Number(d);
+    const year = Number(y);
+    const month = Number(m);
+    const maxDay = new Date(year || 2000, month || 1, 0).getDate();
+
+    if (!d || !Number.isInteger(day) || day < 1 || day > maxDay) {
+      setBirthError(`올바른 생년월일을 입력하세요.`);
+    } else {
+      setBirthError('');
+    }
+  };
 
   
   // async 비동기 함수시작 
@@ -43,10 +77,15 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   const birthdate = `${birthYear.padStart(4, '0')}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
 
     if (!name || !birthYear || !birthMonth || !birthDay || !emailId || !password) {
-    Alert.alert('입력 오류', '모든 항목을 입력하세요.');
-    return;
+      Alert.alert('입력 오류', '모든 항목을 입력하세요.');
+      return;
     } 
 
+    //생년월일 오류(중복적이지 않나?)
+    if (birthError !== '') {
+      Alert.alert('입력 오류', '올바른 생년월일을 입력하세요.');
+      return;
+    }
         
     try {
       //log 남기기 나중에 지우기
@@ -61,6 +100,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
 
   const onlyNumber = (text: string) => text.replace(/[^0-9]/g, ''); //선택사항 나중에 지우기
   return (
+    
     <View style={styles.container}>
       <Text style={styles.title}>회원가입</Text>
 
@@ -73,11 +113,15 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
       />
 
       <Text style={styles.label}>생년월일</Text>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
         <TextInput
           placeholder="년(YYYY)"
           value={birthYear}
-          onChangeText={text => setBirthYear(onlyNumber(text))}
+          onChangeText={text => {
+            const val = onlyNumber(text);
+            setBirthYear(val);
+            validateYear(val);
+          }}
           keyboardType="numeric"
           maxLength={4}
           style={[styles.input, { flex: 3, marginRight: 5 }]}
@@ -85,7 +129,11 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
         <TextInput
           placeholder="월(MM)"
           value={birthMonth}
-          onChangeText={text => setBirthMonth(onlyNumber(text))}
+          onChangeText={text => {
+            const val = onlyNumber(text);
+            setBirthMonth(val);
+            validateMonth(val);  
+          }}
           keyboardType="numeric"
           maxLength={2}
           style={[styles.input, { flex: 2, marginHorizontal: 5 }]}
@@ -93,12 +141,21 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
         <TextInput
           placeholder="일(DD)"
           value={birthDay}
-          onChangeText={text => setBirthDay(onlyNumber(text))}
+          onChangeText={text => {
+            const val = onlyNumber(text);
+            setBirthDay(val);
+            validateDay(val, birthYear, birthMonth);
+          }}
           keyboardType="numeric"
           maxLength={2}
           style={[styles.input, { flex: 2, marginLeft: 5 }]}
         />
       </View>
+      {birthError !== '' && (
+        <Text style={{ color: 'red', fontSize: 12, marginBottom: 10, marginLeft: 4 }}>
+          {birthError}
+        </Text>
+      )}
 
       <Text style={styles.label}>이메일</Text>
       <View style={styles.emailRow}>
