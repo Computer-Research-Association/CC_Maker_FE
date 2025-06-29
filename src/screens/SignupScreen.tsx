@@ -46,7 +46,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   if (!y || !m || !d ||
     isNaN(year) || isNaN(month) || isNaN(day) ||
     year < 1900 || year > new Date().getFullYear() ||
-    month < 1 || month > 12 || day < 1 || day > 31
+    month < 1 || month > 12
   ) 
   {
     setBirthError('올바른 생년월일을 입력하세요.');
