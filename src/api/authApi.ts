@@ -1,4 +1,8 @@
-const BASE_URL = 'http://192.168.29.245:8080';
+import { setTokens } from './apiClient';
+
+//이놈도 나중에 공인 도메인 ip로 바꿔야함
+//지금은 cra와이파이로 고정해놓자
+const BASE_URL = 'http://142.17.128.94:8080';
 
 //회원가입에 필요한 정보들
 interface SignupParams {
@@ -20,6 +24,7 @@ interface LoginParams {
 // 회원가입 함수
 export async function signup(params: SignupParams): Promise<any> {
    try {
+    console.log('📨 회원가입 요청 시작:', params);
     const response = await fetch(`${BASE_URL}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -32,6 +37,7 @@ export async function signup(params: SignupParams): Promise<any> {
       throw new Error(data.message || '회원가입 실패');
     }
 
+    console.log('✅ 회원가입 성공 응답:', data);//나중에 지우기
     return data;
   } catch (error) {
     console.error('회원가입 에러:', error); //나중에 지우기
@@ -39,8 +45,9 @@ export async function signup(params: SignupParams): Promise<any> {
   }
 }
 
-//로그인
-export async function login({ email, password }: LoginParams): Promise<{ accessToken: string; refreshToken?: string }> {
+
+// 로그인 함수 (토큰 저장 포함)
+export async function login({ email, password }: LoginParams): Promise<void> {
   console.log('로그인 API 호출 시작:', { email, password });
 
   try {
@@ -69,7 +76,12 @@ export async function login({ email, password }: LoginParams): Promise<{ accessT
     }
 
     console.log('로그인 성공 응답:', data); // 응답 로그
-    return data;
+
+    // 토큰 저장 (accessToken, refreshToken)
+    await setTokens(data.accessToken, data.refreshToken ?? '');
+
+    // 로그인 함수는 void로 리턴 처리 (필요시 사용자 정보 등 리턴 가능)
+    return;
   } catch (error: any) {
     console.error('로그인 중 에러:', error);
     throw new Error(error.message || '서버와 통신할 수 없습니다.');

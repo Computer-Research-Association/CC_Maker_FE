@@ -14,8 +14,8 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   const [password, setPassword] = useState<string>('');
   const handleLogin = async () => {
     try {
-      const response = await login({ email, password });
-      console.log('로그인 성공!', response.accessToken);  //나중에 로그 지우기
+      await login({ email, password });
+      console.log('로그인 성공!');  // 토큰은 내부에서 저장됨
       Alert.alert('로그인 성공', '환영합니다!');
       // navigation.navigate('Home'); // 필요 시 활성화
     } catch (error: unknown) {
