@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import {View,TextInput,Alert,Text,TouchableOpacity,StyleSheet,} from 'react-native';
+import {View,Text,TextInput,Image,TouchableOpacity,StyleSheet,Alert} from 'react-native';
+import { RootStackParamList } from '../navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { login } from '../api/authApi';
-import { RootStackParamList } from '../navigation/types';
+
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
 };
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
-  const [email, setEmail] = useState<string>('');
+  const [email, setemail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [autoLogin, setAutoLogin] = useState<boolean>(false);
-
   const handleLogin = async () => {
     try {
       const response = await login({ email, password });
@@ -25,29 +24,45 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
     }
   };
 
+  
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder="sample@gmail.com"
-        onChangeText={setEmail}
-        value={email}
-        style={styles.input}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      <TextInput
-        placeholder="영문,숫자,특수문자 포함 8자 이상"
-        onChangeText={setPassword}
-        value={password}
-        secureTextEntry
-        style={styles.input}
-      />
-      <TouchableOpacity style={styles.roundButton} onPress={handleLogin}>
-        <Text style={styles.roundButtonText}>로그인</Text>
-      </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-        <Text style={styles.signupText}>회원가입</Text>
+      {/* <Image
+        source={{
+          uri: 'https://upload.wikimedia.org/wikipedia/sco/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/768px-Starbucks_Corporation_Logo_2011.svg.png',
+        }}
+        style={styles.logo}
+      /> */}
+
+      <Text style={styles.subText}>팀cc맞춤형 플랫폼</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="아이디"
+        value={email}
+        onChangeText={setemail}
+        autoCapitalize="none"
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="비밀번호"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+
+      <View style={styles.linkRow}>
+        <Text style={styles.separator}>|</Text>
+        <TouchableOpacity  onPress={() => navigation.navigate('Signup')}>
+          <Text style={styles.link}>회원가입</Text></TouchableOpacity>
+        {/* <Text style={styles.separator}>|</Text> */}
+
+      </View>
+
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>로그인하기</Text>
       </TouchableOpacity>
     </View>
   );
@@ -55,41 +70,58 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 50,
     flex: 1,
-    backgroundColor: '#ffe6cc',
-    justifyContent: 'center',
+    padding: 24,
+    paddingTop: 300,
+    backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 24,
+
+  logo: {
+    width: 80,
+    height: 80,
+    alignSelf: 'center',
     marginBottom: 20,
+  },
+  welcomeText: {
     textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 6,
+  },
+  subText: {
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 20,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginBottom: 20,
-    padding: 10,
-    color: 'black',
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderRadius: 15,
+    height: 48,
+    borderBottomWidth: 1,
+    borderColor: '#aaa',
+    marginBottom: 16,
+    paddingHorizontal: 8,
+    fontSize: 16,
   },
-  signupText: {
-    marginTop: 15,
-    color: 'black',
-    textAlign: 'right',
-    opacity: 0.7,
+  linkRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 40,
   },
-  roundButton: {
-    backgroundColor: '#f4a261',
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 15,
-    alignItems: 'center',
-    marginBottom: 10,
+  link: {
+    color: '#FF9898',
+    marginHorizontal: 5,
   },
-  roundButtonText: {
-    color: 'white',
+  separator: {
+    color: '#aaa',
+  },
+  loginButton: {
+    backgroundColor: '#FF9898',
+    paddingVertical: 14,
+    borderRadius: 30,
+  },
+  loginButtonText: {
+    color: '#fff',
+    textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
   },
