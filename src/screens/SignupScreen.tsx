@@ -38,7 +38,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   ]);
 
   //그룹
-  const [teamSelect, setTeamSelect] = useState<'TeamLeader' | 'TeamMember'>('TeamLeader');
+  const [role, setRoleSelect] = useState<'TeamLeader' | 'TeamMember'>('TeamLeader');
 
   //년월일 검사기
   const validateFullDate = (y: string, m: string, d: string) => {
@@ -86,7 +86,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
         
     try {
       //log 남기기 나중에 지우기
-      const result  = await signup({ name, birthdate , email, password, gender });
+      const result  = await signup({ name, birthdate , email, password, gender, role});
       Alert.alert('회원가입 성공', '로그인 화면으로 이동합니다.');
       navigation.navigate('Login');
       console.log('서버 응답:', result);
@@ -217,16 +217,16 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
           <View style={styles.radioOption}>
             <RadioButton
               value="TeamLeader"
-              status={teamSelect === 'TeamLeader' ? 'checked' : 'unchecked'}
-              onPress={() => setTeamSelect('TeamLeader')}
+              status={role === 'TeamLeader' ? 'checked' : 'unchecked'}
+              onPress={() => setRoleSelect('TeamLeader')}
             />
             <Text>팀장</Text>
           </View>
-          <View style={styles.radioOption}>Add commentMore actions
+          <View style={styles.radioOption}>
             <RadioButton
               value="TeamMember"
-              status={teamSelect === 'TeamMember' ? 'checked' : 'unchecked'}
-              onPress={() => setTeamSelect('TeamMember')}
+              status={role === 'TeamMember' ? 'checked' : 'unchecked'}
+              onPress={() => setRoleSelect('TeamMember')}
             />
             <Text>팀원</Text>
           </View>
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     borderRadius: 10,
     padding: 1,
-    marginBottom: 50,
+    marginBottom: 20,
     borderWidth: 1,
     borderColor: '#ccc',
   },
