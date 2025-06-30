@@ -102,9 +102,10 @@ const [openDay, setOpenDay] = useState(false);
       placeholder="년도"
       style={[styles.dropdown, styles.birthDropdownLeft]}
       dropDownContainerStyle={[styles.dropdownContainer,{maxHeight: 220}]}
-      listMode="FLATLIST"
+      listMode="SCROLLVIEW"
       scrollViewProps={{
-      nestedScrollEnabled: true,   // ✅ 내부 스크롤 허용
+      nestedScrollEnabled: true,
+      showsVerticalScrollIndicator: true,
     }}
       zIndex={3000}
       zIndexInverse={1000}
