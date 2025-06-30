@@ -22,12 +22,13 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   //생년월일 에러메세지
   const [birthError, setBirthError] = useState('');
 
-
   //이메일
   const [emailId, setEmailId] = useState<string>('');
   const [emailDomain, setEmailDomain] = useState<string>('@gmail.com');
+  const [emailError, setEmailError] = useState<string>(''); // 에러 메세지
   //비밀번호
   const [password, setPassword] = useState<string>('');
+  const [passwordError, setPasswordError] = useState(''); //에러 메세지
   //성별
   const [gender, setGender] = useState<'male' | 'female'>('male');
   const [open, setOpen] = useState<boolean>(false);
@@ -39,7 +40,8 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
 
   //그룹
   const [role, setRoleSelect] = useState<'TeamLeader' | 'TeamMember'>('TeamLeader');
-
+  //이메일 검사기
+  const emailIdRegex = /^[a-zA-Z0-9_]+$/;
   //년월일 검사기
   const validateFullDate = (y: string, m: string, d: string) => {
   const year = Number(y);
@@ -65,7 +67,24 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   } else {
     setBirthError('');
   }
-};
+}
+
+const getPasswordErrorMessage = (password: string) => {
+  if (password.length < 8) return '비밀번호는 8자 이상이어야 합니다.';
+  if (!/[a-zA-Z]/.test(password)) return '영문자를 포함해야 합니다.';
+  if (!/[0-9]/.test(password)) return '숫자를 포함해야 합니다.';
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return '특수문자를 포함해야 합니다.';
+  return '';
+}
+const validateEmailId = (id: string) => {
+  const regex = /^[a-zA-Z0-9_]+$/;
+  if (!regex.test(id)) {
+    setEmailError('아이디는 영문자, 숫자, 밑줄(_)만 사용할 수 있습니다.');
+  } else {
+    setEmailError('');
+  }
+}
+;
 
   
   // async 비동기 함수시작 
@@ -83,7 +102,19 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
       Alert.alert('입력 오류', '올바른 생년월일을 입력하세요.');
       return;
     }
-        
+    //비번 오류
+    const passwordErr = getPasswordErrorMessage(password);
+      if (passwordErr !== '') {
+      Alert.alert('입력 오류', passwordErr);
+      return;
+    }
+
+    //이메일 오류
+    if (emailError !== '') {
+      Alert.alert('입력 오류', '올바른 이메일 아이디를 입력하세요.');
+      return;
+    }
+
     try {
       //log 남기기 나중에 지우기
       const result  = await signup({ name, birthdate , email, password, gender, role});
@@ -159,7 +190,10 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
       <View style={styles.emailRow}>
         <TextInput
           placeholder="이메일 아이디"
-          onChangeText={setEmailId}
+          onChangeText={(text) => {
+            setEmailId(text);
+            validateEmailId(text); // 유효성 검사 호출
+          }}
           value={emailId}
           style={styles.emailInput}
           autoCapitalize="none"
@@ -179,15 +213,28 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
           zIndexInverse={3000}
         />
       </View>
+      {emailError ? (
+      <Text style={{ color: 'red', fontSize: 12, marginTop: -15, marginBottom: 10 }}>
+      {emailError}
+      </Text>
+      ) : null}
 
       <Text style={styles.label}>비밀번호</Text>
       <TextInput
-        placeholder="비밀번호는 8자 이상"
-        onChangeText={setPassword}
+        placeholder="비밀번호 (영문+숫자+특수문자 포함, 8자 이상)"
+         onChangeText={(text) => {
+          setPassword(text);
+          setPasswordError(getPasswordErrorMessage(text));
+        }}
         value={password}
         secureTextEntry
         style={styles.input}
       />
+      {passwordError ? (
+      <Text style={{ color: 'red', fontSize: 12, marginTop: -15, marginBottom: 10 }}>
+        {passwordError}
+      </Text>
+    ) : null}
 
       <Text style={styles.label}>성별</Text>
       <View style={styles.genderBox}>
