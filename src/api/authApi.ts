@@ -7,6 +7,7 @@ interface SignupParams {
   email: string;
   password: string;
   gender: 'male' | 'female' ; 
+  role : 'TeamLeader' | 'TeamMember';
 }
 
 //로그인에 필요한 정보들
