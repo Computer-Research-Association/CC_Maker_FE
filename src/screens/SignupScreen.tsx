@@ -37,6 +37,9 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
     { label: '@gmail.com', value: '@gmail.com' },
   ]);
 
+  //그룹
+  const [teamSelect, setTeamSelect] = useState<'TeamLeader' | 'TeamMember'>('TeamLeader');
+
   //년월일 검사기
   const validateFullDate = (y: string, m: string, d: string) => {
   const year = Number(y);
@@ -204,6 +207,28 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
               onPress={() => setGender('female')}
             />
             <Text>여성</Text>
+          </View>
+        </View>
+      </View>
+
+    <Text style={styles.label}>선택</Text>          
+      <View style={styles.genderBox}>
+        <View style={styles.radioGroup}>
+          <View style={styles.radioOption}>
+            <RadioButton
+              value="TeamLeader"
+              status={teamSelect === 'TeamLeader' ? 'checked' : 'unchecked'}
+              onPress={() => setTeamSelect('TeamLeader')}
+            />
+            <Text>팀장</Text>
+          </View>
+          <View style={styles.radioOption}>Add commentMore actions
+            <RadioButton
+              value="TeamMember"
+              status={teamSelect === 'TeamMember' ? 'checked' : 'unchecked'}
+              onPress={() => setTeamSelect('TeamMember')}
+            />
+            <Text>팀원</Text>
           </View>
         </View>
       </View>
