@@ -39,34 +39,25 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   ]);
 
   //그룹
-  const [role, setRoleSelect] = useState<'TeamLeader' | 'TeamMember'>('TeamLeader');
-  //이메일 검사기
-  const emailIdRegex = /^[a-zA-Z0-9_]+$/;
+  const [role, setRole] = useState<'TeamLeader' | 'TeamMember'>('TeamLeader');
   //년월일 검사기
   const validateFullDate = (y: string, m: string, d: string) => {
   const year = Number(y);
   const month = Number(m);
   const day = Number(d);
 
-  if (!y || !m || !d ||
-    isNaN(year) || isNaN(month) || isNaN(day) ||
-    year < 1900 || year > new Date().getFullYear() ||
-    month < 1 || month > 12
-  ) 
-  {
-    setBirthError('올바른 생년월일을 입력하세요.');
-    return;
-  }
-  const date = new Date(year, month - 1, day);
-  if (
-    date.getFullYear() !== year ||
-    date.getMonth() + 1 !== month ||
-    date.getDate() !== day
-  ) {
-    setBirthError('올바른 생년월일을 입력하세요.');
+  let isValid = true;
+
+  if (!y || !m || !d || isNaN(year) || isNaN(month) || isNaN(day) || year < 1900 || year > new Date().getFullYear() || month < 1 || month > 12) {
+    isValid = false;
   } else {
-    setBirthError('');
+    const date = new Date(year, month - 1, day);
+    if (date.getFullYear() !== year || date.getMonth() + 1 !== month || date.getDate() !== day) {
+      isValid = false;
+    }
   }
+
+  setBirthError(isValid ? '' : '올바른 생년월일을 입력하세요.');
 }
 
 const getPasswordErrorMessage = (password: string) => {
@@ -83,8 +74,7 @@ const validateEmailId = (id: string) => {
   } else {
     setEmailError('');
   }
-}
-;
+};
 
   
   // async 비동기 함수시작 
@@ -265,7 +255,7 @@ const validateEmailId = (id: string) => {
             <RadioButton
               value="TeamLeader"
               status={role === 'TeamLeader' ? 'checked' : 'unchecked'}
-              onPress={() => setRoleSelect('TeamLeader')}
+              onPress={() => setRole('TeamLeader')}
             />
             <Text>팀장</Text>
           </View>
@@ -273,7 +263,7 @@ const validateEmailId = (id: string) => {
             <RadioButton
               value="TeamMember"
               status={role === 'TeamMember' ? 'checked' : 'unchecked'}
-              onPress={() => setRoleSelect('TeamMember')}
+              onPress={() => setRole('TeamMember')}
             />
             <Text>팀원</Text>
           </View>
