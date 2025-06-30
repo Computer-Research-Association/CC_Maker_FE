@@ -1,4 +1,4 @@
-const BASE_URL = 'http://172.17.128.94:8080';
+const BASE_URL = 'http://192.168.29.245:8080';
 
 //회원가입에 필요한 정보들
 interface SignupParams {
