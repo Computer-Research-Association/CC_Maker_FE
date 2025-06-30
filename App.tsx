@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './src/screens/LoginScreen';    
 import SignupScreen from './src/screens/SignupScreen';
 import { RootStackParamList } from './src/navigation/types';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function App() {
