@@ -16,7 +16,6 @@ export default function SchoolRegisterScreen({ navigation }: SchoolRegisterScree
   const [teamCode, setTeamCode] = useState('');
   const [loading, setLoading] = useState(false);
 
-  
   const fetchInviteCode = async () => {
     if (!schoolName.trim()) {
       Alert.alert('입력 오류', '팀 이름을 입력해주세요.');
@@ -24,7 +23,7 @@ export default function SchoolRegisterScreen({ navigation }: SchoolRegisterScree
     }
     try {
       setLoading(true);
-
+      console.log('🚀 fetchInviteCode 실행');
       // AsyncStorage에서 토큰 가져오기 (apiClient 내부에서 헤더 붙이지만, 혹시 토큰 없으면 미리 확인)
       const accessToken = await AsyncStorage.getItem('ACCESS_TOKEN');
       if (!accessToken) {
