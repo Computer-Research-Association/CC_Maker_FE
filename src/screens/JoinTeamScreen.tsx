@@ -14,7 +14,7 @@ export default function JoinTeamScreen({ navigation }: JoinTeamScreenProps) {
   const [code, setCode] = useState('');
 
   const handleJoinTeam = async () => {
-    if (!code.trim()) {
+    if(!code.trim()) {
       Alert.alert('입력 오류', '초대코드를 입력해주세요.');
       return;
     }
