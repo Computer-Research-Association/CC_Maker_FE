@@ -68,9 +68,9 @@ const getPasswordErrorMessage = (password: string) => {
   return '';
 }
 const validateEmailId = (id: string) => {
-  const regex = /^[a-zA-Z0-9_]+$/;
+  const regex = /^[a-zA-Z0-9_]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!regex.test(id)) {
-    setEmailError('아이디는 영문자, 숫자, 밑줄(_)만 사용할 수 있습니다.');
+    setEmailError('이메일 도메인을 지켜주세요');
   } else {
     setEmailError('');
   }
@@ -120,9 +120,7 @@ const validateEmailId = (id: string) => {
   return (
     
     <View style={styles.container}>
-      <Text style={styles.title}>회원가입</Text>
 
-      <Text style={styles.label}>이름</Text>
       <TextInput
         placeholder="이름"
         onChangeText={setName}
@@ -130,7 +128,6 @@ const validateEmailId = (id: string) => {
         style={styles.input}
       />
 
-      <Text style={styles.label}>생년월일</Text>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
         <TextInput
           placeholder="년(YYYY)"
@@ -176,23 +173,22 @@ const validateEmailId = (id: string) => {
         </Text>
       </View>
 
-      <Text style={styles.label}>이메일</Text>
       <View style={styles.emailRow}>
         <TextInput
-          placeholder="이메일 아이디"
+          placeholder="이메일"
           onChangeText={(text) => {
             setEmailId(text);
             validateEmailId(text); // 유효성 검사 호출
           }}
           value={emailId}
-          style={styles.emailInput}
+          style={styles.input}
           autoCapitalize="none"
           keyboardType="email-address"
         />
-        <DropDownPicker
+        {/* <DropDownPicker
           open={open}
           value={emailDomain}
-          items={domainItems}
+          itessms={domainItems}
           setOpen={setOpen}
           setValue={setEmailDomain}
           setItems={setDomainItems}
@@ -201,7 +197,7 @@ const validateEmailId = (id: string) => {
           containerStyle={styles.dropdownWrapper}
           zIndex={1000}
           zIndexInverse={3000}
-        />
+        /> */}
       </View>
       {emailError ? (
       <Text style={{ color: 'red', fontSize: 12, marginTop: -15, marginBottom: 10 }}>
@@ -209,7 +205,6 @@ const validateEmailId = (id: string) => {
       </Text>
       ) : null}
 
-      <Text style={styles.label}>비밀번호</Text>
       <TextInput
         placeholder="비밀번호 (영문+숫자+특수문자 포함, 8자 이상)"
          onChangeText={(text) => {
@@ -226,7 +221,6 @@ const validateEmailId = (id: string) => {
       </Text>
     ) : null}
 
-      <Text style={styles.label}>성별</Text>
       <View style={styles.genderBox}>
         <View style={styles.radioGroup}>
           <View style={styles.radioOption}>
@@ -248,7 +242,6 @@ const validateEmailId = (id: string) => {
         </View>
       </View>
 
-    <Text style={styles.label}>선택</Text>          
       <View style={styles.genderBox}>
         <View style={styles.radioGroup}>
           <View style={styles.radioOption}>
@@ -279,20 +272,19 @@ const validateEmailId = (id: string) => {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 50, flex: 1, backgroundColor: '#ffe6cc' },
+  container: { padding: 50, flex: 1, backgroundColor: '#fff',justifyContent: 'center', },
   title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
   label: {
     marginBottom: 6,
     fontWeight: '600',
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginBottom: 20,
-    padding: 10,
-    color: 'black',
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderRadius: 15,
+    height: 48,
+    borderBottomWidth: 1,
+    borderColor: '#aaa',
+    marginBottom: 16,
+    paddingHorizontal: 8,
+    fontSize: 16,
   },
   radioGroup: {
     flexDirection: 'column',
@@ -312,10 +304,10 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
   },
   roundButton: {
-    backgroundColor: '#f4a261',
+    backgroundColor: '#FF9898',
     paddingVertical: 12,
     paddingHorizontal: 30,
-    borderRadius: 15,
+    borderRadius: 30,
     alignItems: 'center',
     marginBottom: 10,
   },
@@ -323,6 +315,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+    
   },
   emailRow: {
     flexDirection: 'row',
@@ -331,7 +324,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   emailInput: {
-  flex: 4,
+
   height: 50,
   borderWidth: 1,
   borderColor: '#ccc',
