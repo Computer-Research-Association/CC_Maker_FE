@@ -17,10 +17,10 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       await login({ email, password });
       console.log('로그인 성공!');  // 토큰은 내부에서 저장됨
       Alert.alert('로그인 성공', '환영합니다!');
-      // navigation.navigate('Home'); // 필요 시 활성화
+      navigation.navigate('Home'); // 필요 시 활성화
     }catch (error: any) {
-      const errorMessage = error.response?.data?.message || "로그인 실패";
-      Alert.alert("오류", errorMessage);
+    const errorMessage = error.response?.data?.message || "로그인 실패";
+    Alert.alert("오류", errorMessage);
     }
   };
 
