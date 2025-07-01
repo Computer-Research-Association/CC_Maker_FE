@@ -22,6 +22,9 @@ let refreshToken = '';
  */
 async function initializeTokens(): Promise<void> {
   try {
+
+    
+
     accessToken = (await AsyncStorage.getItem(ACCESS_TOKEN_KEY)) ?? '';
     refreshToken = (await AsyncStorage.getItem(REFRESH_TOKEN_KEY)) ?? '';
   } catch (e) {
@@ -38,6 +41,7 @@ initializeTokens();
  */
 export async function setTokens(newAccessToken: string, newRefreshToken: string): Promise<void> {
   try {
+    
     accessToken = newAccessToken;
     refreshToken = newRefreshToken;
     await AsyncStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken);
@@ -67,6 +71,7 @@ export async function clearTokens(): Promise<void> {
 async function handleLogout() {
   await clearTokens();
   // TODO: 네비게이션 초기화, 로그인 화면 이동, 사용자 알림 등 추가 구현
+  
   console.log('사용자 로그아웃 처리 필요');
 }
 
@@ -80,6 +85,10 @@ api.interceptors.request.use(
     if (accessToken && config.headers) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
+    const fullUrl = (config.baseURL ?? '') + (config.url ?? '');
+    console.log('🔼 요청 URL:', fullUrl);
+    console.log('🔼 요청 헤더:', config.headers);
+    console.log('🔼 요청 바디:', config.data);
     return config;
   },
   (error) => Promise.reject(error)
@@ -173,3 +182,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+export { initializeTokens };
