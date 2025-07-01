@@ -18,9 +18,9 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       console.log('로그인 성공!');  // 토큰은 내부에서 저장됨
       Alert.alert('로그인 성공', '환영합니다!');
       // navigation.navigate('Home'); // 필요 시 활성화
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
-      Alert.alert('로그인 실패', errorMessage); //팝업 에러 메세지
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || "로그인 실패";
+      Alert.alert("오류", errorMessage);
     }
   };
 
