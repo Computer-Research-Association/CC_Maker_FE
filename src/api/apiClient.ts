@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //이놈 나중에 공인 도메인/ip로 변경해야한다
 //지금은 cra와이파이로 고정해놓자
-const BASE_URL = 'http://142.17.128.94:8080';
+const BASE_URL = 'http://192.168.29.245:8080';
 
 const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';
 const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN';
@@ -92,12 +92,23 @@ api.interceptors.request.use(
 async function refreshAccessToken(): Promise<void> {
   if (!refreshToken) throw new Error('리프레시 토큰이 없습니다.');
 
-  const response = await axios.post(`${BASE_URL}/api/auth/refresh`, { refreshToken });
+  try {
+    const response = await axios.post(`${BASE_URL}/api/auth/refresh`, null, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${refreshToken}`
+      },
+      withCredentials: true, // 서버에서 쿠키를 내려보내도록 허용 (선택 사항)
+    });
 
-  const newAccessToken = response.data.accessToken;
-  const newRefreshToken = response.data.refreshToken;
+    const newAccessToken = response.data.accessToken;
+    const newRefreshToken = response.data.refreshToken;
 
-  await setTokens(newAccessToken, newRefreshToken);
+    await setTokens(newAccessToken, newRefreshToken);
+  } catch (err) {
+    console.error('🔁 토큰 갱신 실패:', err);
+    throw err;
+  }
 }
 
 // 401 응답 시 토큰 갱신 및 요청 재시도 처리
