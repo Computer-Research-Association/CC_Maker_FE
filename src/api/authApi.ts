@@ -11,7 +11,7 @@ interface SignupParams {
   email: string;
   password: string;
   gender: 'male' | 'female' ; 
-  role : 'TeamLeader' | 'TeamMember';
+  role : 'LEADER' | 'MEMBER';
 }
 
 //로그인에 필요한 정보들
@@ -41,7 +41,7 @@ export async function signup(params: SignupParams): Promise<any> {
     return data;
   } catch (error) {
     console.error('회원가입 에러:', error); //나중에 지우기
-    throw new Error('서버와 통신할 수 없습니다.');
+    throw new Error('서버와 통신할 수 없습니다.' + error);
   }
 }
 
