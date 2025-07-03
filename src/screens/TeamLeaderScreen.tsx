@@ -32,10 +32,8 @@ export default function TeamLeaderScreen({ navigation }: TeamLeaderScreenProps) 
         return;
       }
 
-      // 팀명(schoolName)을 POST 요청 body에 같이 보냄
-      const response = await api.post('/api/invitecode/create', {
-        teamName: teamName,
-      });
+      // request code
+      const response = await api.post('/api/invitecode/create'); 
 
       if (response.data?.code) {
         setTeamCode(response.data.code);
@@ -59,8 +57,10 @@ export default function TeamLeaderScreen({ navigation }: TeamLeaderScreenProps) 
   };
 
   // 시작하기 버튼 눌렀을 때 이동 예시 (필요한 화면명으로 수정하세요)
-  const onStartPress = () => {
-    fetchInviteCode();
+  const onStartPress = async () => {
+    await api.post('/api/invitecode/teamname', {
+      teamName: teamName, // 백엔드에서 기대하는 필드명과 맞춰야 함
+    });
     // navigation.navigate('NextScreenName'); // 실제 네비게이션 대상 이름으로 변경
   };
 
@@ -89,7 +89,7 @@ export default function TeamLeaderScreen({ navigation }: TeamLeaderScreenProps) 
             <Text style={styles.copyButtonText}>코드 복사하기</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.startButton}>
+          <TouchableOpacity style={styles.startButton}onPress={onStartPress}>
             <Text style={styles.startButtonText}>시작하기</Text>
           </TouchableOpacity>
         </View>
