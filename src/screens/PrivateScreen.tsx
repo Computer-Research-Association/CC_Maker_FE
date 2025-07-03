@@ -1,5 +1,3 @@
-// src/screens/JoinTeamScreen.tsx
-
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -12,7 +10,7 @@ type JoinTeamScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'JoinTeam'>;
 };
 
-export default function JoinTeamScreen({ navigation }: JoinTeamScreenProps) {
+export default function PrivateScreen({ navigation }: JoinTeamScreenProps) {
   const [code, setCode] = useState('');
 
   const handleJoinTeam = async () => {
@@ -36,7 +34,7 @@ export default function JoinTeamScreen({ navigation }: JoinTeamScreenProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>초대 코드로 팀 가입</Text>
+      <Text style={styles.title}>여긴 개인화면!</Text>
       <TextInput
         placeholder="초대코드를 입력하세요"
         value={code}
