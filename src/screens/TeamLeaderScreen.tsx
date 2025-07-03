@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../api/apiClient';
+import { RootStackParamList } from '../navigation/types';
 import * as Clipboard from 'expo-clipboard';
 import styles from '../styles/TeamLeaderScreen.styles';
 type TeamLeaderScreenProps = {
@@ -9,7 +11,7 @@ type TeamLeaderScreenProps = {
 };
 
 
-export default function TeamLeaderScreen({ navigation }: TeamLeaderProps) {
+export default function TeamLeaderScreen({ navigation }: TeamLeaderScreenProps) {
   const [schoolName, setSchoolName] = useState('');
   const [teamCode, setTeamCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -55,6 +57,12 @@ export default function TeamLeaderScreen({ navigation }: TeamLeaderProps) {
       Alert.alert('복사 완료', '팀 코드가 복사되었습니다!');
     }
   };
+
+  // 시작하기 버튼 눌렀을 때 이동 예시 (필요한 화면명으로 수정하세요)
+  const onStartPress = () => {
+    //navigation.navigate('NextScreenName'); // 실제 네비게이션 대상 이름으로 변경
+  };
+
 
   return (
     <View style={styles.container}>
