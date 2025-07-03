@@ -32,8 +32,7 @@ export default function App() {
           component={LoginScreen}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
-        />
+        {/* 여기에 빈 <Stack.Screen/> 제거 */}
         <Stack.Screen
           name="Signup"
           component={SignupScreen}
@@ -42,8 +41,8 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={TeamLeaderScreen}
-          options={{ headerShown: false }} //name에 해당하는 배너가 뜨지 않음
-        /> */}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="JoinTeam"
           component={JoinTeamScreen}

@@ -189,7 +189,7 @@ const validateEmailId = (id: string) => {
           autoCapitalize="none"
           keyboardType="email-address"
         />
-        <DropDownPicker
+        {/* <DropDownPicker
           open={open}
           value={emailDomain}
           items={domainItems}
@@ -201,7 +201,7 @@ const validateEmailId = (id: string) => {
           containerStyle={styles.dropdownWrapper}
           zIndex={1000}
           zIndexInverse={3000}
-        />
+        /> */}
       </View>
       {emailError ? (
       <Text style={{ color: 'red', fontSize: 12, marginTop: -15, marginBottom: 10 }}>
