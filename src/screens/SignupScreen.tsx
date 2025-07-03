@@ -1,11 +1,12 @@
 import React, { useState } from 'react';    
 import {View,TextInput,Alert,Text,TouchableOpacity,StyleSheet,} from 'react-native';
 import { RadioButton } from 'react-native-paper';
-import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
+import { ItemType } from 'react-native-dropdown-picker';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { signup } from '../api/authApi';  // api 함수 import
-
+import styles from '../styles/SignupScreen.styles'
 
 type SignupScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Signup'>;
@@ -39,7 +40,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   ]);
 
   //그룹
-  const [role, setRole] = useState<'TeamLeader' | 'TeamMember'>('TeamLeader');
+  const [role, setRole] = useState<'LEADER' | 'MEMBER'>('LEADER');
   //년월일 검사기
   const validateFullDate = (y: string, m: string, d: string) => {
   const year = Number(y);
@@ -51,7 +52,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   if (!y || !m || !d || isNaN(year) || isNaN(month) || isNaN(day) || year < 1900 || year > new Date().getFullYear() || month < 1 || month > 12) {
     isValid = false;
   } else {
-    const date = new Date(year, month - 1, day);
+    const date = new Date(year, month - 1, day); //다시 공부 
     if (date.getFullYear() !== year || date.getMonth() + 1 !== month || date.getDate() !== day) {
       isValid = false;
     }
@@ -68,9 +69,9 @@ const getPasswordErrorMessage = (password: string) => {
   return '';
 }
 const validateEmailId = (id: string) => {
-  const regex = /^[a-zA-Z0-9_]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const regex = /^[a-zA-Z0-9_]+$/;
   if (!regex.test(id)) {
-    setEmailError('이메일 도메인을 지켜주세요');
+    setEmailError('아이디는 영문자, 숫자, 밑줄(_)만 사용할 수 있습니다.');
   } else {
     setEmailError('');
   }
@@ -86,7 +87,6 @@ const validateEmailId = (id: string) => {
       Alert.alert('입력 오류', '모든 항목을 입력하세요.');
       return;
     } 
-
     //생년월일 오류(중복적이지 않나?)
     if (birthError !== '') {
       Alert.alert('입력 오류', '올바른 생년월일을 입력하세요.');
@@ -117,10 +117,13 @@ const validateEmailId = (id: string) => {
   };
 
   const onlyNumber = (text: string) => text.replace(/[^0-9]/g, ''); //선택사항 나중에 지우기
+  
   return (
     
     <View style={styles.container}>
+      <Text style={styles.title}>회원가입</Text>
 
+      <Text style={styles.label}>이름</Text>
       <TextInput
         placeholder="이름"
         onChangeText={setName}
@@ -128,6 +131,7 @@ const validateEmailId = (id: string) => {
         style={styles.input}
       />
 
+      <Text style={styles.label}>생년월일</Text>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
         <TextInput
           placeholder="년(YYYY)"
@@ -173,22 +177,23 @@ const validateEmailId = (id: string) => {
         </Text>
       </View>
 
+      <Text style={styles.label}>이메일</Text>
       <View style={styles.emailRow}>
         <TextInput
-          placeholder="이메일"
+          placeholder="이메일 아이디"
           onChangeText={(text) => {
             setEmailId(text);
             validateEmailId(text); // 유효성 검사 호출
           }}
           value={emailId}
-          style={styles.input}
+          style={styles.emailInput}
           autoCapitalize="none"
           keyboardType="email-address"
         />
-        {/* <DropDownPicker
+        <DropDownPicker
           open={open}
           value={emailDomain}
-          itessms={domainItems}
+          items={domainItems}
           setOpen={setOpen}
           setValue={setEmailDomain}
           setItems={setDomainItems}
@@ -197,7 +202,7 @@ const validateEmailId = (id: string) => {
           containerStyle={styles.dropdownWrapper}
           zIndex={1000}
           zIndexInverse={3000}
-        /> */}
+        />
       </View>
       {emailError ? (
       <Text style={{ color: 'red', fontSize: 12, marginTop: -15, marginBottom: 10 }}>
@@ -205,8 +210,9 @@ const validateEmailId = (id: string) => {
       </Text>
       ) : null}
 
+      <Text style={styles.label}>비밀번호</Text>
       <TextInput
-        placeholder="비밀번호 (영문+숫자+특수문자 포함, 8자 이상)"
+        placeholder="영문+숫자+특수문자 포함, 8자 이상"
          onChangeText={(text) => {
           setPassword(text);
           setPasswordError(getPasswordErrorMessage(text));
@@ -221,6 +227,7 @@ const validateEmailId = (id: string) => {
       </Text>
     ) : null}
 
+      <Text style={styles.label}>성별</Text>
       <View style={styles.genderBox}>
         <View style={styles.radioGroup}>
           <View style={styles.radioOption}>
@@ -242,21 +249,22 @@ const validateEmailId = (id: string) => {
         </View>
       </View>
 
+    <Text style={styles.label}>선택</Text>          
       <View style={styles.genderBox}>
         <View style={styles.radioGroup}>
           <View style={styles.radioOption}>
             <RadioButton
-              value="TeamLeader"
-              status={role === 'TeamLeader' ? 'checked' : 'unchecked'}
-              onPress={() => setRole('TeamLeader')}
+              value="LEADER"
+              status={role === 'LEADER' ? 'checked' : 'unchecked'}
+              onPress={() => setRole('LEADER')}
             />
             <Text>팀장</Text>
           </View>
           <View style={styles.radioOption}>
             <RadioButton
-              value="TeamMember"
-              status={role === 'TeamMember' ? 'checked' : 'unchecked'}
-              onPress={() => setRole('TeamMember')}
+              value="MEMBER"
+              status={role === 'MEMBER' ? 'checked' : 'unchecked'}
+              onPress={() => setRole('MEMBER')}
             />
             <Text>팀원</Text>
           </View>
@@ -270,92 +278,3 @@ const validateEmailId = (id: string) => {
   );
 
 }
-
-const styles = StyleSheet.create({
-  container: { padding: 50, flex: 1, backgroundColor: '#fff',justifyContent: 'center', },
-  title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
-  label: {
-    marginBottom: 6,
-    fontWeight: '600',
-  },
-  input: {
-    height: 48,
-    borderBottomWidth: 1,
-    borderColor: '#aaa',
-    marginBottom: 16,
-    paddingHorizontal: 8,
-    fontSize: 16,
-  },
-  radioGroup: {
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    
-  },
-  radioOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  genderBox: {
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderRadius: 10,
-    padding: 1,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  roundButton: {
-    backgroundColor: '#FF9898',
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 30,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  roundButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    
-  },
-  emailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    zIndex: 1000,
-  },
-  emailInput: {
-
-  height: 50,
-  borderWidth: 1,
-  borderColor: '#ccc',
-  paddingHorizontal: 10, // 좌우 패딩만 줌, 위아래 패딩은 0으로
-  paddingVertical: 0,
-  borderTopLeftRadius: 15,
-  borderBottomLeftRadius: 15,
-  borderRightWidth: 0,
-  backgroundColor: 'rgba(255, 255, 255, 0.7)',
-  },
-  dropdownWrapper: {
-  flex: 6,
-  height: 50,
-  zIndex: 1000,
-  },
-  dropdown: {
-  height: 50,
-  borderWidth: 1,
-  borderColor: '#ccc',
-  paddingHorizontal: 10,  // emailInput과 맞춤
-  paddingVertical: 0,
-  borderTopRightRadius: 15,
-  borderBottomRightRadius: 15,
-  borderTopLeftRadius: 0,
-  borderBottomLeftRadius: 0,
-  borderLeftWidth: 0,
-  backgroundColor: 'rgba(255, 255, 255, 0.7)',
-},
-  dropdownContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    zIndex: 1000,
-  },
-});
