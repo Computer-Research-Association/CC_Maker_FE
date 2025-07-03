@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   emailInput: {
-
   height: 50,
   borderWidth: 1,
   borderColor: '#ccc',
@@ -65,24 +64,24 @@ const styles = StyleSheet.create({
   borderRightWidth: 0,
   backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },
-//   dropdownWrapper: {
-//   flex: 6,
-//   height: 50,
-//   zIndex: 1000,
-//   },
-//   dropdown: {
-//   height: 50,
-//   borderWidth: 1,
-//   borderColor: '#ccc',
-//   paddingHorizontal: 10,  // emailInput과 맞춤
-//   paddingVertical: 0,
-//   borderTopRightRadius: 15,
-//   borderBottomRightRadius: 15,
-//   borderTopLeftRadius: 0,
-//   borderBottomLeftRadius: 0,
-//   borderLeftWidth: 0,
-//   backgroundColor: 'rgba(255, 255, 255, 0.7)',
-// },
+  dropdownWrapper: {
+  flex: 5,
+  height: 50,
+  zIndex: 1000,
+  },
+  dropdown: {
+  height: 50,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  paddingHorizontal: 10,  // emailInput과 맞춤
+  paddingVertical: 0,
+  borderTopRightRadius: 15,
+  borderBottomRightRadius: 15,
+  borderTopLeftRadius: 0,
+  borderBottomLeftRadius: 0,
+  borderLeftWidth: 0,
+  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+},
   dropdownContainer: {
     borderWidth: 1,
     borderColor: '#ccc',
