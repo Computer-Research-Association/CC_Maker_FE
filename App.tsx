@@ -1,39 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
+import { initializeTokens } from './src/api/apiClient';
 import LoginScreen from './src/screens/LoginScreen';    
 import SignupScreen from './src/screens/SignupScreen';
 import { RootStackParamList } from './src/navigation/types';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import TeamLeaderScreen from './src/screens/TeamLeaderScreen';
-// import TeamMemberScreen from './src/screens/TeamMemberScreen';
+import TeamMemberScreen from './src/screens/TeamMemberScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
 export default function App() {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const init = async () => {
+      await initializeTokens();
+      setIsReady(true);
+    };
+    init();
+  }, []);
+
+  if (!isReady) {
+    return null; // 또는 로딩 스피너 등 렌더링
+  }
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        {/* <Stack.Screen
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen
           name="Login"
           component={LoginScreen}
           options={{ headerShown: false }}
-        /> */}
-        {/* <Stack.Screen
+        />
+        {/* 여기에 빈 <Stack.Screen/> 제거 */}
+        <Stack.Screen
           name="Signup"
           component={SignupScreen}
           options={{ headerShown: false }}
-        /> */}
+        />
         <Stack.Screen
-          name="Home"
+          name="TeamLeaderScreen"
           component={TeamLeaderScreen}
           options={{ headerShown: false }}
         />
-        {/* <Stack.Screen
-          name="Member"
+        <Stack.Screen
+          name="TeamMemberScreen"
           component={TeamMemberScreen}
           options={{ headerShown: false }}
-        /> */}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

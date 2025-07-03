@@ -80,6 +80,10 @@ api.interceptors.request.use(
     if (accessToken && config.headers) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
+    const fullUrl = (config.baseURL ?? '') + (config.url ?? '');
+    console.log('🔼 요청 URL:', fullUrl);
+    console.log('🔼 요청 헤더:', config.headers);
+    console.log('🔼 요청 바디:', config.data);
     return config;
   },
   (error) => Promise.reject(error)
@@ -173,3 +177,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+export { initializeTokens };

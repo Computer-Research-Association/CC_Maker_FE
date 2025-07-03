@@ -1,29 +1,36 @@
 import React, { useState } from 'react';
 import {View,Text,TextInput,Image,TouchableOpacity,StyleSheet,Alert} from 'react-native';
 import { RootStackParamList } from '../navigation/types';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'; //네비게이션을 타입안정성있게 쓰기 위한 도구 
 import { login } from '../api/authApi';
+import styles from '../styles/LoginScreen.styles';
 
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
-};
+};//이 컴포넌트는 navigation이라는 prop을 받고, 객체로 타입을 지정해준다. 
 
-export default function LoginScreen({ navigation }: LoginScreenProps) {
+export default function LoginScreen({ navigation }: LoginScreenProps) {//react는 객체로 props를 받음
   const [email, setemail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const handleLogin = async () => {
     try {
-      await login({ email, password });
-      console.log('로그인 성공!');  // 토큰은 내부에서 저장됨
+      const response = await login({ email, password });
       Alert.alert('로그인 성공', '환영합니다!');
-      // navigation.navigate('Home'); // 필요 시 활성화
-    }catch (error: any) {
-      const errorMessage = error.response?.data?.message || "로그인 실패";
-      Alert.alert("오류", errorMessage);
+      console.log(response.role + "내 직업이야");
+      if (response.role === 'LEADER') {
+        navigation.navigate('TeamLeaderScreen');
+      }else if (response.role === 'MEMBER') {
+        navigation.navigate('TeamMemberScreen');
+      }
+
+    } catch (error: unknown) { // 다시 공부 하기 =
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
+      Alert.alert('로그인 실패', errorMessage); //팝업 에러 메세지
     }
   };
 
+  
   
   return (
     <View style={styles.container}>
@@ -67,62 +74,3 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    paddingTop: 300,
-    backgroundColor: '#fff',
-  },
-
-  logo: {
-    width: 80,
-    height: 80,
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  welcomeText: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 6,
-  },
-  subText: {
-    textAlign: 'center',
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 20,
-  },
-  input: {
-    height: 48,
-    borderBottomWidth: 1,
-    borderColor: '#aaa',
-    marginBottom: 16,
-    paddingHorizontal: 8,
-    fontSize: 16,
-  },
-  linkRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginBottom: 40,
-  },
-  link: {
-    color: '#FF9898',
-    marginHorizontal: 5,
-  },
-  separator: {
-    color: '#aaa',
-  },
-  loginButton: {
-    backgroundColor: '#FF9898',
-    paddingVertical: 14,
-    borderRadius: 30,
-  },
-  loginButtonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
