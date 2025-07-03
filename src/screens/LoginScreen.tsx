@@ -16,15 +16,21 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {//react�
   const handleLogin = async () => {
     try {
       const response = await login({ email, password });
-      // console.log('로그인 성공!', response.accessToken);  //나중에 로그 지우기
       Alert.alert('로그인 성공', '환영합니다!');
-      navigation.navigate('Home',); // 필요 시 활성화
+      console.log(response.role + "내 직업이야");
+      if (response.role === 'LEADER') {
+        navigation.navigate('TeamLeaderScreen');
+      }else if (response.role === 'MEMBER') {
+        navigation.navigate('TeamMemberScreen');
+      }
+
     } catch (error: unknown) { // 다시 공부 하기 =
       const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
       Alert.alert('로그인 실패', errorMessage); //팝업 에러 메세지
     }
   };
 
+  
   
   return (
     <View style={styles.container}>
@@ -56,7 +62,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {//react�
 
       <View style={styles.linkRow}>
         <Text style={styles.separator}>|</Text>
-        <TouchableOpacity  onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity  onPress={() => navigation.navigate('Signup')}>
           <Text style={styles.link}>회원가입</Text></TouchableOpacity>
         {/* <Text style={styles.separator}>|</Text> */}
 
