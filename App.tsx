@@ -8,6 +8,9 @@ import { RootStackParamList } from './src/navigation/types';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import TeamLeaderScreen from './src/screens/TeamLeaderScreen';
 import JoinTeamScreen from './src/screens/JoinTeamScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import PrivateScreen from './src/screens/PrivateScreen';
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function App() {
 
@@ -25,13 +28,23 @@ export default function App() {
           options={{ headerShown: false }}
         /> */}
         {/* <Stack.Screen
-          name="Home"
+          name="leader"
           component={TeamLeaderScreen}
           options={{ headerShown: false }} //name에 해당하는 배너가 뜨지 않음
-        /> */}
+        />
         <Stack.Screen
           name="JoinTeam"
           component={JoinTeamScreen}
+          options={{ headerShown: false }}
+        /> */}
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="private"
+          component={PrivateScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
