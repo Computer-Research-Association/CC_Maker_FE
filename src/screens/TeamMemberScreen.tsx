@@ -3,11 +3,11 @@ import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'reac
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { joinTeamByCode } from '../api/teamApi';
-import styles from '../styles/JoinTeamScreem.styles';
+import styles from '../styles/TeamMemberScreen.styles';
 
 
 type JoinTeamScreenProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'JoinTeam'>;
+  navigation: NativeStackNavigationProp<RootStackParamList, 'TeamMemberScreen'>;
 };
 
 export default function JoinTeamScreen({ navigation }: JoinTeamScreenProps) {
@@ -22,7 +22,7 @@ export default function JoinTeamScreen({ navigation }: JoinTeamScreenProps) {
     try {
       await joinTeamByCode(code);
       Alert.alert('팀 가입 완료', '성공적으로 팀에 가입했습니다!');
-      navigation.navigate('Home',); // 필요 시 다른 화면으로 이동
+      navigation.navigate('TeamLeaderScreen',); // 필요 시 다른 화면으로 이동
     } catch (error: any) {
       Alert.alert('가입 실패', error.message || '팀 가입 중 오류가 발생했습니다.');
     }

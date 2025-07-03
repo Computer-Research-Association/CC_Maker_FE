@@ -6,7 +6,8 @@ import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import { RootStackParamList } from './src/navigation/types';
 import TeamLeaderScreen from './src/screens/TeamLeaderScreen';
-import JoinTeamScreen from './src/screens/JoinTeamScreen';
+import TeamMemberScreen from './src/screens/TeamMemberScreen';
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
@@ -39,13 +40,13 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Home"
+          name="TeamLeaderScreen"
           component={TeamLeaderScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="JoinTeam"
-          component={JoinTeamScreen}
+          name="TeamMemberScreen"
+          component={TeamMemberScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

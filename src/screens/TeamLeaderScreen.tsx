@@ -7,7 +7,7 @@ import { RootStackParamList } from '../navigation/types';
 import * as Clipboard from 'expo-clipboard';
 import styles from '../styles/TeamLeaderScreen.styles';
 type TeamLeaderScreenProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
+  navigation: NativeStackNavigationProp<RootStackParamList, 'TeamLeaderScreen'>;
 };
 
 

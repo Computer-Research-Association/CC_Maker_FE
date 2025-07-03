@@ -4,6 +4,7 @@ import { RadioButton } from 'react-native-paper';
 import { ItemType } from 'react-native-dropdown-picker';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { signup } from '../api/authApi';  // api 함수 import
 import styles from '../styles/SignupScreen.styles'
 
@@ -87,10 +88,10 @@ const validateEmailId = (id: string) => {
       return;
     } 
     //생년월일 오류(중복적이지 않나?)
-    // if (birthError !== '') {
-    //   Alert.alert('입력 오류', '올바른 생년월일을 입력하세요.');
-    //   return;
-    // }
+    if (birthError !== '') {
+      Alert.alert('입력 오류', '올바른 생년월일을 입력하세요.');
+      return;
+    }
     //비번 오류
     const passwordErr = getPasswordErrorMessage(password);
       if (passwordErr !== '') {
@@ -189,7 +190,7 @@ const validateEmailId = (id: string) => {
           autoCapitalize="none"
           keyboardType="email-address"
         />
-        {/* <DropDownPicker
+        <DropDownPicker
           open={open}
           value={emailDomain}
           items={domainItems}
@@ -201,7 +202,7 @@ const validateEmailId = (id: string) => {
           containerStyle={styles.dropdownWrapper}
           zIndex={1000}
           zIndexInverse={3000}
-        /> */}
+        />
       </View>
       {emailError ? (
       <Text style={{ color: 'red', fontSize: 12, marginTop: -15, marginBottom: 10 }}>
@@ -211,7 +212,7 @@ const validateEmailId = (id: string) => {
 
       <Text style={styles.label}>비밀번호</Text>
       <TextInput
-        placeholder="비밀번호 (영문+숫자+특수문자 포함, 8자 이상)"
+        placeholder="영문+숫자+특수문자 포함, 8자 이상"
          onChangeText={(text) => {
           setPassword(text);
           setPasswordError(getPasswordErrorMessage(text));
