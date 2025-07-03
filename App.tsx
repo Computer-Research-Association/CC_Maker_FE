@@ -7,33 +7,33 @@ import SignupScreen from './src/screens/SignupScreen';
 import { RootStackParamList } from './src/navigation/types';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import TeamLeaderScreen from './src/screens/TeamLeaderScreen';
-// import TeamMemberScreen from './src/screens/TeamMemberScreen';
-
+import JoinTeamScreen from './src/screens/JoinTeamScreen';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function App() {
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator >
         {/* <Stack.Screen
           name="Login"
           component={LoginScreen}
           options={{ headerShown: false }}
-        /> */}
-        {/* <Stack.Screen
+        />
+        <Stack.Screen
           name="Signup"
           component={SignupScreen}
           options={{ headerShown: false }}
         /> */}
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Home"
           component={TeamLeaderScreen}
+          options={{ headerShown: false }} //name에 해당하는 배너가 뜨지 않음
+        /> */}
+        <Stack.Screen
+          name="JoinTeam"
+          component={JoinTeamScreen}
           options={{ headerShown: false }}
         />
-        {/* <Stack.Screen
-          name="Member"
-          component={TeamMemberScreen}
-          options={{ headerShown: false }}
-        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
