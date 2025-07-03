@@ -6,12 +6,12 @@ import * as Clipboard from 'expo-clipboard';
 import { RootStackParamList } from '../navigation/types';
 import api from '../api/apiClient'; // axios 인스턴스 import
 
-type SchoolRegisterScreenProps = {
+type TeamLeaderProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
 };
 
 
-export default function SchoolRegisterScreen({ navigation }: SchoolRegisterScreenProps) {
+export default function TeamLeaderScreen({ navigation }: TeamLeaderProps) {
   const [schoolName, setSchoolName] = useState('');
   const [teamCode, setTeamCode] = useState('');
   const [loading, setLoading] = useState(false);

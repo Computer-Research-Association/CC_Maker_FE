@@ -39,7 +39,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   ]);
 
   //그룹
-  const [role, setRole] = useState<'TeamLeader' | 'TeamMember'>('TeamLeader');
+  const [role, setRole] = useState<'LEADER' | 'MEMBER'>('LEADER');
   //년월일 검사기
   const validateFullDate = (y: string, m: string, d: string) => {
   const year = Number(y);
@@ -253,17 +253,17 @@ const validateEmailId = (id: string) => {
         <View style={styles.radioGroup}>
           <View style={styles.radioOption}>
             <RadioButton
-              value="TeamLeader"
-              status={role === 'TeamLeader' ? 'checked' : 'unchecked'}
-              onPress={() => setRole('TeamLeader')}
+              value="LEADER"
+              status={role === 'LEADER' ? 'checked' : 'unchecked'}
+              onPress={() => setRole('LEADER')}
             />
             <Text>팀장</Text>
           </View>
           <View style={styles.radioOption}>
             <RadioButton
-              value="TeamMember"
-              status={role === 'TeamMember' ? 'checked' : 'unchecked'}
-              onPress={() => setRole('TeamMember')}
+              value="MEMBER"
+              status={role === 'MEMBER' ? 'checked' : 'unchecked'}
+              onPress={() => setRole('MEMBER')}
             />
             <Text>팀원</Text>
           </View>
