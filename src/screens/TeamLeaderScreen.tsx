@@ -12,12 +12,12 @@ type TeamLeaderScreenProps = {
 
 
 export default function TeamLeaderScreen({ navigation }: TeamLeaderScreenProps) {
-  const [schoolName, setSchoolName] = useState('');
+  const [teamName, setTeamName] = useState('');
   const [teamCode, setTeamCode] = useState('');
   const [loading, setLoading] = useState(false);
 
   const fetchInviteCode = async () => {
-    if (!schoolName.trim()) {
+    if (!teamName.trim()) {
       Alert.alert('입력 오류', '팀 이름을 입력해주세요.');
       return;
     }
@@ -34,7 +34,7 @@ export default function TeamLeaderScreen({ navigation }: TeamLeaderScreenProps) 
 
       // 팀명(schoolName)을 POST 요청 body에 같이 보냄
       const response = await api.post('/api/invitecode/create', {
-        teamName: schoolName,
+        teamName: teamName,
       });
 
       if (response.data?.code) {
@@ -60,7 +60,8 @@ export default function TeamLeaderScreen({ navigation }: TeamLeaderScreenProps) 
 
   // 시작하기 버튼 눌렀을 때 이동 예시 (필요한 화면명으로 수정하세요)
   const onStartPress = () => {
-    //navigation.navigate('NextScreenName'); // 실제 네비게이션 대상 이름으로 변경
+    fetchInviteCode();
+    // navigation.navigate('NextScreenName'); // 실제 네비게이션 대상 이름으로 변경
   };
 
 
@@ -72,8 +73,8 @@ export default function TeamLeaderScreen({ navigation }: TeamLeaderScreenProps) 
       <TextInput
         style={styles.input}
         placeholder="팀명"
-        value={schoolName}
-        onChangeText={setSchoolName}
+        value={teamName}
+        onChangeText={setTeamName}
         placeholderTextColor="#ccc"
       />
 

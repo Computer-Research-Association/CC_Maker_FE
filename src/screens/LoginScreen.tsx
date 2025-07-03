@@ -17,7 +17,6 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {//react�
     try {
       const response = await login({ email, password });
       Alert.alert('로그인 성공', '환영합니다!');
-      console.log(response.role + "내 직업이야");
       if (response.role === 'LEADER') {
         navigation.navigate('TeamLeaderScreen');
       }else if (response.role === 'MEMBER') {
