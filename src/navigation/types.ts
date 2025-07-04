@@ -5,6 +5,10 @@ export type RootStackParamList = {
   Signup: undefined;
   TeamMemberScreen: undefined; // 로그인 성공 시 이동할 화면이 있다면 추가
   TeamLeaderScreen:undefined;
+  HomeScreen:undefined;
+  SettingScreen:undefined;
+  StartScreen:undefined;
+  MbtiScreen: undefined;
 };
 
 export interface LoginResponse {

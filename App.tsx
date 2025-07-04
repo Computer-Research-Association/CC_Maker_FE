@@ -7,7 +7,11 @@ import SignupScreen from './src/screens/SignupScreen';
 import { RootStackParamList } from './src/navigation/types';
 import TeamLeaderScreen from './src/screens/TeamLeaderScreen';
 import TeamMemberScreen from './src/screens/TeamMemberScreen';
-
+import HomeScreen from './src/screens/HomeScreen';
+import BottomTabNavigator from './src/function/BottomTabNavigator'; // ✅ 여기 추가
+import SettingsScreen from './src/screens/SettingScreen';
+import StartScreen from './src/screens/StartScreen';
+import MBTISelector from './src/screens/MbtiScreen';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
@@ -27,14 +31,19 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen
+      <Stack.Navigator initialRouteName="MbtiScreen">
+        {/* <Stack.Screen
+          name="HomeScreen"
+          component={BottomTabNavigator}
+          options={{ headerShown: false }}
+        /> */}
+        {/* <Stack.Screen
           name="Login"
           component={LoginScreen}
           options={{ headerShown: false }}
-        />
+        /> */}
         {/* 여기에 빈 <Stack.Screen/> 제거 */}
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Signup"
           component={SignupScreen}
           options={{ headerShown: false }}
@@ -48,6 +57,16 @@ export default function App() {
           name="TeamMemberScreen"
           component={TeamMemberScreen}
           options={{ headerShown: false }}
+        /> */}
+        {/* <Stack.Screen
+          name="SettingScreen"
+          component={SettingsScreen}
+          options={{ headerShown: false }}
+        /> */}
+        <Stack.Screen
+        name="MbtiScreen"
+        component={MBTISelector}
+        options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
