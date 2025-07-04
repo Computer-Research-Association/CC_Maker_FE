@@ -17,7 +17,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {//react�
     try {
       const response = await login({ email, password });
       Alert.alert('로그인 성공', '환영합니다!');
-        navigation.navigate('Home');
+        navigation.navigate('HomeScreen');
 
     } catch (error: unknown) { // 다시 공부 하기 =
       const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
