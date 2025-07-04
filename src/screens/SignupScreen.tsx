@@ -39,8 +39,6 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
     { label: '@gmail.com', value: '@gmail.com' },
   ]);
 
-  //그룹
-  const [role, setRole] = useState<'LEADER' | 'MEMBER'>('LEADER');
   //년월일 검사기
   const validateFullDate = (y: string, m: string, d: string) => {
   const year = Number(y);
@@ -107,7 +105,7 @@ const validateEmailId = (id: string) => {
 
     try {
       //log 남기기 나중에 지우기
-      const result  = await signup({ name, birthdate , email, password, gender, role});
+      const result  = await signup({ name, birthdate , email, password, gender});
       Alert.alert('회원가입 성공', '로그인 화면으로 이동합니다.');
       navigation.navigate('Login');
       console.log('서버 응답:', result);
@@ -245,28 +243,6 @@ const validateEmailId = (id: string) => {
               onPress={() => setGender('female')}
             />
             <Text>여성</Text>
-          </View>
-        </View>
-      </View>
-
-    <Text style={styles.label}>선택</Text>          
-      <View style={styles.genderBox}>
-        <View style={styles.radioGroup}>
-          <View style={styles.radioOption}>
-            <RadioButton
-              value="LEADER"
-              status={role === 'LEADER' ? 'checked' : 'unchecked'}
-              onPress={() => setRole('LEADER')}
-            />
-            <Text>팀장</Text>
-          </View>
-          <View style={styles.radioOption}>
-            <RadioButton
-              value="MEMBER"
-              status={role === 'MEMBER' ? 'checked' : 'unchecked'}
-              onPress={() => setRole('MEMBER')}
-            />
-            <Text>팀원</Text>
           </View>
         </View>
       </View>
