@@ -5,7 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/types';
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList,'Home'>;
+type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList,'HomeScreen'>;
 
 const Home = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
@@ -25,31 +25,24 @@ const Home = () => {
         onRequestClose={closeModal}
       >
         <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={closeModal}
+          style={styles.button}
+          onPress={() => {
+            closeModal();
+            navigation.navigate('InviteScreen');
+          }}
         >
-          <View style={styles.modalContent}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                closeModal();
-                navigation.navigate('InviteScreen');
-              }}
-            >
-              <Text style={styles.buttonText}>팀 생성하기</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                closeModal();
-                navigation.navigate('InviteScreen');
-              }}
-            >
-              <Text style={styles.buttonText}>팀 참여하기</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
+        <Text style={styles.buttonText}>팀 생성하기</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+        closeModal();
+        navigation.navigate('JoinScreen');
+        }}
+      >
+    <Text style={styles.buttonText}>팀 참여하기</Text>
+    </TouchableOpacity>
       </Modal>
 
       <TouchableOpacity style={styles.fab} onPress={openModal}>

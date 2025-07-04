@@ -71,7 +71,7 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
   };
 
   const onStartPress = async () => {
-    // navigation.navigate('NextScreenName'); // 실제 화면 이름으로 수정
+    navigation.navigate('HomeScreen');
   };
 
 
