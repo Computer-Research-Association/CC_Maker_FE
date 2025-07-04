@@ -3,8 +3,9 @@
 export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
-  TeamMemberScreen: undefined; // 로그인 성공 시 이동할 화면이 있다면 추가
-  TeamLeaderScreen:undefined;
+  JoinScreen: undefined; // 로그인 성공 시 이동할 화면이 있다면 추가
+  InviteScreen:undefined;
+  Home : undefined;
 };
 
 export interface LoginResponse {
@@ -12,7 +13,6 @@ export interface LoginResponse {
   refreshToken: string;
   email: string;
   name: string;
-  role: 'LEADER' | 'MEMBER';
   teamId: number | null;
   teamName: string | null;
   userId: number;
