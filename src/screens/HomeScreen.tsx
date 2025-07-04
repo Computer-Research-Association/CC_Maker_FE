@@ -1,50 +1,114 @@
+// Home.tsx
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../navigation/types';
 
-// import React, { useState } from 'react';
-// import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
-// import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-// import { RootStackParamList } from '../navigation/types';
-// import { joinTeamByCode } from '../api/teamApi';
-// // import styles from '../styles/JoinTeamScreem.styles';
+type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList,'Home'>;
 
+const Home = () => {
+  const navigation = useNavigation<HomeScreenNavigationProp>();
+  const [modalVisible, setModalVisible] = useState(false);
 
-// // type JoinTeamScreenProps = {
-// //   navigation: NativeStackNavigationProp<RootStackParamList, 'JoinTeam'>;
-// // };
+  const openModal = () => setModalVisible(true);
+  const closeModal = () => setModalVisible(false);
 
-// export default function HomeScreen({ navigation }: JoinTeamScreenProps) {
-//   const [code, setCode] = useState('');
+  return (
+    <View style={styles.container}>
+      <Text style={styles.welcomeText}>환영합니다, 사용자님!</Text>
 
-//   const handleJoinTeam = async () => {
-//     if(!code.trim()) {
-//       Alert.alert('입력 오류', '초대코드를 입력해주세요.');
-//       return;
-//     }
+      <Modal
+        transparent
+        visible={modalVisible}
+        animationType="fade"
+        onRequestClose={closeModal}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={closeModal}
+        >
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                closeModal();
+                navigation.navigate('InviteScreen');
+              }}
+            >
+              <Text style={styles.buttonText}>팀 생성하기</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                closeModal();
+                navigation.navigate('InviteScreen');
+              }}
+            >
+              <Text style={styles.buttonText}>팀 참여하기</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
-//     try {
-//       await joinTeamByCode(code);
-//       Alert.alert('팀 가입 완료', '성공적으로 팀에 가입했습니다!');
-//       navigation.navigate('Home',); // 필요 시 다른 화면으로 이동
-//     } catch (error: unknown) {
-//       if (error instanceof Error) {
-//         Alert.alert('가입 실패', error.message);
-//       } else {
-//         Alert.alert('가입 실패', '팀 가입 중 오류가 발생했습니다.');
-//       }
-// }
-//   };
+      <TouchableOpacity style={styles.fab} onPress={openModal}>
+        <Text style={styles.fabText}>＋</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.title}>환영합니다!</Text>
-//       <TextInput
-//         placeholder="초대코드를 입력하세요"
-//         value={code}
-//         onChangeText={setCode}
-//         style={styles.input}
-//       />
-//       <TouchableOpacity style={styles.button} onPress={handleJoinTeam}>
-//         <Text style={styles.buttonText}>팀 가입하기</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// }
+export default Home;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  welcomeText: {
+    fontSize: 24,
+    marginBottom: 20
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 30,
+    right: 30,
+    backgroundColor: '#007AFF',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5
+  },
+  fabText: {
+    fontSize: 30,
+    color: '#fff',
+    lineHeight: 30,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    width: 250,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginVertical: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    textAlign: 'center'
+  },
+});

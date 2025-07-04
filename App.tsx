@@ -5,8 +5,9 @@ import { initializeTokens } from './src/api/apiClient';
 import LoginScreen from './src/screens/LoginScreen';    
 import SignupScreen from './src/screens/SignupScreen';
 import { RootStackParamList } from './src/navigation/types';
-import TeamLeaderScreen from './src/screens/TeamLeaderScreen';
-import TeamMemberScreen from './src/screens/TeamMemberScreen';
+import InviteScreen from './src/screens/InviteScreen';
+import JoinScreen from './src/screens/JoinScreen';
+import Home from './src/screens/HomeScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -39,14 +40,20 @@ export default function App() {
           component={SignupScreen}
           options={{ headerShown: false }}
         />
+        {/* 여기에 빈 <Stack.Screen/> 제거 */}
         <Stack.Screen
-          name="TeamLeaderScreen"
-          component={TeamLeaderScreen}
+          name="Home"
+          component={Home}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="TeamMemberScreen"
-          component={TeamMemberScreen}
+          name="InviteScreen"
+          component={InviteScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="JoinScreen"
+          component={JoinScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
