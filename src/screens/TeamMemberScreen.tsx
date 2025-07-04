@@ -22,8 +22,7 @@ export default function JoinTeamScreen({ navigation }: JoinTeamScreenProps) {
     try {
       await joinTeamByCode(code);
       Alert.alert('팀 가입 완료', '성공적으로 팀에 가입했습니다!');
-<<<<<<< HEAD:src/screens/JoinTeamScreen.tsx
-      navigation.navigate('Home',); // 필요 시 다른 화면으로 이동
+      navigation.navigate('HomeScreen',); // 필요 시 다른 화면으로 이동
     } catch (error: unknown) {
       if (error instanceof Error) {
         Alert.alert('가입 실패', error.message);
@@ -31,12 +30,7 @@ export default function JoinTeamScreen({ navigation }: JoinTeamScreenProps) {
         Alert.alert('가입 실패', '팀 가입 중 오류가 발생했습니다.');
       }
 }
-=======
-      navigation.navigate('TeamLeaderScreen',); // 필요 시 다른 화면으로 이동
-    } catch (error: any) {
-      Alert.alert('가입 실패', error.message || '팀 가입 중 오류가 발생했습니다.');
-    }
->>>>>>> dad0654b891986183f4dd63a2970c17876145de9:src/screens/TeamMemberScreen.tsx
+
   };
 
   return (

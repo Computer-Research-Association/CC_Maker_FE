@@ -1,68 +1,28 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet,Alert  } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from '../api/apiClient';
-import { RootStackParamList } from '../navigation/types';
+import { RootStackParamList } from '../navigation/types'; // 네비게이션 타입 정의된 파일
 import * as Clipboard from 'expo-clipboard';
 import styles from '../styles/TeamLeaderScreen.styles';
 type TeamLeaderScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'TeamLeaderScreen'>;
 };
 
-
-export default function TeamLeaderScreen({ navigation }: TeamLeaderScreenProps) {
+export default function TeamMemberScreen({ navigation }: TeamLeaderScreenProps) {
   const [schoolName, setSchoolName] = useState('');
   const [teamCode, setTeamCode] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  const fetchInviteCode = async () => {
-    if (!schoolName.trim()) {
-      Alert.alert('입력 오류', '팀 이름을 입력해주세요.');
-      return;
-    }
-    try {
-      setLoading(true);
-      console.log('🚀 fetchInviteCode 실행');
-      // AsyncStorage에서 토큰 가져오기 (apiClient 내부에서 헤더 붙이지만, 혹시 토큰 없으면 미리 확인)
-      const accessToken = await AsyncStorage.getItem('ACCESS_TOKEN');
-      if (!accessToken) {
-        Alert.alert('로그인 필요', '로그인 후 이용해주세요.');
-        setLoading(false);
-        return;
-      }
-
-      // 팀명(schoolName)을 POST 요청 body에 같이 보냄
-      const response = await api.post('/api/invitecode/create', {
-        teamName: schoolName,
-      });
-
-      if (response.data?.code) {
-        setTeamCode(response.data.code);
-        Alert.alert('성공', '초대코드가 생성되었습니다.');
-      } else {
-        Alert.alert('오류', '초대코드 생성에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('초대코드 생성 실패:', error);
-      Alert.alert('오류', '초대코드 생성에 실패했습니다.');
-    } finally {
-      setLoading(false);
-    }
+  
+  const generateTeamCode = () => {
+    // 간단한 6자리 영문+숫자 코드 생성
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+    setTeamCode(code);
   };
 
   const copyToClipboard = async () => {
-    if (teamCode) {
-      await Clipboard.setStringAsync(teamCode);
-      Alert.alert('복사 완료', '팀 코드가 복사되었습니다!');
-    }
+    await Clipboard.setStringAsync(teamCode);
+    Alert.alert('복사 완료', '팀 코드가 복사되었습니다!');
   };
-
-  // 시작하기 버튼 눌렀을 때 이동 예시 (필요한 화면명으로 수정하세요)
-  const onStartPress = () => {
-    //navigation.navigate('NextScreenName'); // 실제 네비게이션 대상 이름으로 변경
-  };
-
 
   return (
     <View style={styles.container}>
@@ -77,8 +37,8 @@ export default function TeamLeaderScreen({ navigation }: TeamLeaderScreenProps) 
         placeholderTextColor="#ccc"
       />
 
-      <TouchableOpacity style={styles.Button} onPress={fetchInviteCode} disabled={loading}>
-        <Text style={styles.laterButtonText}>{loading ? '생성 중...' : '팀 코드 생성'}</Text>
+      <TouchableOpacity style={styles.Button} onPress={generateTeamCode}>
+        <Text style={styles.laterButtonText}>팀 코드생성</Text>
       </TouchableOpacity>
 
       {teamCode !== '' && (
@@ -88,9 +48,10 @@ export default function TeamLeaderScreen({ navigation }: TeamLeaderScreenProps) 
             <Text style={styles.copyButtonText}>코드 복사하기</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.startButton}>
-            <Text style={styles.startButtonText}>시작하기</Text>
+          <TouchableOpacity style={styles.startButton} >
+                  <Text style={styles.startButtonText}>시작하기</Text>
           </TouchableOpacity>
+
         </View>
       )}
     </View>
