@@ -14,6 +14,7 @@ const Home = () => {
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
 
+  //이부분부터 수정 필요//
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>환영합니다, 사용자님!</Text>
@@ -41,12 +42,12 @@ const Home = () => {
         navigation.navigate('JoinScreen');
         }}
       >
-    <Text style={styles.buttonText}>팀 참여하기</Text>
+    <Text style={styles.buttonText}>팀 참여하기 </Text>
     </TouchableOpacity>
       </Modal>
 
       <TouchableOpacity style={styles.fab} onPress={openModal}>
-        <Text style={styles.fabText}>＋</Text>
+        <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
     </View>
   );
