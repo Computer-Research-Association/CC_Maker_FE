@@ -32,7 +32,6 @@ export default function JoinTeamScreen({ navigation }: JoinTeamScreenProps) {
 }
 
   };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>초대 코드로 팀 가입</Text>
