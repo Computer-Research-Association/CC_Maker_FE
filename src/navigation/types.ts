@@ -8,6 +8,7 @@ export type RootStackParamList = {
   HomeScreen:undefined;
   SettingScreen:undefined;
   StartScreen:undefined;
+  TeamDetail: { teamId: string };
   MbtiScreen: undefined;
 };
 
