@@ -10,6 +10,8 @@ import { TouchableOpacity, View } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
+import MyPageScreen from '../screens/MypageScreen';
+import MissionScreen from '../screens/MissionScreen';
 // import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
@@ -62,8 +64,8 @@ export default function BottomTabNavigator() {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Login" component={LoginScreen} />
-      <Tab.Screen name="Signup" component={SignupScreen} />
+      <Tab.Screen name="Signup" component={MissionScreen} />
+      <Tab.Screen name="Profile" component={MyPageScreen} />
       {/* <Tab.Screen name="Profile" component={ProfileScreen} /> */}
     </Tab.Navigator>
   );

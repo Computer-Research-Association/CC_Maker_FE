@@ -9,6 +9,11 @@ export type RootStackParamList = {
   SettingScreen:undefined;
   StartScreen:undefined;
   MbtiScreen: undefined;
+  MypageScreen:undefined;
+  MissionScreen:undefined;
+  CheckScreen:undefined;
+  QuestionScreen:{index: number };
+  
 };
 
 export interface LoginResponse {

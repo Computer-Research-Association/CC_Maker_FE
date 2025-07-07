@@ -12,6 +12,9 @@ import BottomTabNavigator from './src/function/BottomTabNavigator'; // ✅ 여�
 import SettingsScreen from './src/screens/SettingScreen';
 import StartScreen from './src/screens/StartScreen';
 import MBTISelector from './src/screens/MbtiScreen';
+import MyPageScreen from './src/screens/MypageScreen';
+import MissionScreen from './src/screens/MissionScreen';
+import QuestionScreen from './src/screens/QuestionScreen';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
@@ -31,12 +34,12 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="MbtiScreen">
-        {/* <Stack.Screen
+      <Stack.Navigator initialRouteName="HomeScreen">
+        <Stack.Screen
           name="HomeScreen"
           component={BottomTabNavigator}
           options={{ headerShown: false }}
-        /> */}
+        />
         {/* <Stack.Screen
           name="Login"
           component={LoginScreen}
@@ -68,6 +71,19 @@ export default function App() {
         component={MBTISelector}
         options={{ headerShown: false }}
         />
+        <Stack.Screen
+        name="MypageScreen"
+        component={MyPageScreen}
+        options={{ headerShown: false }}
+        />
+        <Stack.Screen
+        name="MissionScreen"
+        component={MissionScreen}
+        options={{ headerShown: false }}
+        />
+        <Stack.Screen name="QuestionScreen"
+        component={QuestionScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
