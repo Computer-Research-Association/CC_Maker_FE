@@ -8,8 +8,13 @@ import {
   Pressable,
   Animated,
 } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/types';
 
-export default function MBTISelector() {
+type Props = {
+  navigation: NativeStackNavigationProp<RootStackParamList, 'MbtiScreen'>;
+};
+export default function MBTISelector({ navigation }: Props) {
   const [mbti, setMbti] = useState<{ [key: string]: string }>({
     EI: '',
     SN: '',
@@ -60,7 +65,7 @@ export default function MBTISelector() {
           { key: 'TF', options: ['T', 'F'] },
           { key: 'JP', options: ['J', 'P'] },
         ].map(({ key, options }) => (
-          <View style={styles.verticalPair} key={key}>
+          <View style= {styles.verticalPair} key={key}>
             {options.map(option => (
               <TouchableOpacity
                 key={option}
@@ -91,6 +96,12 @@ export default function MBTISelector() {
           </Animated.View>
         </Pressable>
       </View>
+      <TouchableOpacity
+        style={[styles.submitButton, { marginTop: 20 }]}
+        onPress={() => navigation.navigate('QuestionScreen', { index: 0 })}
+      >
+        <Text style={styles.submitText}>질문 시작하기</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -116,7 +127,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 30,
     justifyContent: 'center',
-    marginHorizontal: 0
   },
   verticalPair: {
     flexDirection: 'column',
