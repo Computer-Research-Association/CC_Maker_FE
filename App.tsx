@@ -15,6 +15,7 @@ import MBTISelector from './src/screens/MbtiScreen';
 import MyPageScreen from './src/screens/MypageScreen';
 import MissionScreen from './src/screens/MissionScreen';
 import QuestionScreen from './src/screens/QuestionScreen';
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
@@ -83,7 +84,14 @@ export default function App() {
         />
         <Stack.Screen name="QuestionScreen"
         component={QuestionScreen} />
-
+      </Stack.Navigator>
+      
+      <Stack.Navigator>
+        <Stack.Screen
+          name="QuestionScreen"
+          component={QuestionScreen}
+          initialParams={{ index: 0 }} // 처음은 0번 질문
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
