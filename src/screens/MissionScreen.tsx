@@ -1,20 +1,69 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { RootStackParamList } from '../navigation/types';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'; //네비게이션을 타입안정성있게 쓰기 위한 도구 
+import React from "react";
+import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
 
-type MissionScreenProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'MissionScreen'>;
-};
+const screenWidth = Dimensions.get("window").width;
+const BOX_PER_ROW = 3;
+const BOX_SIZE = screenWidth / BOX_PER_ROW;
 
-export default function MissionScreen({ navigation }: MissionScreenProps) {
+export default function MissionScreen() {
   return (
-    <View style={styles.container}>
-      <Text>미션 화면입니다</Text>
-    </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* 1학점 */}
+      <View style={styles.section}>
+        <Text style={styles.title}>1학점</Text>x`x `
+        <View style={styles.grid}>
+          {Array.from({ length: 9 }).map((_, i) => (
+            <View
+              key={`1-credit-${i}`}
+              style={[styles.box, i === 0 && styles.selectedBox]}
+            />
+          ))}
+        </View>
+      </View>
+
+      {/* 3학점 */}
+      <View style={styles.section}>
+        <Text style={styles.title}>3학점</Text>
+        <View style={styles.grid}>
+          {Array.from({ length: 9 }).map((_, i) => (
+            <View key={`3-credit-${i}`} style={styles.box} />
+          ))}
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  container: {
+    paddingVertical: 60,
+  },
+  section: {
+    marginBottom: 40,
+  },
+  title: {
+    backgroundColor: "#FFC0C0",
+    alignSelf: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 10,
+    fontWeight: "bold",
+    marginBottom: 12,
+  },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  box: {
+    width: BOX_SIZE,
+    height: BOX_SIZE,
+    backgroundColor: "#f6f6f6",
+    borderRadius: 20,
+    borderWidth: 0.5,
+    borderColor: "#ddd",
+  },
+  selectedBox: {
+    borderWidth: 2,
+    borderColor: "#2196F3",
+  },
 });

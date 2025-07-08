@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { RootStackParamList } from '../navigation/types';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'; //네비게이션을 타입안정성있게 쓰기 위한 도구 
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { RootStackParamList } from "../navigation/types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"; //네비게이션을 타입안정성있게 쓰기 위한 도구
 
 type HomeScreenProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'HomeScreen'>;
+  navigation: NativeStackNavigationProp<RootStackParamList, "HomeScreen">;
 };
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
@@ -16,5 +16,5 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  container: { flex: 1, justifyContent: "center", alignItems: "center" },
 });
