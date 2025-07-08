@@ -1,11 +1,17 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { RootStackParamList } from '../navigation/types';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'; //네비게이션을 타입안정성있게 쓰기 위한 도구 
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { RootStackParamList } from "../navigation/types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"; //네비게이션을 타입안정성있게 쓰기 위한 도구
 
 type SettingScreenProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'SettingScreen'>;
-};//이 컴포넌트는 navigation이라는 prop을 받고, 객체로 타입을 지정해준다. 
+  navigation: NativeStackNavigationProp<RootStackParamList, "SettingScreen">;
+}; //이 컴포넌트는 navigation이라는 prop을 받고, 객체로 타입을 지정해준다.
 
 export default function SettingsScreen({ navigation }: SettingScreenProps) {
   return (
@@ -38,7 +44,7 @@ function SettingItem({ label, onPress, external }: SettingItemProps) {
   return (
     <TouchableOpacity style={styles.item} onPress={onPress}>
       <Text style={styles.label}>{label}</Text>
-      <Text style={styles.arrow}>{external ? '↗' : '›'}</Text>
+      <Text style={styles.arrow}>{external ? "↗" : "›"}</Text>
     </TouchableOpacity>
   );
 }
@@ -46,31 +52,31 @@ function SettingItem({ label, onPress, external }: SettingItemProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     paddingTop: 20,
     paddingHorizontal: 20,
   },
   sectionTitle: {
-    color: '#888',
+    color: "#888",
     fontSize: 14,
     marginTop: 24,
     marginBottom: 8,
   },
   item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#111',
+    fontWeight: "bold",
+    color: "#111",
   },
   arrow: {
     fontSize: 18,
-    color: '#ccc',
+    color: "#ccc",
   },
 });
