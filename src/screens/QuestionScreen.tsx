@@ -5,7 +5,7 @@ import { RootStackParamList } from "../navigation/types";
 import { questions } from "./Question";
 import LikertScale from "../function/LikertScale"; // Likert 컴포넌트 불러오기
 import SubmitButton from "../component/SubmitButton";
-
+import HomeScreen from "./HomeScreen";
 type Props = NativeStackScreenProps<RootStackParamList, "QuestionScreen">;
 
 export default function QuestionScreen({ route, navigation }: Props) {
@@ -13,6 +13,11 @@ export default function QuestionScreen({ route, navigation }: Props) {
   const current = questions[index];
 
   const [selected, setSelected] = useState<number | null>(null);
+  const goToPrevious = () => {
+    if (index > 0) {
+      navigation.replace("QuestionScreen", { index: index - 1 });
+    }
+  };
 
   const goToNext = () => {
     const nextIndex = index + 1;
@@ -20,6 +25,7 @@ export default function QuestionScreen({ route, navigation }: Props) {
       navigation.push("QuestionScreen", { index: nextIndex });
     } else {
       alert("모든 질문이 끝났습니다!");
+      navigation.navigate("MypageScreen");
     }
   };
 
@@ -35,6 +41,9 @@ export default function QuestionScreen({ route, navigation }: Props) {
         onPress={goToNext}
         disabled={selected === null}
       />
+      {index > 0 && (
+        <SubmitButton title="이전" onPress={goToPrevious} disabled={false} />
+      )}
     </View>
   );
 }

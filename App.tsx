@@ -17,6 +17,7 @@ import JoinScreen from "./src/screens/JoinScreen";
 import login from "./src/screens/LoginScreen";
 import QuestionScreen from "./src/screens/QuestionScreen";
 import signup from "./src/screens/SignupScreen";
+import CheckScreen from "./src/screens/CheckScreen";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
@@ -42,7 +43,7 @@ export default function App() {
           component={login}
           options={{ headerShown: false }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="Signup"
           component={signup}
           options={{ headerShown: false }}
@@ -87,6 +88,16 @@ export default function App() {
           name="QuestionScreen"
           component={QuestionScreen}
           initialParams={{ index: 0 }} // 처음은 0번 질문
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SettingScreen"
+          component={SettingsScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CheckScreen"
+          component={CheckScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
