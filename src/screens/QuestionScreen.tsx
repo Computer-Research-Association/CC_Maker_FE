@@ -13,7 +13,9 @@ type Props = NativeStackScreenProps<RootStackParamList, "QuestionScreen">;
 export default function QuestionScreen({ route, navigation }: Props) {
   const { index, mbti } = route.params;
   // answers가 없을 경우 빈 배열로 초기화
-  const initialAnswers = route.params.answers ?? [];
+    const initialAnswers = route.params.answers ?? [];
+  const [localAnswers, setLocalAnswers] = useState<number[]>(initialAnswers);
+
   const { teamId } = useContext(TeamContext);
   const current = questions[index];
 
@@ -23,10 +25,14 @@ export default function QuestionScreen({ route, navigation }: Props) {
 }
   const [selected, setSelected] = useState<number | null>(null);
   const goToPrevious = () => {
-    if (index > 0) {
-      navigation.replace("QuestionScreen", { index: index - 1 });
-    }
-  };
+      if (index > 0) {
+        navigation.replace("QuestionScreen", { 
+          index: index - 1,
+          mbti,
+          answers: localAnswers,
+        });
+      }
+};
 
   const goToNext = async () => {
     if (selected === null) return;

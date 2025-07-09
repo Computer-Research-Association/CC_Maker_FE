@@ -66,9 +66,7 @@ export default function MBTISelector({ navigation }: Props) {
       <SubmitButton title="MBTI 확인" onPress={getMBTI} />
 
       <SubmitButton
-        title="질문 시작하기"
-        onPress={() => navigation.navigate("QuestionScreen", { index: 0 })}
-        disabled={(mbti.EI + mbti.SN + mbti.TF + mbti.JP).length < 4}
+        title="질문 시작하기" 
         onPress={() => {
           const mbtiString = mbti.EI + mbti.SN + mbti.TF + mbti.JP;
           if (mbtiString.length < 4) {
