@@ -1,21 +1,23 @@
 import React from "react";
-import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 
-const screenWidth = Dimensions.get("window").width;
+const BOX_SIZE = 120;
+const BOX_MARGIN = 6;
 const BOX_PER_ROW = 3;
-const BOX_SIZE = screenWidth / BOX_PER_ROW;
+const GRID_WIDTH = BOX_PER_ROW * (BOX_SIZE + BOX_MARGIN * 2); // 총 박스 영역 너비
 
 export default function MissionScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* 1학점 */}
       <View style={styles.section}>
-        <Text style={styles.title}>1학점</Text>x`x `
+        <Text style={styles.title}>1학점</Text>
         <View style={styles.grid}>
           {Array.from({ length: 9 }).map((_, i) => (
             <View
               key={`1-credit-${i}`}
-              style={[styles.box, i === 0 && styles.selectedBox]}
+              style={styles.box}
+              // style={[styles.box, i === 0 && styles.selectedBox]}
             />
           ))}
         </View>
@@ -30,20 +32,48 @@ export default function MissionScreen() {
           ))}
         </View>
       </View>
+
+      <View style={styles.section}>
+        <Text style={styles.title}>5학점</Text>
+        <View style={styles.grid}>
+          {Array.from({ length: 9 }).map((_, i) => (
+            <View
+              key={`1-credit-${i}`}
+              style={styles.box}
+              // style={[styles.box, i === 0 && styles.selectedBox]}
+            />
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.title}>10학점</Text>
+        <View style={styles.grid}>
+          {Array.from({ length: 9 }).map((_, i) => (
+            <View
+              key={`1-credit-${i}`}
+              style={styles.box}
+              // style={[styles.box, i === 0 && styles.selectedBox]}
+            />
+          ))}
+        </View>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 60,
+    marginTop: 50,
+    paddingVertical: 20,
+    alignItems: "center", // 전체 스크롤뷰에서 가운데 정렬
   },
   section: {
     marginBottom: 40,
+    alignItems: "center",
   },
   title: {
     backgroundColor: "#FFC0C0",
-    alignSelf: "center",
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 10,
@@ -51,8 +81,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   grid: {
+    width: GRID_WIDTH,
     flexDirection: "row",
     flexWrap: "wrap",
+    justifyContent: "flex-start",
   },
   box: {
     width: BOX_SIZE,
@@ -61,6 +93,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 0.5,
     borderColor: "#ddd",
+    margin: BOX_MARGIN,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
   },
   selectedBox: {
     borderWidth: 2,
