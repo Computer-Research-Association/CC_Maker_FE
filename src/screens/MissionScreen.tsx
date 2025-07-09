@@ -1,16 +1,22 @@
-import React from "react";
+import React, {useContext } from "react" ;
 import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
+import { TeamContext } from "../screens/TeamContext";
+
+
 
 const screenWidth = Dimensions.get("window").width;
 const BOX_PER_ROW = 3;
 const BOX_SIZE = screenWidth / BOX_PER_ROW;
 
+
 export default function MissionScreen() {
+  const { teamId } = useContext(TeamContext);
+  
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* 1학점 */}
       <View style={styles.section}>
-        <Text style={styles.title}>1학점</Text>x`x `
+        <Text style={styles.title}>1학점</Text>
         <View style={styles.grid}>
           {Array.from({ length: 9 }).map((_, i) => (
             <View

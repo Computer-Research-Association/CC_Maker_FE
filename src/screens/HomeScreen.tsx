@@ -1,13 +1,17 @@
-import React from "react";
+import React,{ useContext } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"; //네비게이션을 타입안정성있게 쓰기 위한 도구
+import { TeamContext } from './TeamContext';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "HomeScreen">;
 };
 
+
+
 export default function HomeScreen({ navigation }: HomeScreenProps) {
+  const { teamId } = useContext(TeamContext);
   return (
     <View style={styles.container}>
       <Text>홈화면 입니다</Text>
