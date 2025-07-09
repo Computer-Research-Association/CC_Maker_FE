@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import styles from '../styles/MypageScreen.syles';
 import MbtiScreen from '../screens/MbtiScreen';
+import { TeamContext } from './TeamContext';
+
 type MyPageScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'MypageScreen'>;
 };
 
+
+
 export default function MyPageScreen({ navigation }: MyPageScreenProps) {
+  
+  const { teamId } = useContext(TeamContext);
   const userName = '김예준';
   const month = '7월';
   const writtenCount = 0;

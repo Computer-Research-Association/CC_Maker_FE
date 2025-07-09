@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,9 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { TeamResponseDto } from "../types/team";
 import api from "../api/apiClient";
+import { TeamContext } from "../screens/TeamContext";
+
+
 
 type MainHomeScreenNavigationProp = {
   navigation: NativeStackNavigationProp<RootStackParamList, "MainHomeScreen">;
@@ -34,6 +37,7 @@ export default function MainHomeScreen({
 }: MainHomeScreenNavigationProp) {
   const [teams, setTeams] = useState<Team[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const { setTeamId } = useContext(TeamContext);
 
   useEffect(() => {
     fetchUserTeams();
@@ -59,6 +63,7 @@ export default function MainHomeScreen({
       style={styles.teamCard}
       onPress={() => {
         console.log(`선택한 팀 ID: ${item.id}, 팀 이름: ${item.teamName}`);
+        setTeamId(item.id);
         navigation.navigate("HomeScreen", { teamId: item.id });
       }}
     >

@@ -13,7 +13,7 @@ export type RootStackParamList = {
   MypageScreen: undefined;
   MissionScreen: undefined;
   CheckScreen: undefined;
-  QuestionScreen: { index: number };
+  QuestionScreen: { index: number; mbti: string; answers: number[] };
 };
 
 export interface LoginResponse {

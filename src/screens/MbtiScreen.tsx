@@ -1,21 +1,19 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   Alert,
-  Pressable,
-  Animated,
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
-// 1. import 추가
 import SubmitButton from "../component/SubmitButton";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "MbtiScreen">;
 };
+
 export default function MBTISelector({ navigation }: Props) {
   const [mbti, setMbti] = useState<{ [key: string]: string }>({
     EI: "",
@@ -64,10 +62,23 @@ export default function MBTISelector({ navigation }: Props) {
           </View>
         ))}
       </View>
+
       <SubmitButton title="MBTI 확인" onPress={getMBTI} />
+
       <SubmitButton
         title="질문 시작하기"
-        onPress={() => navigation.navigate("QuestionScreen", { index: 0 })}
+        onPress={() => {
+          const mbtiString = mbti.EI + mbti.SN + mbti.TF + mbti.JP;
+          if (mbtiString.length < 4) {
+            Alert.alert("선택 부족", "MBTI를 모두 선택해주세요.");
+            return;
+          }
+          navigation.navigate("QuestionScreen", {
+            index: 0,
+            mbti: mbtiString,
+            answers: [],
+          });
+        }}
         style={{ marginTop: 20 }}
       />
     </View>
@@ -120,8 +131,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
   },
-
-  // ✅ 얇고 감싸는 그림자
   shadowWrapper: {
     alignItems: "center",
     marginTop: 40,
@@ -129,14 +138,13 @@ const styles = StyleSheet.create({
   },
   shadowLayer: {
     position: "absolute",
-    top: 2, // 아주 살짝 아래
-    width: BUTTON_WIDTH, // 좌우 2px 여유
-    height: BUTTON_HEIGHT + 1.5, // 상하 2px 여유
+    top: 2,
+    width: BUTTON_WIDTH,
+    height: BUTTON_HEIGHT + 1.5,
     backgroundColor: "#B54D4D",
     borderRadius: 999,
     zIndex: 0,
   },
-
   submitButton: {
     width: BUTTON_WIDTH,
     height: BUTTON_HEIGHT,
