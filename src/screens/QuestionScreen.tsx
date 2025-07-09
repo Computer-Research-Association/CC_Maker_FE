@@ -56,6 +56,7 @@ export default function QuestionScreen({ route, navigation }: Props) {
       // });
       navigation.navigate("HomeScreen", { teamId });
 
+      
     }
   };
 
