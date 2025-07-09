@@ -21,6 +21,7 @@ import signup from "./src/screens/SignupScreen";
 // 아까 만든 TeamProvider import
 import { TeamProvider } from "./src/screens/TeamContext";
 
+import CheckScreen from "./src/screens/CheckScreen";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {

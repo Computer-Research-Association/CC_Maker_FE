@@ -45,6 +45,8 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
     { label: "@handong.ac.kr", value: "@handong.ac.kr" },
     { label: "@gmail.com", value: "@gmail.com" },
   ]);
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string>("");
 
   //년월일 검사기
   const validateFullDate = (y: string, m: string, d: string) => {
@@ -275,6 +277,31 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
           }}
         >
           {passwordError}
+        </Text>
+      ) : null}
+      <Text style={styles.label}>비밀번호 확인</Text>
+      <TextInput
+        placeholder="비밀번호 재입력"
+        onChangeText={(text) => {
+          setConfirmPassword(text);
+          setConfirmPasswordError(
+            text !== password ? "비밀번호가 일치하지 않습니다." : ""
+          );
+        }}
+        value={confirmPassword}
+        secureTextEntry
+        style={styles.input}
+      />
+      {confirmPasswordError ? (
+        <Text
+          style={{
+            color: "red",
+            fontSize: 12,
+            marginTop: -15,
+            marginBottom: 10,
+          }}
+        >
+          {confirmPasswordError}
         </Text>
       ) : null}
 

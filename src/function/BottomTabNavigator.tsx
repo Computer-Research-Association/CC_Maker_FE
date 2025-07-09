@@ -1,17 +1,16 @@
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 //@ts-ignore
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { TouchableWithoutFeedback } from 'react-native';
-import { TouchableOpacity, View } from 'react-native';
-
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { TouchableWithoutFeedback } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 // 각 화면 import
-import HomeScreen from '../screens/HomeScreen';
-import LoginScreen from '../screens/LoginScreen';
-import SignupScreen from '../screens/SignupScreen';
-import MyPageScreen from '../screens/MypageScreen';
-import MissionScreen from '../screens/MissionScreen';
+import HomeScreen from "../screens/HomeScreen";
+import LoginScreen from "../screens/LoginScreen";
+import SignupScreen from "../screens/SignupScreen";
+import MyPageScreen from "../screens/MypageScreen";
+import MissionScreen from "../screens/MissionScreen";
 // import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
@@ -23,7 +22,7 @@ export default function BottomTabNavigator() {
         headerShown: true,
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: "#fff",
           height: 100,
         },
         tabBarButton: (props) => (
@@ -36,20 +35,20 @@ export default function BottomTabNavigator() {
           </TouchableOpacity>
         ),
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: string = '';
+          let iconName: string = "";
 
           switch (route.name) {
-            case 'Home':
-              iconName = 'home';
+            case "Home":
+              iconName = "home";
               break;
-            case 'Login':
-              iconName = 'log-in-outline';
+            case "Login":
+              iconName = "log-in-outline";
               break;
-            case 'Signup':
-              iconName = 'person-add-outline';
+            case "Signup":
+              iconName = "person-add-outline";
               break;
-            case 'Profile':
-              iconName = 'person';
+            case "Profile":
+              iconName = "person";
               break;
           }
 
@@ -57,7 +56,7 @@ export default function BottomTabNavigator() {
             <Ionicons
               name={iconName}
               size={focused ? 28 : 24}
-              color={focused ? '#333' : '#bbb'}
+              color={focused ? "#333" : "#bbb"}
             />
           );
         },
