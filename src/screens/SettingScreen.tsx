@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"; //네비게이션을 타입안정성있게 쓰기 위한 도구
+import CheckScreen from "./CheckScreen";
 
 type SettingScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "SettingScreen">;
@@ -30,6 +31,13 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
       <SettingItem label="이용 약관" onPress={() => {}} external />
       <SettingItem label="언어 설정" onPress={() => {}} external /> */}
       <SettingItem label="문의하기" onPress={() => {}} external />
+      <SettingItem
+        label="매칭시작하기"
+        onPress={() => {
+          navigation.navigate("CheckScreen");
+        }}
+        external
+      />
     </ScrollView>
   );
 }

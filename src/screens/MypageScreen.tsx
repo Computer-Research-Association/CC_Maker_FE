@@ -1,13 +1,17 @@
-import React, { useState,useContext } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/types';
-import styles from '../styles/MypageScreen.syles';
-import MbtiScreen from '../screens/MbtiScreen';
+import React, { useState,useContext } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/types";
+import styles from "../styles/MypageScreen.syles";
+import MbtiScreen from "../screens/MbtiScreen";
+import SettingsScreen from "./SettingScreen";
+//@ts-ignore
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import { TeamContext } from './TeamContext';
 
 type MyPageScreenProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'MypageScreen'>;
+  navigation: NativeStackNavigationProp<RootStackParamList, "MypageScreen">;
 };
 
 
@@ -15,26 +19,39 @@ type MyPageScreenProps = {
 export default function MyPageScreen({ navigation }: MyPageScreenProps) {
   
   const { teamId } = useContext(TeamContext);
-  const userName = '김예준';
-  const month = '7월';
+  const userName = "김예준";
+  const month = "7월";
   const writtenCount = 0;
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => {
+          console.log("눌림!");
+          navigation.navigate("SettingScreen");
+        }}
+      >
+        <Ionicons
+          name="settings-outline"
+          size={28}
+          color="#000"
+          style={styles.settingIcon}
+        />
+      </TouchableOpacity>
       {/* ✅ 중앙 정렬된 상단 프로필 */}
-   <View style={styles.profileRow}>
-  {/* 왼쪽 프로필 */}
-  <View style={styles.profileBlock}>
-    <View style={styles.avatar} />
-    <Text style={styles.name}>{userName}</Text>
-  </View>
+      <View style={styles.profileRow}>
+        {/* 왼쪽 프로필 */}
+        <View style={styles.profileBlock}>
+          <View style={styles.avatar} />
+          <Text style={styles.name}>{userName}</Text>
+        </View>
 
-  {/* 오른쪽 프로필 */}
-  <View style={styles.profileBlock}>
-    <View style={styles.avatar} />
-    <Text style={styles.name}>{userName}</Text>
-  </View>
-</View>
+        {/* 오른쪽 프로필 */}
+        <View style={styles.profileBlock}>
+          <View style={styles.avatar} />
+          <Text style={styles.name}>{userName}</Text>
+        </View>
+      </View>
 
       {/* ✅ 아이콘 제거됨 */}
 
@@ -53,8 +70,11 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
       {/* 작성 안내 */}
       <View style={styles.emptyNoteContainer}>
         <Text style={styles.emptyNoteText}>아직 매칭된 상대가 없어요</Text>
-        <TouchableOpacity style={styles.writeButtonMain}  onPress={() => navigation.navigate('MbtiScreen')}>
-          <Text style={styles.writeButtonMainText} >매칭시작하기</Text>
+        <TouchableOpacity
+          style={styles.writeButtonMain}
+          onPress={() => navigation.navigate("MbtiScreen")}
+        >
+          <Text style={styles.writeButtonMainText}>매칭시작하기</Text>
         </TouchableOpacity>
       </View>
     </View>

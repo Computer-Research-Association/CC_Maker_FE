@@ -6,7 +6,7 @@ import { questions } from "./Question";
 import { TeamContext } from "../screens/TeamContext";
 import LikertScale from "../function/LikertScale"; // Likert 컴포넌트 불러오기
 import SubmitButton from "../component/SubmitButton";
-import api from "../api/apiClient";
+import HomeScreen from "./HomeScreen";import api from "../api/apiClient";
 
 // QuestionScreen.tsx
 type Props = NativeStackScreenProps<RootStackParamList, "QuestionScreen">;
@@ -22,7 +22,11 @@ export default function QuestionScreen({ route, navigation }: Props) {
   return null; // 또는 적절한 UI 렌더링
 }
   const [selected, setSelected] = useState<number | null>(null);
-  const [localAnswers, setLocalAnswers] = useState<number[]>(initialAnswers);
+  const goToPrevious = () => {
+    if (index > 0) {
+      navigation.replace("QuestionScreen", { index: index - 1 });
+    }
+  };
 
   const goToNext = async () => {
     if (selected === null) return;
@@ -89,6 +93,9 @@ export default function QuestionScreen({ route, navigation }: Props) {
         onPress={goToNext}
         disabled={selected === null}
       />
+      {index > 0 && (
+        <SubmitButton title="이전" onPress={goToPrevious} disabled={false} />
+      )}
     </View>
   );
 }
