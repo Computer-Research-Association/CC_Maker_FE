@@ -65,7 +65,7 @@ export default function QuestionScreen({ route, navigation }: Props) {
     // questionId와 score 매핑
     const answerDtos = answersToSend.map((score, idx) => ({
       questionId: questions[idx].id,  // 질문 id 추가
-      score: score,
+      score: score + 1,
     }));
     
     //설문조사 완료 api
@@ -75,7 +75,7 @@ export default function QuestionScreen({ route, navigation }: Props) {
     console.log("내가 1번쨰 보낸거");
     
     //설문조사 결과 api보내기
-    await api.post("/api/v1/matching/answer", {
+    await api.post("/api/matching/answer", {
       teamId,
       mbti,
       answers: answerDtos,
