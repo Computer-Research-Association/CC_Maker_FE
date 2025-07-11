@@ -43,8 +43,8 @@ export default function App() {
     <NavigationContainer>
       {/* TeamProvider로 감싸서 모든 화면에서 teamId 공유 가능 */}
       <TeamProvider>
-        <Stack.Navigator initialRouteName="MainHomeScreen">
-          <Stack.Screen
+        <Stack.Navigator initialRouteName="HomeScreen">
+          {/* <Stack.Screen
             name="Login"
             component={login}
             options={{ headerShown: false }}
@@ -59,13 +59,13 @@ export default function App() {
             component={MainHomeScreen}
             options={{ headerShown: false }}
           />
-          
+           */}
           <Stack.Screen
             name="HomeScreen"
             component={BottomTabNavigator}
             options={{ headerShown: false }}
           />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="InviteScreen"
             component={InviteScreen}
             options={{ headerShown: false }}
@@ -74,7 +74,7 @@ export default function App() {
             name="JoinScreen"
             component={JoinScreen}
             options={{ headerShown: false }}
-          />
+          /> */}
           <Stack.Screen
             name="MbtiScreen"
             component={MBTISelector}
@@ -94,6 +94,16 @@ export default function App() {
             name="QuestionScreen"
             component={QuestionScreen}
             initialParams={{ index: 0 }} // 처음은 0번 질문
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SettingScreen"
+            component={SettingsScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CheckScreen"
+            component={CheckScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
