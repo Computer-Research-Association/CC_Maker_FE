@@ -89,11 +89,6 @@ export default function App() {
             component={MissionScreen}
             options={{ headerShown: false }}
           />
-           <Stack.Screen
-            name="SettingScreen"
-            component={SettingsScreen}
-            options={{ headerShown: false }}
-          />
           <Stack.Screen
             name="CheckScreen"
             component={CheckScreen}
