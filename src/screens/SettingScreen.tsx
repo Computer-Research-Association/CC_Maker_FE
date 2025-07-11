@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext,useEffect  } from "react";
 import {
   View,
   Text,
@@ -8,13 +8,20 @@ import {
 } from "react-native";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"; //네비게이션을 타입안정성있게 쓰기 위한 도구
-import CheckScreen from "./CheckScreen";
+import { TeamContext } from "../screens/TeamContext";
+
 
 type SettingScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "SettingScreen">;
 }; //이 컴포넌트는 navigation이라는 prop을 받고, 객체로 타입을 지정해준다.
 
 export default function SettingsScreen({ navigation }: SettingScreenProps) {
+  const { role } = useContext(TeamContext);
+  //실험 나중에 지우기
+  useEffect(() => {
+    console.log("현재 role:", role);
+  }, [role]);
+
   return (
     <ScrollView style={styles.container}>
       {/* <Text style={styles.sectionTitle}>내 활동</Text>
@@ -31,13 +38,16 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
       <SettingItem label="이용 약관" onPress={() => {}} external />
       <SettingItem label="언어 설정" onPress={() => {}} external /> */}
       <SettingItem label="문의하기" onPress={() => {}} external />
-      <SettingItem
-        label="매칭시작하기"
-        onPress={() => {
-          navigation.navigate("CheckScreen");
-        }}
-        external
-      />
+        
+      {role === "LEADER" && (
+        <SettingItem
+          label="매칭시작하기"
+          onPress={() => {
+            navigation.navigate("CheckScreen");
+          }}
+          external
+        />
+      )}
     </ScrollView>
   );
 }

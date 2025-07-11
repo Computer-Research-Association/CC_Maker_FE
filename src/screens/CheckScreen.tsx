@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
+
 import {
   View,
   Text,
@@ -6,41 +7,63 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import api from "../api/apiClient";
+import { TeamContext } from '../screens/TeamContext';
 
 type Member = {
-  id: string;
-  name: string;
-  checked: boolean;
+  userId: number;
+  userName: string;
+  surveyCompleted: boolean;
 };
 
-const members: Member[] = Array.from({ length: 30 }, (_, i) => ({
-  id: `user-${i + 1}`,
-  name: `팀원`,
-  checked: true,
-}));
-
 export default function CheckScreen() {
+  const [members, setMembers] = useState<Member[]>([]);
+  const { teamId } = useContext(TeamContext);
+
+  useEffect(() => {
+    if (!teamId) return;
+
+    const fetchMembers = async () => {
+      try {
+        const response = await api.get(`/api/team/${teamId}/survey-status/all`);
+        // response.data가 SurveyStatusDto[] 형태라고 가정
+        setMembers(response.data);
+        console.log(response);
+      } catch (error) {
+        console.error("팀원 설문 상태 조회 실패", error);
+      }
+    };
+
+    fetchMembers();
+  }, [teamId]);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.role}>팀장</Text>
-      <Text style={styles.count}>00명</Text>
+      <Text style={styles.role}>팀원 설문 상태</Text>
+      <Text style={styles.count}>{members.length}명</Text>
 
       <FlatList
         data={members}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.userId.toString()}
         contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
           <View style={styles.listItem}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>A</Text>
+              <Text style={styles.avatarText}>
+                {item.userName.charAt(0)}
+              </Text>
             </View>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.checkbox}>{item.checked ? "✅" : "⬜️"}</Text>
+            <Text style={styles.name}>{item.userName}</Text>
+              <Text style={styles.checkbox}>
+              {item.surveyCompleted ? "✅" : "⬜️"}
+            </Text>
           </View>
         )}
       />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={() => {
+        // 여기에 매칭 시작하기 로직 혹은 네비게이션 추가
+      }}>
         <Text style={styles.buttonText}>매칭시작하기</Text>
       </TouchableOpacity>
     </View>
