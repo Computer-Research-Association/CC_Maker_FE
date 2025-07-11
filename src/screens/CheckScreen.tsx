@@ -37,6 +37,32 @@ export default function CheckScreen() {
     fetchMembers();
   }, [teamId]);
 
+    // 매칭 시작 API 호출 함수
+  const handleStartMatching = async () => {
+    if (!teamId) {
+      alert("팀 정보가 없습니다.");
+      return;
+    }
+
+    // 모든 팀원이 설문 완료했는지 체크 (필요하면)
+    const allCompleted = members.every((member) => member.surveyCompleted);
+    if (!allCompleted) {
+      alert("모든 팀원이 설문을 완료해야 매칭을 시작할 수 있습니다.");
+      return;
+    }
+
+    try {
+      const response = await api.post(`/api/matching/start/${teamId}`);
+      console.log("매칭 시작 결과:", response.data);
+      alert("매칭이 시작되었습니다!");
+      // TODO: 필요 시 결과 화면 이동 또는 상태 업데이트
+    } catch (error) {
+      console.error("매칭 시작 실패", error);
+      alert("매칭 시작 중 오류가 발생했습니다.");
+    }
+  };
+  
+
   return (
     <View style={styles.container}>
       <Text style={styles.role}>팀원 설문 상태</Text>
@@ -61,11 +87,9 @@ export default function CheckScreen() {
         )}
       />
 
-      <TouchableOpacity style={styles.button} onPress={() => {
-        // 여기에 매칭 시작하기 로직 혹은 네비게이션 추가
-      }}>
-        <Text style={styles.buttonText}>매칭시작하기</Text>
-      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleStartMatching}>
+      <Text style={styles.buttonText}>매칭시작하기</Text>
+    </TouchableOpacity>
     </View>
   );
 }
