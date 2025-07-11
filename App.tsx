@@ -59,7 +59,6 @@ export default function App() {
             component={MainHomeScreen}
             options={{ headerShown: false }}
           />
-          
           <Stack.Screen
             name="HomeScreen"
             component={BottomTabNavigator}
@@ -104,6 +103,16 @@ export default function App() {
             name="QuestionScreen"
             component={QuestionScreen}
             initialParams={{ index: 0 }} // 처음은 0번 질문
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SettingScreen"
+            component={SettingsScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CheckScreen"
+            component={CheckScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
