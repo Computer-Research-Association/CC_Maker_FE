@@ -90,11 +90,6 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="CheckScreen"
-            component={CheckScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
             name="QuestionScreen"
             component={QuestionScreen}
             initialParams={{ index: 0 }} // 처음은 0번 질문
