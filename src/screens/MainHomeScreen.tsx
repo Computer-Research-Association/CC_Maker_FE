@@ -23,10 +23,12 @@ type MainHomeScreenNavigationProp = {
 
 const windowWidth = Dimensions.get("window").width;
 
+type Role = "MEMBER" | "LEADER";
+
 interface Team {
   id: string;
   teamName: string;
-  // 추가 필드 있으면 여기에 작성
+  role: Role;
 }
 
 // + 버튼 포함된 전체 렌더링 타입
@@ -37,7 +39,8 @@ export default function MainHomeScreen({
 }: MainHomeScreenNavigationProp) {
   const [teams, setTeams] = useState<Team[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const { setTeamId } = useContext(TeamContext);
+  const { setTeamId, setRole } = useContext(TeamContext);
+
 
   useEffect(() => {
     fetchUserTeams();
@@ -47,10 +50,13 @@ export default function MainHomeScreen({
     try {
       const response = await api.get<TeamResponseDto[]>("/api/team/mine");
       // teamId(Long)를 string id로 변환하여 맞춰줌
+      
       const mappedTeams = response.data.map((team) => ({
         id: team.teamId.toString(),
         teamName: team.teamName,
+        role: team.role,
       }));
+      
       setTeams(mappedTeams);
     } catch (error) {
       console.error("팀 목록 불러오기 실패", error);
@@ -62,8 +68,9 @@ export default function MainHomeScreen({
     <TouchableOpacity
       style={styles.teamCard}
       onPress={() => {
-        console.log(`선택한 팀 ID: ${item.id}, 팀 이름: ${item.teamName}`);
+        console.log(`선택한 팀 ID: ${item.id}, 팀 이름: ${item.teamName}, role: ${item.role}`);
         setTeamId(item.id);
+        setRole(item.role);
         navigation.navigate("HomeScreen", { teamId: item.id });
       }}
     >

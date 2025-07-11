@@ -25,3 +25,4 @@ export interface LoginResponse {
   teamName: string | null;
   userId: number;
 }
+
