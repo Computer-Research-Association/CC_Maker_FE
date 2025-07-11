@@ -1,4 +1,4 @@
-import React, { useState,useContext } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
@@ -6,33 +6,34 @@ import { questions } from "./Question";
 import { TeamContext } from "../screens/TeamContext";
 import LikertScale from "../function/LikertScale"; // Likert 컴포넌트 불러오기
 import SubmitButton from "../component/SubmitButton";
-import HomeScreen from "./HomeScreen";import api from "../api/apiClient";
+import HomeScreen from "./HomeScreen";
+import api from "../api/apiClient";
 
 // QuestionScreen.tsx
 type Props = NativeStackScreenProps<RootStackParamList, "QuestionScreen">;
 export default function QuestionScreen({ route, navigation }: Props) {
   const { index, mbti } = route.params;
   // answers가 없을 경우 빈 배열로 초기화
-    const initialAnswers = route.params.answers ?? [];
+  const initialAnswers = route.params.answers ?? [];
   const [localAnswers, setLocalAnswers] = useState<number[]>(initialAnswers);
 
   const { teamId } = useContext(TeamContext);
   const current = questions[index];
 
   if (!teamId) {
-  // teamId가 null일 때 처리할 로직 (예: 로딩 화면 표시, 에러 처리 등)
-  return null; // 또는 적절한 UI 렌더링
-}
+    // teamId가 null일 때 처리할 로직 (예: 로딩 화면 표시, 에러 처리 등)
+    return null; // 또는 적절한 UI 렌더링
+  }
   const [selected, setSelected] = useState<number | null>(null);
   const goToPrevious = () => {
-      if (index > 0) {
-        navigation.replace("QuestionScreen", { 
-          index: index - 1,
-          mbti,
-          answers: localAnswers,
-        });
-      }
-};
+    if (index > 0) {
+      navigation.replace("QuestionScreen", {
+        index: index - 1,
+        mbti,
+        answers: localAnswers,
+      });
+    }
+  };
 
   const goToNext = async () => {
     if (selected === null) return;
@@ -55,8 +56,6 @@ export default function QuestionScreen({ route, navigation }: Props) {
       //   routes: [{ name: "HomeScreen", params: { teamId } }],
       // });
       navigation.navigate("HomeScreen", { teamId });
-
-      
     }
   };
 
@@ -81,12 +80,12 @@ export default function QuestionScreen({ route, navigation }: Props) {
       answers: answerDtos,
     });
 
-    console.log("내가 2번째 보낸거", { teamId, mbti, answers: answerDtos });
-  } catch (error) {
-    console.error("설문 완료 처리 실패", error);
-    alert("설문 완료 처리에 실패했습니다.");
-  }
-};
+      console.log("내가 2번째 보낸거", { teamId, mbti, answers: answerDtos });
+    } catch (error) {
+      console.error("설문 완료 처리 실패", error);
+      alert("설문 완료 처리에 실패했습니다.");
+    }
+  };
 
   return (
     <View style={styles.container}>

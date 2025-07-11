@@ -1,15 +1,9 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import SubmitButton from "../component/SubmitButton";
-
+import QuestionScreen from "./QuestionScreen";
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "MbtiScreen">;
 };
@@ -66,7 +60,7 @@ export default function MBTISelector({ navigation }: Props) {
       <SubmitButton title="MBTI 확인" onPress={getMBTI} />
 
       <SubmitButton
-        title="질문 시작하기" 
+        title="질문 시작하기"
         onPress={() => {
           const mbtiString = mbti.EI + mbti.SN + mbti.TF + mbti.JP;
           if (mbtiString.length < 4) {
@@ -79,6 +73,7 @@ export default function MBTISelector({ navigation }: Props) {
             answers: [],
           });
         }}
+        disabled={(mbti.EI + mbti.SN + mbti.TF + mbti.JP).length < 4}
         style={{ marginTop: 20 }}
       />
     </View>
