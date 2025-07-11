@@ -1,5 +1,5 @@
-import React, { useState,useContext } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState,useEffect,useContext } from "react";
+import { View, Text, TouchableOpacity,Alert } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import styles from "../styles/MypageScreen.syles";
@@ -7,6 +7,7 @@ import MbtiScreen from "../screens/MbtiScreen";
 import SettingsScreen from "./SettingScreen";
 //@ts-ignore
 import Ionicons from "react-native-vector-icons/Ionicons";
+import api from "../api/apiClient";
 
 import { TeamContext } from './TeamContext';
 
@@ -17,11 +18,29 @@ type MyPageScreenProps = {
 
 
 export default function MyPageScreen({ navigation }: MyPageScreenProps) {
-  
+  const [isSurveyCompleted, setIsSurveyCompleted] = useState<boolean>(false);
   const { teamId } = useContext(TeamContext);
   const userName = "김예준";
   const month = "7월";
   const writtenCount = 0;
+
+  useEffect(() => {
+    if (!teamId) return;
+
+    // API 호출해서 설문 완료 여부 가져오기
+    const fetchSurveyStatus = async () => {
+      try {
+        const response = await api.get(`/api/team/${teamId}/survey-status`);
+        console.log("설문 완료 조회 ", response);
+        // 예: { issurveycompleted: true }
+        setIsSurveyCompleted(response.data.issurveycompleted);
+      } catch (error) {
+        console.error("설문 완료 상태 조회 실패", error);
+      }
+    };
+
+    fetchSurveyStatus();
+  }, [teamId]);
 
   return (
     <View style={styles.container}>
@@ -71,11 +90,17 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
       <View style={styles.emptyNoteContainer}>
         <Text style={styles.emptyNoteText}>아직 매칭된 상대가 없어요</Text>
         <TouchableOpacity
-          style={styles.writeButtonMain}
-          onPress={() => navigation.navigate("MbtiScreen")}
-        >
-          <Text style={styles.writeButtonMainText}>매칭시작하기</Text>
-        </TouchableOpacity>
+            style={styles.writeButtonMain}
+            onPress={() => {
+              if (isSurveyCompleted) {
+                Alert.alert("알림", "이미 설문조사를 완료했습니다.", [{ text: "확인" }]);
+              } else {
+                navigation.navigate("MbtiScreen");
+              }
+            }}
+          >
+  <Text style={styles.writeButtonMainText}>매칭시작하기</Text>
+</TouchableOpacity>
       </View>
     </View>
   );

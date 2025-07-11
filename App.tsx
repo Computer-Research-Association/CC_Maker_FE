@@ -43,7 +43,7 @@ export default function App() {
     <NavigationContainer>
       {/* TeamProvider로 감싸서 모든 화면에서 teamId 공유 가능 */}
       <TeamProvider>
-        <Stack.Navigator initialRouteName="MainHomeScreen">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Login"
             component={login}
