@@ -6,9 +6,16 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import api from "../api/apiClient";
-import { TeamContext } from '../screens/TeamContext';
+import { TeamContext } from "../screens/TeamContext";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/types";
+import HomeScreen from "./HomeScreen";
+type Props = {
+  navigation: NativeStackNavigationProp<RootStackParamList, "CheckScreen">;
+};
 
 type Member = {
   userId: number;
@@ -16,10 +23,13 @@ type Member = {
   surveyCompleted: boolean;
 };
 
-export default function CheckScreen() {
+export default function CheckScreen({ navigation }: Props) {
   const [members, setMembers] = useState<Member[]>([]);
   const [isMatchingStarted, setIsMatchingStarted] = useState(false);
   const { teamId } = useContext(TeamContext);
+  const [matchingStatus, setMatchingStatus] = useState<
+    "idle" | "loading" | "done"
+  >("idle");
 
   useEffect(() => {
     if (!teamId) return;
@@ -41,7 +51,7 @@ export default function CheckScreen() {
     fetchMembers();
   }, [teamId]);
 
-    // 매칭 시작 API 호출 함수
+  // 매칭 시작 API 호출 함수
   const handleStartMatching = async () => {
 
     if (isMatchingStarted) {
@@ -61,8 +71,16 @@ export default function CheckScreen() {
       return;
     }
 
-   try {
+    try {
+      setMatchingStatus("loading"); // 1. 로딩 시작
       const response = await api.post(`/api/matching/start/${teamId}`);
+      console.log("매칭 시작 결과:", response.data);
+
+      // 2. 2초 기다렸다가 상태를 done으로 변경
+      setTimeout(() => {
+        setMatchingStatus("done");
+      }, 1000);
+    
       if (response.data.matchingStarted) {
         setIsMatchingStarted(true);
         alert("매칭이 완료되었습니다!");
@@ -86,7 +104,6 @@ export default function CheckScreen() {
     }
   };
 
-
   return (
     <View style={styles.container}>
       <Text style={styles.role}>팀원 설문 상태</Text>
@@ -99,21 +116,57 @@ export default function CheckScreen() {
         renderItem={({ item }) => (
           <View style={styles.listItem}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {item.userName.charAt(0)}
-              </Text>
+              <Text style={styles.avatarText}>{item.userName.charAt(0)}</Text>
             </View>
             <Text style={styles.name}>{item.userName}</Text>
-              <Text style={styles.checkbox}>
+            <Text style={styles.checkbox}>
               {item.surveyCompleted ? "✅" : "⬜️"}
             </Text>
           </View>
         )}
       />
 
+      <Modal
+        transparent
+        visible={matchingStatus === "loading"}
+        animationType="fade"
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalText}>⏳ 매칭 중입니다...</Text>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 매칭 완료 모달 */}
+      <Modal
+        transparent
+        visible={matchingStatus === "done"}
+        animationType="fade"
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalBox}>
+            <Text
+              style={[styles.modalText, { color: "green", marginBottom: 16 }]}
+            >
+              ✅ 매칭이 완료되었습니다!
+            </Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => {
+                setMatchingStatus("idle");
+                navigation.navigate("HomeScreen", { teamId: teamId! }); // 홈으로 이동
+              }}
+            >
+              <Text style={styles.modalButtonText}>확인</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <TouchableOpacity style={styles.button} onPress={handleStartMatching}>
-      <Text style={styles.buttonText}>매칭시작하기</Text>
-    </TouchableOpacity>
+        <Text style={styles.buttonText}>매칭시작하기</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -182,5 +235,38 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalBox: {
+    backgroundColor: "white",
+    padding: 30,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  modalButton: {
+    backgroundColor: "#8de969",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  modalButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
