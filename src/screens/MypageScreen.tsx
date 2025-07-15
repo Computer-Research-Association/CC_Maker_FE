@@ -1,5 +1,5 @@
-import React, { useState,useEffect,useContext } from "react";
-import { View, Text, TouchableOpacity,Alert } from "react-native";
+import React, { useState, useEffect, useContext, useId } from "react";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import styles from "../styles/MypageScreen.syles";
@@ -9,18 +9,17 @@ import SettingsScreen from "./SettingScreen";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import api from "../api/apiClient";
 
-import { TeamContext } from './TeamContext';
+import { TeamContext } from "./TeamContext";
 
 type MyPageScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "MypageScreen">;
 };
 
-
-
 export default function MyPageScreen({ navigation }: MyPageScreenProps) {
   const [isSurveyCompleted, setIsSurveyCompleted] = useState<boolean>(false);
   const [matchedNames, setMatchedNames] = useState<string[]>([]);
   const { teamId, userName } = useContext(TeamContext);
+
   const month = "7월";
   const writtenCount = 0;
 
@@ -41,6 +40,8 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
     const fetchMatchedNames = async () => {
       try {
         const response = await api.get(`/api/matching/matched-names`);
+        console.log("🔍 매칭된 이름 응답:", response.data); // ✅ 콘솔 출력 추가
+
         setMatchedNames(response.data);
       } catch (error) {
         console.error("매칭된 이름 조회 실패", error);
@@ -49,6 +50,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
 
     fetchSurveyStatus();
     fetchMatchedNames();
+
   }, [teamId]);
   //나중에 지우기
   useEffect(() => {
@@ -58,13 +60,20 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.navigate("SettingScreen")}>
-        <Ionicons name="settings-outline" size={28} color="#000" style={styles.settingIcon} />
+        <Ionicons
+          name="settings-outline"
+          size={28}
+          color="#000"
+          style={styles.settingIcon}
+        />
       </TouchableOpacity>
 
+      {/* 프로필과 매칭된 상대 이름 */}
       <View style={styles.profileRow}>
+        {/* 내 프로필 */}
         <View style={styles.profileBlock}>
           <View style={styles.avatar} />
-          <Text style={styles.name}>{userName}</Text> {/* ✅ context에서 가져온 이름 사용 */}
+          <Text style={styles.name}>{teamId}</Text>
         </View>
 
         {/* 매칭된 상대 프로필 및 이름 */}
@@ -101,7 +110,9 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
             style={styles.writeButtonMain}
             onPress={() => {
               if (isSurveyCompleted) {
-                Alert.alert("알림", "이미 설문조사를 완료했습니다.", [{ text: "확인" }]);
+                Alert.alert("알림", "이미 설문조사를 완료했습니다.", [
+                  { text: "확인" },
+                ]);
               } else {
                 navigation.navigate("MbtiScreen");
               }
