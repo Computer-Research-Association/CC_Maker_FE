@@ -18,6 +18,7 @@ type Member = {
 
 export default function CheckScreen() {
   const [members, setMembers] = useState<Member[]>([]);
+  const [isMatchingStarted, setIsMatchingStarted] = useState(false);
   const { teamId } = useContext(TeamContext);
 
   useEffect(() => {
@@ -29,6 +30,9 @@ export default function CheckScreen() {
         // response.data가 SurveyStatusDto[] 형태라고 가정
         setMembers(response.data);
         console.log(response);
+         // 팀 매칭 상태 조회
+        const teamResponse = await api.get(`/api/team/${teamId}`);
+        setIsMatchingStarted(teamResponse.data.matchingStarted);
       } catch (error) {
         console.error("팀원 설문 상태 조회 실패", error);
       }
@@ -39,6 +43,12 @@ export default function CheckScreen() {
 
     // 매칭 시작 API 호출 함수
   const handleStartMatching = async () => {
+
+    if (isMatchingStarted) {
+      alert("이미 매칭이 되었습니다.");
+      return;
+    }
+
     if (!teamId) {
       alert("팀 정보가 없습니다.");
       return;
@@ -51,17 +61,31 @@ export default function CheckScreen() {
       return;
     }
 
-    try {
+   try {
       const response = await api.post(`/api/matching/start/${teamId}`);
-      console.log("매칭 시작 결과:", response.data);
-      alert("매칭이 시작되었습니다!");
-      // TODO: 필요 시 결과 화면 이동 또는 상태 업데이트
-    } catch (error) {
-      console.error("매칭 시작 실패", error);
-      alert("매칭 시작 중 오류가 발생했습니다.");
+      if (response.data.matchingStarted) {
+        setIsMatchingStarted(true);
+        alert("매칭이 완료되었습니다!");
+      }
+
+       // ✅ 매칭 성공 후 미션 부여 API 호출
+      try {
+        await api.post(`/api/missions/assign/${teamId}`);
+        alert("그룹 미션이 부여되었습니다!");
+      } catch (missionError) {
+        console.error("미션 부여 실패", missionError);
+        alert("미션 부여 중 오류가 발생했습니다.");
+      }
+
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.error) {
+        alert(error.response.data.error);
+      } else {
+        alert("매칭 시작 중 오류가 발생했습니다.");
+      }
     }
   };
-  
+
 
   return (
     <View style={styles.container}>
