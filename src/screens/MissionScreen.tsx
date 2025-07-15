@@ -1,29 +1,62 @@
-import React, {useContext } from "react" ;
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import React, { useContext, useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Button,
+} from "react-native";
 import { TeamContext } from "../screens/TeamContext";
-
-
+import MissionBox from "../component/MissionBox";
 
 const BOX_SIZE = 120;
 const BOX_MARGIN = 6;
 const BOX_PER_ROW = 3;
-const GRID_WIDTH = BOX_PER_ROW * (BOX_SIZE + BOX_MARGIN * 2); // 총 박스 영역 너비
+const GRID_WIDTH = BOX_PER_ROW * (BOX_SIZE + BOX_MARGIN * 2);
 
 export default function MissionScreen() {
   const { teamId } = useContext(TeamContext);
-  
+
+  const [selectedBoxIndex, setSelectedBoxIndex] = useState<number | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleBoxPress = (index: number) => {
+    setSelectedBoxIndex(index);
+    setModalVisible(true);
+  };
+
+  const handleComplete = () => {
+    console.log(`미션 ${selectedBoxIndex} 완료`);
+    setModalVisible(false);
+    // 여기서 서버로 완료 처리 요청 등을 추가할 수 있음
+  };
+
+  const handleRefresh = (index: number) => {
+    console.log(`미션 ${index} 새로고침`);
+    // API 호출 등 실제 로직 작성
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* 1학점 */}
       <View style={styles.section}>
         <Text style={styles.title}>1학점</Text>
         <View style={styles.grid}>
-          {Array.from({ length: 9 }).map((_, i) => (
-            <View
+          {Array.from({ length: 6 }).map((_, i) => (
+            <TouchableOpacity
               key={`1-credit-${i}`}
               style={styles.box}
-              // style={[styles.box, i === 0 && styles.selectedBox]}
-            />
+              onPress={() => handleBoxPress(i)}
+            >
+              <TouchableOpacity
+                style={styles.refreshButton}
+                onPress={() => handleRefresh(i)}
+              >
+                <Text style={styles.refreshText}>↻</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
           ))}
         </View>
       </View>
@@ -32,37 +65,86 @@ export default function MissionScreen() {
       <View style={styles.section}>
         <Text style={styles.title}>3학점</Text>
         <View style={styles.grid}>
-          {Array.from({ length: 9 }).map((_, i) => (
-            <View key={`3-credit-${i}`} style={styles.box} />
+          {Array.from({ length: 6 }).map((_, i) => (
+            <TouchableOpacity
+              key={`3-credit-${i}`}
+              style={styles.box}
+              onPress={() => handleBoxPress(i)}
+            >
+              <TouchableOpacity
+                style={styles.refreshButton}
+                onPress={() => handleRefresh(i)}
+              >
+                <Text style={styles.refreshText}>↻</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
           ))}
         </View>
       </View>
 
+      {/* 5학점 */}
       <View style={styles.section}>
         <Text style={styles.title}>5학점</Text>
         <View style={styles.grid}>
-          {Array.from({ length: 9 }).map((_, i) => (
-            <View
-              key={`1-credit-${i}`}
+          {Array.from({ length: 6 }).map((_, i) => (
+            <TouchableOpacity
+              key={`5-credit-${i}`}
               style={styles.box}
-              // style={[styles.box, i === 0 && styles.selectedBox]}
-            />
+              onPress={() => handleBoxPress(i)}
+            >
+              <TouchableOpacity
+                style={styles.refreshButton}
+                onPress={() => handleRefresh(i)}
+              >
+                <Text style={styles.refreshText}>↻</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
           ))}
         </View>
       </View>
 
+      {/* 10학점 */}
       <View style={styles.section}>
         <Text style={styles.title}>10학점</Text>
         <View style={styles.grid}>
-          {Array.from({ length: 9 }).map((_, i) => (
-            <View
-              key={`1-credit-${i}`}
+          {Array.from({ length: 6 }).map((_, i) => (
+            <TouchableOpacity
+              key={`10-credit-${i}`}
               style={styles.box}
-              // style={[styles.box, i === 0 && styles.selectedBox]}
-            />
+              onPress={() => handleBoxPress(i)}
+            >
+              <TouchableOpacity
+                style={styles.refreshButton}
+                onPress={() => handleRefresh(i)}
+              >
+                <Text style={styles.refreshText}>↻</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
           ))}
         </View>
       </View>
+
+      {/* ✅ 모달 */}
+      <Modal
+        transparent
+        animationType="slide"
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>이 미션을 완료하시겠습니까?</Text>
+            <View style={styles.modalButtons}>
+              <Button title="완료" onPress={handleComplete} />
+              <Button
+                title="취소"
+                color="gray"
+                onPress={() => setModalVisible(false)}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -71,7 +153,7 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 50,
     paddingVertical: 20,
-    alignItems: "center", // 전체 스크롤뷰에서 가운데 정렬
+    alignItems: "center",
   },
   section: {
     marginBottom: 40,
@@ -104,8 +186,39 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4,
   },
-  selectedBox: {
-    borderWidth: 2,
-    borderColor: "#2196F3",
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 24,
+    borderRadius: 12,
+    width: 280,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    gap: 16,
+  },
+  refreshButton: {
+    position: "absolute",
+    top: 6,
+    right: 6,
+    backgroundColor: "#eee",
+    padding: 4,
+    borderRadius: 10,
+    zIndex: 1,
+  },
+  refreshText: {
+    fontSize: 12,
   },
 });
