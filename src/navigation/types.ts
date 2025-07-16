@@ -7,7 +7,7 @@ export type RootStackParamList = {
   InviteScreen: undefined;
   SettingScreen: undefined;
   StartScreen: undefined;
-  HomeScreen: { teamId: string };
+  HomeScreen: { teamId: number };
   MbtiScreen: undefined;
   MainHomeScreen: undefined;
   MypageScreen: undefined;
