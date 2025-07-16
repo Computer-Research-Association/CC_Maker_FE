@@ -1,52 +1,82 @@
-import React, { useContext,useEffect  } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import { RootStackParamList } from "../navigation/types";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack"; //네비게이션을 타입안정성있게 쓰기 위한 도구
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { TeamContext } from "../screens/TeamContext";
-
+import api from "../api/apiClient";
+import * as Clipboard from "expo-clipboard"; // 복사 기능 (Expo)
 
 type SettingScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "SettingScreen">;
-}; //이 컴포넌트는 navigation이라는 prop을 받고, 객체로 타입을 지정해준다.
+};
 
 export default function SettingsScreen({ navigation }: SettingScreenProps) {
-  const { role } = useContext(TeamContext);
-  //실험 나중에 지우기
+  const { role, teamId } = useContext(TeamContext);
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
+
   useEffect(() => {
     console.log("현재 role:", role);
   }, [role]);
 
+  // ✅ 초대 코드 생성
+  const createInviteCode = async () => {
+    try {
+      const response = await api.post("/api/invitecode/create", {
+        teamId: teamId,
+      });
+      console.log("초대 코드 생성 성공:", response.data);
+      setInviteCode(response.data.inviteCode); // API 응답에 맞게 key 확인
+      Alert.alert("성공", "초대 코드가 생성되었습니다!");
+    } catch (error) {
+      console.error("초대 코드 생성 실패:", error);
+      Alert.alert("오류", "초대 코드 생성 중 문제가 발생했습니다.");
+    }
+  };
+
+  // ✅ 복사하기
+  const copyToClipboard = async () => {
+    if (inviteCode) {
+      await Clipboard.setStringAsync(inviteCode);
+      Alert.alert("복사 완료", "초대 코드가 클립보드에 복사되었습니다.");
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
-      {/* <Text style={styles.sectionTitle}>내 활동</Text>
-      <SettingItem label="내가 응답한 퀴즈" onPress={() => {}} /> */}
-
       <Text style={styles.sectionTitle}>내 계정</Text>
       <SettingItem label="계정 관리" onPress={() => {}} />
       <SettingItem label="알림 설정" onPress={() => {}} />
-      {/* <SettingItem label="친구 목록 설정" onPress={() => {}} /> */}
 
       <Text style={styles.sectionTitle}>서비스</Text>
-      {/* <SettingItem label="타임스 소식" onPress={() => {}} external />
-      <SettingItem label="이용 안내" onPress={() => {}} external />
-      <SettingItem label="이용 약관" onPress={() => {}} external />
-      <SettingItem label="언어 설정" onPress={() => {}} external /> */}
       <SettingItem label="문의하기" onPress={() => {}} external />
-        
+
       {role === "LEADER" && (
-        <SettingItem
-          label="매칭시작하기"
-          onPress={() => {
-            navigation.navigate("CheckScreen");
-          }}
-          external
-        />
+        <>
+          <SettingItem label="초대 코드 생성" onPress={createInviteCode} external />
+          
+          {/* ✅ 초대 코드 보여주기 + 복사 버튼 */}
+          {inviteCode && (
+            <View style={styles.inviteContainer}>
+              <Text style={styles.inviteText}>초대 코드: {inviteCode}</Text>
+              <TouchableOpacity style={styles.copyButton} onPress={copyToClipboard}>
+                <Text style={styles.copyText}>복사하기</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <SettingItem
+            label="매칭 시작하기"
+            onPress={() => navigation.navigate("CheckScreen")}
+            external
+          />
+        </>
       )}
     </ScrollView>
   );
@@ -96,5 +126,28 @@ const styles = StyleSheet.create({
   arrow: {
     fontSize: 18,
     color: "#ccc",
+  },
+  inviteContainer: {
+    marginTop: 10,
+    padding: 12,
+    backgroundColor: "#f4f4f4",
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  inviteText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
+  },
+  copyButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: "#007bff",
+    borderRadius: 6,
+  },
+  copyText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
