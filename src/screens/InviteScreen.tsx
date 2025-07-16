@@ -1,18 +1,12 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import React, { useState, useContext } from "react";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/apiClient";
 import { RootStackParamList } from "../navigation/types";
 import * as Clipboard from "expo-clipboard";
 import styles from "../styles/TeamLeaderScreen.styles";
+import { TeamContext } from "./TeamContext";
 
 type InviteScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "InviteScreen">;
@@ -22,21 +16,24 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
   const [teamName, setTeamName] = useState("");
   const [teamCode, setTeamCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<1 | 2>(1); // ⭐ 단계 상태 추가
+  const [step, setStep] = useState<1 | 2>(1);
+  const { teamId, setTeamId } = useContext(TeamContext);
 
   const fetchInviteCode = async () => {
     try {
       setLoading(true);
       console.log("🚀 fetchInviteCode 실행");
-      // AsyncStorage에서 토큰 가져오기 (apiClient 내부에서 헤더 붙이지만, 혹시 토큰 없으면 미리 확인)
+
       const accessToken = await AsyncStorage.getItem("ACCESS_TOKEN");
       if (!accessToken) {
         Alert.alert("로그인 필요", "로그인 후 이용해주세요.");
         setLoading(false);
         return;
       }
-      // request code
-      const response = await api.post("/api/invitecode/create");
+
+      const response = await api.post("/api/invitecode/create", {
+        teamId: teamId,
+      });
 
       if (response.data?.code) {
         setTeamCode(response.data.code);
@@ -58,17 +55,32 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
       Alert.alert("복사 완료", "팀 코드가 복사되었습니다!");
     }
   };
-
   const onCreateTeam = async () => {
     if (!teamName.trim()) {
       Alert.alert("입력 오류", "팀 이름을 입력해주세요.");
       return;
     }
     try {
-      await api.post("/api/invitecode/teamname", {
+      const response = await api.post("/api/invitecode/teamname", {
         teamName: teamName,
       });
-      setStep(2); // 2단계로 이동
+
+      console.log("팀 생성 응답:", JSON.stringify(response, null, 2));
+
+      if (!response.data) {
+        Alert.alert("오류", "서버에서 데이터를 받지 못했습니다.");
+        return;
+      }
+
+      const { teamId, teamName: savedTeamName } = response.data;
+
+      if (teamId) {
+        setTeamId(teamId);
+        console.log("✅ teamId 저장됨:", teamId);
+        setStep(2);
+      } else {
+        Alert.alert("오류", "팀 생성 후 teamId를 가져오지 못했습니다.");
+      }
     } catch (error) {
       console.error("팀 생성 실패:", error);
       Alert.alert("오류", "팀 생성에 실패했습니다.");
