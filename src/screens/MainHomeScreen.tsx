@@ -26,7 +26,7 @@ const windowWidth = Dimensions.get("window").width;
 type Role = "MEMBER" | "LEADER";
 
 interface Team {
-  id: string;
+  id: number;
   teamName: string;
   role: Role;
 }
@@ -52,10 +52,10 @@ export default function MainHomeScreen({
       // teamId(Long)를 string id로 변환하여 맞춰줌
       
       const mappedTeams = response.data.map((team) => ({
-        id: team.teamId.toString(),
-        teamName: team.teamName,
-        role: team.role,
-      }));
+      id: team.teamId, // number
+      teamName: team.teamName,
+      role: team.role,
+    }));
       
       setTeams(mappedTeams);
     } catch (error) {
@@ -112,7 +112,7 @@ export default function MainHomeScreen({
         <FlatList
           horizontal
           data={[...teams, { id: "add-button" }]}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           renderItem={renderItem}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
