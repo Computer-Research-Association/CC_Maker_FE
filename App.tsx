@@ -18,10 +18,9 @@ import login from "./src/screens/LoginScreen";
 import QuestionScreen from "./src/screens/QuestionScreen";
 import signup from "./src/screens/SignupScreen";
 
-// 아까 만든 TeamProvider import
 import { TeamProvider } from "./src/screens/TeamContext";
-
 import CheckScreen from "./src/screens/CheckScreen";
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
@@ -41,7 +40,6 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      {/* TeamProvider로 감싸서 모든 화면에서 teamId 공유 가능 */}
       <TeamProvider>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
@@ -92,7 +90,7 @@ export default function App() {
           <Stack.Screen
             name="QuestionScreen"
             component={QuestionScreen}
-            initialParams={{ index: 0 }} // 처음은 0번 질문
+            initialParams={{ index: 0 }}
             options={{ headerShown: false }}
           />
           <Stack.Screen
