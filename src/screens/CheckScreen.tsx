@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-
 import {
   View,
   Text,
@@ -12,7 +11,7 @@ import api from "../api/apiClient";
 import { TeamContext } from "../screens/TeamContext";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
-import HomeScreen from "./HomeScreen";
+
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "CheckScreen">;
 };
@@ -22,42 +21,61 @@ type Member = {
   userName: string;
   surveyCompleted: boolean;
 };
+
 export default function CheckScreen({ navigation }: Props) {
   const [members, setMembers] = useState<Member[]>([]);
   const [isMatchingStarted, setIsMatchingStarted] = useState(false);
-  const { teamId, setSubGroupId, subGroupId } = useContext(TeamContext);
-  const [matchingStatus, setMatchingStatus] = useState<"idle" | "loading" | "done">("idle");
+  const { teamId, subGroupIdMap, setSubGroupIdMap } = useContext(TeamContext);
+  const [matchingStatus, setMatchingStatus] = useState<
+    "idle" | "loading" | "done"
+  >("idle");
 
-  // 0. 팀 아이디가 바뀔 때마다 최신 subGroupId 받아오기
+  // 0. 팀 아이디 변경 시 최신 subGroupId 받아오기
   useEffect(() => {
     if (!teamId) return;
 
     const fetchSubGroupId = async () => {
       try {
-        const response = await api.get(`/api/matching/subgroup/${teamId}`);
-        if (response.data.subGroupId) {
-          setSubGroupId(response.data.subGroupId);
-          console.log("최신 subGroupId 업데이트됨:", response.data.subGroupId);
-        } else {
-          setSubGroupId(null);
-          console.log("subGroupId 없음");
-        }
+        //나중에 수정하기
+        const userId = 1; // 임시 userId
+      const response = await api.get(`/api/matching/subgroup/${teamId}`, {
+        params: { userId },
+      });
+
+        //const response = await api.get(`/api/matching/subgroup/${teamId}`);
+        const subGroupId = response.data.subGroupId ?? null;
+
+        setSubGroupIdMap((prev) => ({
+          ...prev,
+          [teamId]: subGroupId,
+        }));
+
+        console.log("최신 subGroupId 업데이트됨:", subGroupId);
       } catch (error) {
         console.error("subGroupId 조회 실패", error);
-        setSubGroupId(null);
+        setSubGroupIdMap((prev) => ({
+          ...prev,
+          [teamId]: null,
+        }));
       }
     };
 
     fetchSubGroupId();
-  }, [teamId, setSubGroupId]);
+  }, [teamId, setSubGroupIdMap]);
 
-  // 1. 매칭된 이름(subGroupId 있을 때)
+  // 1. subGroupId가 있을 때 => 매칭된 이름 조회
   useEffect(() => {
-    if (!teamId || !subGroupId) return;
+    if (teamId == null || !subGroupIdMap) return;
+
+    const subGroupId = subGroupIdMap[teamId];    
+    if (!subGroupId) return;
 
     const fetchMatchedNames = async () => {
       try {
-        const response = await api.get(`/api/matching/matched-names/${teamId}/${subGroupId}`);
+        const response = await api.get(
+          `/api/matching/matched-names/${teamId}/${subGroupId}`
+        );
+        console.log("팀읽어왔어용")
         setMembers(response.data);
       } catch (error) {
         console.error("매칭된 이름 조회 실패", error);
@@ -65,11 +83,13 @@ export default function CheckScreen({ navigation }: Props) {
     };
 
     fetchMatchedNames();
-  }, [teamId, subGroupId]);
+  }, [teamId, subGroupIdMap]);
 
-  // 2. 매칭 이전 팀 멤버 (subGroupId 없을 때)
+  // 2. subGroupId가 없을 때 => 매칭 전 팀 멤버 조회 및 매칭 시작 여부 조회
   useEffect(() => {
     if (!teamId) return;
+
+    if (subGroupIdMap[teamId] !== null) return; // subGroupId가 있으면 여기서 멤버를 안 불러오도록 함
 
     const fetchMembers = async () => {
       try {
@@ -84,11 +104,10 @@ export default function CheckScreen({ navigation }: Props) {
     };
 
     fetchMembers();
-  }, [teamId]);
+  }, [teamId, subGroupIdMap]);
 
   // 매칭 시작 API 호출 함수
   const handleStartMatching = async () => {
-
     if (isMatchingStarted) {
       alert("이미 매칭이 되었습니다.");
       return;
@@ -99,63 +118,61 @@ export default function CheckScreen({ navigation }: Props) {
       return;
     }
 
-    // 모든 팀원이 설문 완료했는지 체크 (필요하면)
     const allCompleted = members.every((member) => member.surveyCompleted);
     if (!allCompleted) {
       alert("모든 팀원이 설문을 완료해야 매칭을 시작할 수 있습니다.");
       return;
     }
-      try {
-        setMatchingStatus("loading");
 
-        const response = await api.post(`/api/matching/start/${teamId}`);
+    try {
+      setMatchingStatus("loading");
 
-        console.log("매칭 시작 결과:", response.data);
+      const response = await api.post(`/api/matching/start/${teamId}`);
 
-        // 매칭이 실제로 시작되었는지 먼저 체크
-        if (response.data && response.data.matchingStarted) {
-          setIsMatchingStarted(true);
-          alert("매칭이 완료되었습니다!");
+      console.log("매칭 시작 결과:", response.data);
 
-          // 서브그룹 아이디 가져오기 및 미션 부여 처리
-          //이부분 나중에 jwt도입해서 바꿔야함.
-          const userId = 1;
-          const subgroupResponse = await api.get(`/api/matching/subgroup/${teamId}?userId=${userId}`);
-          //const subgroupResponse = await api.get(`/api/matching/subgroup/${teamId}`);
-          const newSubGroupId = subgroupResponse.data.subGroupId;
+      if (response.data && response.data.matchingStarted) {
+        setIsMatchingStarted(true);
+        alert("매칭이 완료되었습니다!");
 
-          if (newSubGroupId) {
-            setSubGroupId(newSubGroupId);
-            console.log("서브 그룹 값 업데이트 되었습니다.");
+        // 서브그룹 아이디 가져오기 및 미션 부여 처리 (임시 userId 사용)
+        const userId = 1;
+        const subgroupResponse = await api.get(
+          `/api/matching/subgroup/${teamId}?userId=${userId}`
+        );
+        const newSubGroupId = subgroupResponse.data.subGroupId;
 
-            try {
-              await api.post(`/api/missions/assign/subgroup/${newSubGroupId}`);
-              alert("그룹 미션이 부여되었습니다!");
-            } catch (missionError) {
-              console.error("미션 부여 실패", missionError);
-              alert("미션 부여 중 오류가 발생했습니다.");
-            }
+        if (newSubGroupId) {
+          setSubGroupIdMap((prev) => ({
+            ...prev,
+            [teamId]: newSubGroupId,
+          }));
+          console.log("서브 그룹 값 업데이트 되었습니다.");
+
+          try {
+            await api.post(`/api/missions/assign/subgroup/${newSubGroupId}`);
+            alert("그룹 미션이 부여되었습니다!");
+          } catch (missionError) {
+            console.error("미션 부여 실패", missionError);
+            alert("미션 부여 중 오류가 발생했습니다.");
           }
-
-          setTimeout(() => {
-            setMatchingStatus("done");
-          }, 1000);
-
-        } else {
-          // 매칭 시작 API 호출은 성공했지만 실제로 매칭이 안 됐을 경우
-          alert("매칭이 시작되지 않았습니다.");
-          setMatchingStatus("idle");
         }
 
-      } catch (error: any) {
-        // 에러 발생 시
-        setMatchingStatus("idle"); // 로딩 상태 해제
-        if (error.response && error.response.data && error.response.data.error) {
-          alert(error.response.data.error);
-        } else {
-          alert("매칭 시작 중 오류가 발생했습니다.");
-        }
+        setTimeout(() => {
+          setMatchingStatus("done");
+        }, 1000);
+      } else {
+        alert("매칭이 시작되지 않았습니다.");
+        setMatchingStatus("idle");
       }
+    } catch (error: any) {
+      setMatchingStatus("idle");
+      if (error.response?.data?.error) {
+        alert(error.response.data.error);
+      } else {
+        alert("매칭 시작 중 오류가 발생했습니다.");
+      }
+    }
   };
 
   return (
@@ -192,7 +209,6 @@ export default function CheckScreen({ navigation }: Props) {
         </View>
       </Modal>
 
-      {/* 매칭 완료 모달 */}
       <Modal
         transparent
         visible={matchingStatus === "done"}
@@ -209,7 +225,7 @@ export default function CheckScreen({ navigation }: Props) {
               style={styles.modalButton}
               onPress={() => {
                 setMatchingStatus("idle");
-                navigation.navigate("HomeScreen", { teamId: teamId! }); // 홈으로 이동
+                navigation.navigate("HomeScreen", { teamId: teamId! });
               }}
             >
               <Text style={styles.modalButtonText}>확인</Text>
@@ -228,7 +244,6 @@ export default function CheckScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "#fafafa",
     paddingHorizontal: 16,
     paddingTop: 40,
   },
@@ -244,7 +259,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   listContainer: {
-    // backgroundColor: "#fff0ff",
     borderRadius: 10,
     paddingBottom: 100,
   },
