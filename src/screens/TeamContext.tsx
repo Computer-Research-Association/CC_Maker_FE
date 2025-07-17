@@ -7,6 +7,8 @@ interface TeamContextType {
   setRole: React.Dispatch<React.SetStateAction<string | null>>;
   userName: string | null;
   setUserName: React.Dispatch<React.SetStateAction<string | null>>;
+  subGroupId: number | null;               // 추가
+  setSubGroupId: React.Dispatch<React.SetStateAction<number | null>>;  // 추가
 }
 
 export const TeamContext = createContext<TeamContextType>({
@@ -16,12 +18,17 @@ export const TeamContext = createContext<TeamContextType>({
   setRole: () => {},
   userName: null,
   setUserName: () => {},
+  subGroupId: null,               // 추가
+  setSubGroupId: () => {},        // 추가
 });
 
 export const TeamProvider = ({ children }: { children: ReactNode }) => {
   const [teamId, setTeamId] = useState<number | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
+  const [subGroupId, setSubGroupId] = useState<number | null>(null);  // 추가
+
+
 
   return (
     <TeamContext.Provider
@@ -32,6 +39,8 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
         setRole,
         userName,
         setUserName,
+        subGroupId,          // 추가
+        setSubGroupId,       // 추가
       }}
     >
       {children}
