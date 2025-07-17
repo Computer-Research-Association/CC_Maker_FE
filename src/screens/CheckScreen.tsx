@@ -22,25 +22,60 @@ type Member = {
   userName: string;
   surveyCompleted: boolean;
 };
-
 export default function CheckScreen({ navigation }: Props) {
   const [members, setMembers] = useState<Member[]>([]);
   const [isMatchingStarted, setIsMatchingStarted] = useState(false);
-  const { teamId } = useContext(TeamContext);
-  const [matchingStatus, setMatchingStatus] = useState<
-    "idle" | "loading" | "done"
-  >("idle");
+  const { teamId, setSubGroupId, subGroupId } = useContext(TeamContext);
+  const [matchingStatus, setMatchingStatus] = useState<"idle" | "loading" | "done">("idle");
 
+  // 0. 팀 아이디가 바뀔 때마다 최신 subGroupId 받아오기
+  useEffect(() => {
+    if (!teamId) return;
+
+    const fetchSubGroupId = async () => {
+      try {
+        const response = await api.get(`/api/matching/subgroup/${teamId}`);
+        if (response.data.subGroupId) {
+          setSubGroupId(response.data.subGroupId);
+          console.log("최신 subGroupId 업데이트됨:", response.data.subGroupId);
+        } else {
+          setSubGroupId(null);
+          console.log("subGroupId 없음");
+        }
+      } catch (error) {
+        console.error("subGroupId 조회 실패", error);
+        setSubGroupId(null);
+      }
+    };
+
+    fetchSubGroupId();
+  }, [teamId, setSubGroupId]);
+
+  // 1. 매칭된 이름(subGroupId 있을 때)
+  useEffect(() => {
+    if (!teamId || !subGroupId) return;
+
+    const fetchMatchedNames = async () => {
+      try {
+        const response = await api.get(`/api/matching/matched-names/${teamId}/${subGroupId}`);
+        setMembers(response.data);
+      } catch (error) {
+        console.error("매칭된 이름 조회 실패", error);
+      }
+    };
+
+    fetchMatchedNames();
+  }, [teamId, subGroupId]);
+
+  // 2. 매칭 이전 팀 멤버 (subGroupId 없을 때)
   useEffect(() => {
     if (!teamId) return;
 
     const fetchMembers = async () => {
       try {
         const response = await api.get(`/api/team/${teamId}/survey-status/all`);
-        // response.data가 SurveyStatusDto[] 형태라고 가정
         setMembers(response.data);
-        console.log(response);
-         // 팀 매칭 상태 조회
+
         const teamResponse = await api.get(`/api/team/${teamId}`);
         setIsMatchingStarted(teamResponse.data.matchingStarted);
       } catch (error) {
@@ -70,38 +105,57 @@ export default function CheckScreen({ navigation }: Props) {
       alert("모든 팀원이 설문을 완료해야 매칭을 시작할 수 있습니다.");
       return;
     }
-
-    try {
-      setMatchingStatus("loading"); // 1. 로딩 시작
-      const response = await api.post(`/api/matching/start/${teamId}`);
-      console.log("매칭 시작 결과:", response.data);
-
-      // 2. 2초 기다렸다가 상태를 done으로 변경
-      setTimeout(() => {
-        setMatchingStatus("done");
-      }, 1000);
-    
-      if (response.data.matchingStarted) {
-        setIsMatchingStarted(true);
-        alert("매칭이 완료되었습니다!");
-      }
-
-       // ✅ 매칭 성공 후 미션 부여 API 호출
       try {
-        await api.post(`/api/missions/assign/${teamId}`);
-        alert("그룹 미션이 부여되었습니다!");
-      } catch (missionError) {
-        console.error("미션 부여 실패", missionError);
-        alert("미션 부여 중 오류가 발생했습니다.");
-      }
+        setMatchingStatus("loading");
 
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
-        alert(error.response.data.error);
-      } else {
-        alert("매칭 시작 중 오류가 발생했습니다.");
+        const response = await api.post(`/api/matching/start/${teamId}`);
+
+        console.log("매칭 시작 결과:", response.data);
+
+        // 매칭이 실제로 시작되었는지 먼저 체크
+        if (response.data && response.data.matchingStarted) {
+          setIsMatchingStarted(true);
+          alert("매칭이 완료되었습니다!");
+
+          // 서브그룹 아이디 가져오기 및 미션 부여 처리
+          //이부분 나중에 jwt도입해서 바꿔야함.
+          const userId = 1;
+          const subgroupResponse = await api.get(`/api/matching/subgroup/${teamId}?userId=${userId}`);
+          //const subgroupResponse = await api.get(`/api/matching/subgroup/${teamId}`);
+          const newSubGroupId = subgroupResponse.data.subGroupId;
+
+          if (newSubGroupId) {
+            setSubGroupId(newSubGroupId);
+            console.log("서브 그룹 값 업데이트 되었습니다.");
+
+            try {
+              await api.post(`/api/missions/assign/subgroup/${newSubGroupId}`);
+              alert("그룹 미션이 부여되었습니다!");
+            } catch (missionError) {
+              console.error("미션 부여 실패", missionError);
+              alert("미션 부여 중 오류가 발생했습니다.");
+            }
+          }
+
+          setTimeout(() => {
+            setMatchingStatus("done");
+          }, 1000);
+
+        } else {
+          // 매칭 시작 API 호출은 성공했지만 실제로 매칭이 안 됐을 경우
+          alert("매칭이 시작되지 않았습니다.");
+          setMatchingStatus("idle");
+        }
+
+      } catch (error: any) {
+        // 에러 발생 시
+        setMatchingStatus("idle"); // 로딩 상태 해제
+        if (error.response && error.response.data && error.response.data.error) {
+          alert(error.response.data.error);
+        } else {
+          alert("매칭 시작 중 오류가 발생했습니다.");
+        }
       }
-    }
   };
 
   return (

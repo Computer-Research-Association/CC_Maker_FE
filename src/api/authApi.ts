@@ -3,7 +3,7 @@ import { LoginResponse } from "../navigation/types";
 
 //이놈도 나중에 공인 도메인 ip로 바꿔야함
 //지금은 cra와이파이로 고정해놓자
-const BASE_URL = "http://192.168.29.132:8080";
+const BASE_URL = "http://192.168.29.245:8080";
 
 //회원가입에 필요한 정보들
 interface SignupParams {

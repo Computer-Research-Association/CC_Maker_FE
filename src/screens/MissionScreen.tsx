@@ -18,7 +18,7 @@ const BOX_PER_ROW = 3;
 const GRID_WIDTH = BOX_PER_ROW * (BOX_SIZE + BOX_MARGIN * 2);
 
 export default function MissionScreen() {
-  const { teamId } = useContext(TeamContext);
+  const { teamId, subGroupId } = useContext(TeamContext);
   const [missions, setMissions] = useState<any[]>([]);
   const [selectedBoxIndex, setSelectedBoxIndex] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -28,14 +28,15 @@ useEffect(() => {
     if (!teamId) return;
 
     // 팀 미션 목록 API 호출
-    api.get(`/api/missions/team/${teamId}`)
+    api.get(`/api/missions/subgroup/${subGroupId}`)
       .then((res) => {
         setMissions(res.data);
       })
       .catch((err) => {
         console.error("미션 불러오기 실패:", err);
       });
-  }, [teamId]);
+    }, [subGroupId]);
+
 
 
 
@@ -44,20 +45,48 @@ useEffect(() => {
     setModalVisible(true);
   };
 
- const handleComplete = () => {
-    if (selectedBoxIndex === null) return;
-    const mission = missions[selectedBoxIndex];
-    console.log(`미션 ${mission.title} 완료`);
+  //미션 완료 관리
+ const handleComplete = async () => {
+  if (selectedBoxIndex === null) return;
+  const mission = missions[selectedBoxIndex];
+
+  try {
+    await api.post("/api/missions/complete", {
+      teamId,
+      subGroupId,
+      missionId: mission.missionTemplateId,
+    });
+    alert(`${mission.title} 미션이 완료 처리되었습니다.`);
+
+    // 완료 상태 갱신을 위해 미션 리스트 재조회
+    const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
+    setMissions(res.data);
+  } catch (error) {
+    console.error("미션 완료 처리 실패:", error);
+    alert("미션 완료 처리에 실패했습니다.");
+  } finally {
     setModalVisible(false);
-    // TODO: 완료 API 호출 등 추가 가능
-  };
+  }
+};
 
+//미션 새로고침 
+const handleRefresh = async (index: number) => {
+  const mission = missions[index];
 
-  const handleRefresh = (index: number) => {
-    const mission = missions[index];
-    console.log(`미션 ${mission.title} 새로고침`);
-    // TODO: 새로고침 API 호출 등 실제 로직 작성
-  };
+  try {
+    await api.post(
+      `/api/missions/refresh/subgroup/${subGroupId}/${mission.subGroupMissionId}/${mission.score}`
+    );
+    alert(`${mission.title} 미션이 새로고침되었습니다.`);
+
+    // 새로고침 후 미션 리스트 갱신
+    const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
+    setMissions(res.data);
+  } catch (error) {
+    console.error("미션 새로고침 실패:", error);
+    alert("미션 새로고침에 실패했습니다.");
+  }
+};
 
    // 학점별 미션 분류
   const missionsByScore = (score: number) =>
@@ -72,13 +101,11 @@ useEffect(() => {
           <View style={styles.grid}>
             {missionsByScore(score).map((mission, i) => (
               <TouchableOpacity
-                key={`${score}-credit-${mission.missionId}`}
+                key={`${score}-credit-${mission.subGroupMissionId}`}
                 style={styles.box}
                 onPress={() => handleBoxPress(missions.indexOf(mission))}
               >
-                {/* 미션 타이틀 등 표시 */}
                 <Text style={{ padding: 10 }}>{mission.description}</Text>
-
                 <TouchableOpacity
                   style={styles.refreshButton}
                   onPress={() => handleRefresh(missions.indexOf(mission))}
