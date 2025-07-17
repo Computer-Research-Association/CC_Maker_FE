@@ -7,7 +7,7 @@ import styles from "../styles/MypageScreen.syles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import api from "../api/apiClient";
 import { TeamContext } from "./TeamContext";
-import { useIsFocused } from "@react-navigation/native"; // ✅ 추가
+import { useIsFocused } from "@react-navigation/native";
 
 type MyPageScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "MypageScreen">;
@@ -16,42 +16,74 @@ type MyPageScreenProps = {
 export default function MyPageScreen({ navigation }: MyPageScreenProps) {
   const [isSurveyCompleted, setIsSurveyCompleted] = useState<boolean>(false);
   const [matchedNames, setMatchedNames] = useState<string[]>([]);
-  const { teamId, subGroupId } = useContext(TeamContext);
+  const { teamId, subGroupIdMap, setSubGroupIdMap } = useContext(TeamContext);
 
   const month = "7월";
   const writtenCount = 0;
-  const isFocused = useIsFocused(); // ✅ 현재 화면 focus 여부 확인
+  const isFocused = useIsFocused();
 
- useEffect(() => {
-  if (!teamId || !subGroupId || !isFocused) {
-    console.warn("teamId 또는 subGroupId가 없어서 매칭된 이름 조회를 건너뜁니다.");
-    return;
-  }
-  const fetchSurveyStatus = async () => {
-    try {
-      const response = await api.get(`/api/team/${teamId}/survey-status`);
-      setIsSurveyCompleted(response.data.issurveycompleted);
-    } catch (error) {
-      console.error("설문 완료 상태 조회 실패", error);
-    }
-  };
+  // teamId가 있을 때 subGroupId 뽑기
+  const subGroupId = teamId ? subGroupIdMap[teamId] : undefined;
 
-  const fetchMatchedNames = async () => {
+  useEffect(() => {
+    if (!teamId || !isFocused) return;
+
+    // subGroupId가 없으면 API 호출로 최신화
+    const fetchSubGroupIdIfNeeded = async () => {
+      if (!subGroupId) {
+        try {
+          // 임시 유저id, 나중에 삭제 필요
+          const response = await api.get(`/api/matching/subgroup/${teamId}`, {
+            params: { userId: 1 },
+          });
+          const newSubGroupId = response.data.subGroupId ?? null;
+
+          setSubGroupIdMap((prev) => {
+            if (prev[teamId] === newSubGroupId) return prev; // 중복 방지
+            return { ...prev, [teamId]: newSubGroupId };
+          });
+
+          console.log("서브그룹 아이디 최신화 완료:", newSubGroupId);
+        } catch (error) {
+          console.error("subGroupId 조회 실패", error);
+        }
+      }
+    };
+
+    const fetchSurveyStatus = async () => {
+      try {
+        const response = await api.get(`/api/team/${teamId}/survey-status`);
+        setIsSurveyCompleted(response.data.issurveycompleted);
+      } catch (error) {
+        console.error("설문 완료 상태 조회 실패", error);
+      }
+    };
+
+    const fetchMatchedNames = async () => {
+  if (!subGroupId) return;
   try {
-    //지금 여기서 에러가 나는거 같은데?
-    const response = await api.get(`/api/matching/matched-names/${teamId}/${subGroupId}`);
-    console.log("🔍 매칭된 이름 응답:", response.data);
-    // response.data.matchedNames가 배열이라면 그걸 상태로 저장
+    console.log("이름 조회 시도:", subGroupId);
+    const response = await api.get(
+      `/api/matching/matched-names/${teamId}/${subGroupId}`
+    );
+    console.log("이름 조회 성공:", response.data);
+
+    // matchedNames 배열만 꺼내서 저장
     setMatchedNames(response.data.matchedNames || []);
   } catch (error) {
     console.error("매칭된 이름 조회 실패", error);
   }
 };
 
-  fetchSurveyStatus();
-  fetchMatchedNames();
-}, [teamId, subGroupId, isFocused]);
 
+    const run = async () => {
+      await fetchSubGroupIdIfNeeded();
+      await fetchSurveyStatus();
+      await fetchMatchedNames();
+    };
+
+    run();
+  }, [teamId, subGroupId, isFocused]);
 
   return (
     <View style={styles.container}>
@@ -64,7 +96,6 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
         />
       </TouchableOpacity>
 
-      {/* 프로필과 매칭된 상대 이름 */}
       <View style={styles.profileRow}>
         <View style={styles.profileBlock}>
           <View style={styles.avatar} />
