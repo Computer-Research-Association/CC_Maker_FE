@@ -87,6 +87,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
 
   return (
     <View style={styles.container}>
+      {/* 설정 버튼 */}
       <TouchableOpacity onPress={() => navigation.navigate("SettingScreen")}>
         <Ionicons
           name="settings-outline"
@@ -96,36 +97,83 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
         />
       </TouchableOpacity>
 
+      {/* 프로필 영역 */}
       <View style={styles.profileRow}>
         <View style={styles.profileBlock}>
           <View style={styles.avatar} />
           <Text style={styles.name}>{teamId}</Text>
         </View>
 
-        <View style={styles.profileBlock}>
-          <View style={styles.avatar} />
-          {matchedNames.length > 0 ? (
-            matchedNames.map((name) => (
-              <Text key={name} style={styles.name}>
-                {name}
-              </Text>
-            ))
-          ) : (
-            <Text style={styles.name}>아직 매칭된 상대가 없어요</Text>
-          )}
-        </View>
+        {/* 매칭된 상대 프로필 */}
+        {(() => {
+          switch (matchedNames.length) {
+            case 0:
+              return (
+                <View style={styles.profileBlock}>
+                  <Text style={styles.name}>아직 매칭된 상대가 없어요</Text>
+                </View>
+              );
+            case 1:
+              return (
+                <View style={styles.profileBlock}>
+                  <View style={styles.avatar} />
+                  <Text style={styles.name}>{matchedNames[0]}</Text>
+                </View>
+              );
+            case 2:
+              return (
+                <>
+                  <View style={styles.profileBlock}>
+                    <View style={styles.avatar} />
+                    <Text style={styles.name}>{matchedNames[0]}</Text>
+                  </View>
+                  <View style={styles.profileBlock}>
+                    <View style={styles.avatar} />
+                    <Text style={styles.name}>{matchedNames[1]}</Text>
+                  </View>
+                </>
+              );
+            case 3:
+              return (
+                <>
+                  <View style={styles.profileBlock}>
+                    <View style={styles.avatar} />
+                    <Text style={styles.name}>{matchedNames[0]}</Text>
+                  </View>
+                  <View style={styles.profileBlock}>
+                    <View style={styles.avatar} />
+                    <Text style={styles.name}>{matchedNames[1]}</Text>
+                  </View>
+                  <View style={styles.profileBlock}>
+                    <View style={styles.avatar} />
+                    <Text style={styles.name}>{matchedNames[2]}</Text>
+                  </View>
+                </>
+              );
+            default:
+              return matchedNames.map((name) => (
+                <View key={name} style={styles.profileBlock}>
+                  <View style={styles.avatar} />
+                  <Text style={styles.name}>{name}</Text>
+                </View>
+              ));
+          }
+        })()}
       </View>
 
+      {/* 다이어리 탭 */}
       <View style={styles.tabRow}>
         <Text style={[styles.tabText, styles.selectedTab]}>다이어리</Text>
       </View>
 
+      {/* 미션 작성 현황 */}
       <View style={styles.statusRow}>
         <Text style={styles.statusText}>
           {month} | 완료한 미션개수 {writtenCount}개
         </Text>
       </View>
 
+      {/* 매칭 상대 없으면 설문 버튼 노출 */}
       {matchedNames.length === 0 && (
         <View style={styles.emptyNoteContainer}>
           <TouchableOpacity

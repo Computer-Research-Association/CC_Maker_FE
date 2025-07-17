@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Modal,
 } from "react-native";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -20,6 +21,8 @@ type SettingScreenProps = {
 export default function SettingsScreen({ navigation }: SettingScreenProps) {
   const { role, teamId } = useContext(TeamContext);
   const [inviteCode, setInviteCode] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState(false); // ✅ 모달 상태
+  const [inquiryModalVisible, setInquiryModalVisible] = useState(false);
 
   useEffect(() => {
     console.log("현재 role:", role);
@@ -31,9 +34,10 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
       const response = await api.post("/api/invitecode/create", {
         teamId: teamId,
       });
-      console.log("초대 코드 생성 성공:", response.data);
-      setInviteCode(response.data.inviteCode); // API 응답에 맞게 key 확인
-      Alert.alert("성공", "초대 코드가 생성되었습니다!");
+
+      const code = response.data.inviteCode || response.data.code;
+      setInviteCode(code);
+      setModalVisible(true); // ✅ 모달 열기
     } catch (error) {
       console.error("초대 코드 생성 실패:", error);
       Alert.alert("오류", "초대 코드 생성 중 문제가 발생했습니다.");
@@ -55,33 +59,84 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
       <SettingItem label="알림 설정" onPress={() => {}} />
 
       <Text style={styles.sectionTitle}>서비스</Text>
-      <SettingItem label="문의하기" onPress={() => {}} external />
+      <SettingItem
+        label="문의하기"
+        onPress={() => setInquiryModalVisible(true)}
+        external
+      />
 
       {role === "LEADER" && (
         <>
-          <SettingItem label="초대 코드 생성" onPress={createInviteCode} external />
-          
-          {/* ✅ 초대 코드 보여주기 + 복사 버튼 */}
-          {inviteCode && (
-            <View style={styles.inviteContainer}>
-              <Text style={styles.inviteText}>초대 코드: {inviteCode}</Text>
-              <TouchableOpacity style={styles.copyButton} onPress={copyToClipboard}>
-                <Text style={styles.copyText}>복사하기</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
+          <SettingItem
+            label="초대 코드 생성"
+            onPress={createInviteCode}
+            external
+          />
           <SettingItem
             label="매칭 시작하기"
             onPress={() => navigation.navigate("CheckScreen")}
             external
           />
+          매칭시작하는것
         </>
       )}
+
+      {/* ✅ 모달로 초대 코드 보여주기 */}
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>초대 코드</Text>
+            <Text style={styles.modalCode}>{inviteCode}</Text>
+
+            <TouchableOpacity
+              style={styles.copyButton}
+              onPress={copyToClipboard}
+            >
+              <Text style={styles.copyText}>복사하기</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              style={styles.closeButton}
+            >
+              <Text style={styles.closeText}>닫기</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={inquiryModalVisible}
+        onRequestClose={() => setInquiryModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>문의하기</Text>
+            <Text style={styles.modalCode}>
+              문의는 아래 이메일로 보내주세요.{"\n"}
+              📧 example@email.com
+            </Text>
+
+            <TouchableOpacity
+              onPress={() => setInquiryModalVisible(false)}
+              style={styles.closeButton}
+            >
+              <Text style={styles.closeText}>확인</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
 
+// 개별 설정 아이템 컴포넌트
 type SettingItemProps = {
   label: string;
   onPress: () => void;
@@ -97,6 +152,7 @@ function SettingItem({ label, onPress, external }: SettingItemProps) {
   );
 }
 
+// 스타일
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -127,18 +183,31 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#ccc",
   },
-  inviteContainer: {
-    marginTop: 10,
-    padding: 12,
-    backgroundColor: "#f4f4f4",
-    borderRadius: 8,
+
+  // ✅ 모달 관련 스타일
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
     alignItems: "center",
   },
-  inviteText: {
+  modalContent: {
+    width: 280,
+    backgroundColor: "white",
+    padding: 24,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
+    marginBottom: 12,
+  },
+  modalCode: {
+    fontSize: 20,
+    fontWeight: "bold",
     color: "#333",
-    marginBottom: 10,
+    marginBottom: 16,
   },
   copyButton: {
     paddingVertical: 8,
@@ -149,5 +218,13 @@ const styles = StyleSheet.create({
   copyText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  closeButton: {
+    marginTop: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  closeText: {
+    color: "#888",
   },
 });
