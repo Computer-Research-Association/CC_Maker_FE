@@ -8,47 +8,81 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import api from "../api/apiClient";
 import { TeamContext } from "./TeamContext";
 import { useIsFocused } from "@react-navigation/native";
+import { UserContext } from "./UserContext"; // UserContext 경로에 맞게 수정
 
 type MyPageScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "MypageScreen">;
 };
 
 export default function MyPageScreen({ navigation }: MyPageScreenProps) {
-  const [isSurveyCompleted, setIsSurveyCompleted] = useState<boolean>(false);
+  const [isSurveyCompleted, setIsSurveyCompleted] = useState(false);
   const [matchedNames, setMatchedNames] = useState<string[]>([]);
   const { teamId, subGroupIdMap, setSubGroupIdMap } = useContext(TeamContext);
-
-  const month = "7월";
-  const writtenCount = 0;
+  const { userId } = useContext(UserContext); // userId 받아오기
   const isFocused = useIsFocused();
 
   // teamId가 있을 때 subGroupId 뽑기
-  const subGroupId = teamId ? subGroupIdMap[teamId] : undefined;
+  const subGroupId = teamId ? subGroupIdMap[teamId] : null;
+  const month = "7월";
+  const writtenCount = 0;
 
+  // 1) teamId 변경 또는 포커스 시 subGroupId 조회
   useEffect(() => {
     if (!teamId || !isFocused) return;
+    if (!userId) {
+      console.warn("UserId가 없습니다. 로그인 상태를 확인하세요.");
+      return;
+    }
 
-    // subGroupId가 없으면 API 호출로 최신화
     const fetchSubGroupIdIfNeeded = async () => {
       if (!subGroupId) {
         try {
-          // 임시 유저id, 나중에 삭제 필요
+          console.log("현재 subGroupId가 없어서 새로고침 합니다.", subGroupId);
           const response = await api.get(`/api/matching/subgroup/${teamId}`, {
-            params: { userId: 1 },
+            params: { userId },
           });
           const newSubGroupId = response.data.subGroupId ?? null;
-
           setSubGroupIdMap((prev) => {
-            if (prev[teamId] === newSubGroupId) return prev; // 중복 방지
+            if (prev[teamId] === newSubGroupId) return prev;
             return { ...prev, [teamId]: newSubGroupId };
           });
-
-          console.log("서브그룹 아이디 최신화 완료:", newSubGroupId);
         } catch (error) {
           console.error("subGroupId 조회 실패", error);
         }
       }
     };
+
+    fetchSubGroupIdIfNeeded();
+  }, [teamId, isFocused, subGroupId, userId, setSubGroupIdMap]);
+
+  // 2) subGroupId가 준비되면 매칭된 이름 조회
+  useEffect(() => {
+    if (!teamId || !subGroupId || !isFocused) return;
+    if (!userId) {
+      console.warn("UserId가 없습니다. 로그인 상태를 확인하세요.");
+      return;
+    }
+
+    const fetchMatchedNames = async () => {
+      try {
+        console.log("현재subGroupId : ", subGroupId);
+        console.log("현재teamId: ", teamId);
+        console.log("현재isFocused : ", isFocused);
+        const response = await api.get(`/api/matching/matched-names/${teamId}`, {
+          params: { userId },
+        });
+        setMatchedNames(response.data.matchedNames || []);
+      } catch (error) {
+        console.error("매칭된 이름 조회 실패", error);
+      }
+    };
+
+    fetchMatchedNames();
+  }, [teamId, subGroupId, isFocused, userId]);
+
+  // 3) 설문 상태 조회 (teamId, 포커스 시)
+  useEffect(() => {
+    if (!teamId || !isFocused) return;
 
     const fetchSurveyStatus = async () => {
       try {
@@ -59,31 +93,8 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
       }
     };
 
-    const fetchMatchedNames = async () => {
-  if (!subGroupId) return;
-  try {
-    console.log("이름 조회 시도:", subGroupId);
-    const response = await api.get(
-      `/api/matching/matched-names/${teamId}/${subGroupId}`
-    );
-    console.log("이름 조회 성공:", response.data);
-
-    // matchedNames 배열만 꺼내서 저장
-    setMatchedNames(response.data.matchedNames || []);
-  } catch (error) {
-    console.error("매칭된 이름 조회 실패", error);
-  }
-};
-
-
-    const run = async () => {
-      await fetchSubGroupIdIfNeeded();
-      await fetchSurveyStatus();
-      await fetchMatchedNames();
-    };
-
-    run();
-  }, [teamId, subGroupId, isFocused]);
+    fetchSurveyStatus();
+  }, [teamId, isFocused]);
 
   return (
     <View style={styles.container}>
@@ -101,7 +112,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
       <View style={styles.profileRow}>
         <View style={styles.profileBlock}>
           <View style={styles.avatar} />
-          <Text style={styles.name}>{teamId}</Text>
+          <Text style={styles.name}>{userId}</Text>
         </View>
 
         {/* 매칭된 상대 프로필 */}
@@ -180,9 +191,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
             style={styles.writeButtonMain}
             onPress={() => {
               if (isSurveyCompleted) {
-                Alert.alert("알림", "이미 설문조사를 완료했습니다.", [
-                  { text: "확인" },
-                ]);
+                Alert.alert("알림", "이미 설문조사를 완료했습니다.", [{ text: "확인" }]);
               } else {
                 navigation.navigate("MbtiScreen");
               }

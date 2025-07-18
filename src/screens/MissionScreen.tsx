@@ -46,28 +46,32 @@ export default function MissionScreen() {
   };
 
   // 미션 완료 관리
-  const handleComplete = async () => {
-    if (selectedBoxIndex === null) return;
-    const mission = missions[selectedBoxIndex];
+const handleComplete = async () => {
+  if (selectedBoxIndex === null) return;
+  const mission = missions[selectedBoxIndex];
 
-    try {
-      await api.post("/api/missions/complete", {
-        teamId,
-        subGroupId,
-        missionId: mission.missionTemplateId,
-      });
-      alert(`${mission.title} 미션이 완료 처리되었습니다.`);
+  try {
+    await api.post("/api/missions/complete", {
+      teamId,
+      subGroupId,
+      missionId: mission.missionTemplateId,
+    });
+    alert(`${mission.title} 미션이 완료 처리되었습니다.`);
 
-      // 완료 상태 갱신을 위해 미션 리스트 재조회
-      const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
-      setMissions(res.data);
-    } catch (error) {
-      console.error("미션 완료 처리 실패:", error);
-      alert("미션 완료 처리에 실패했습니다.");
-    } finally {
-      setModalVisible(false);
-    }
-  };
+    // 1) 미션 리스트 다시 불러오기 대신,
+    // 2) 상태를 직접 업데이트 (즉시 UI 반영)
+    setMissions((prev) =>
+      prev.map((m, i) =>
+        i === selectedBoxIndex ? { ...m, completed: true } : m
+      )
+    );
+  } catch (error) {
+    console.error("미션 완료 처리 실패:", error);
+    alert("미션 완료 처리에 실패했습니다.");
+  } finally {
+    setModalVisible(false);
+  }
+};
 
   // 미션 새로고침
   const handleRefresh = async (index: number) => {
@@ -101,13 +105,18 @@ export default function MissionScreen() {
             {missionsByScore(score).map((mission, i) => (
               <TouchableOpacity
                 key={`${score}-credit-${mission.subGroupMissionId}`}
-                style={styles.box}
-                onPress={() => handleBoxPress(missions.indexOf(mission))}
+                style={[styles.box, mission.completed && styles.completedBox]}
+                 onPress={() => !mission.completed && handleBoxPress(missions.indexOf(mission))}
+                 disabled={mission.completed}
               >
                 <Text style={{ padding: 10 }}>{mission.description}</Text>
                 <TouchableOpacity
-                  style={styles.refreshButton}
-                  onPress={() => handleRefresh(missions.indexOf(mission))}
+                   style={[
+                            styles.refreshButton,
+                            mission.completed && styles.disabledRefreshButton,
+                          ]}
+                  onPress={() => !mission.completed && handleRefresh(missions.indexOf(mission))}
+                  disabled={mission.completed}
                 >
                   <Text style={styles.refreshText}>↻</Text>
                 </TouchableOpacity>
@@ -213,5 +222,11 @@ const styles = StyleSheet.create({
   },
   refreshText: {
     fontSize: 12,
+  },
+  completedBox: {
+    backgroundColor: "#d3d3d3",
+  },
+  disabledRefreshButton: {
+  opacity: 0.3,
   },
 });

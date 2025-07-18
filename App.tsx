@@ -21,6 +21,10 @@ import signup from "./src/screens/SignupScreen";
 import { TeamProvider } from "./src/screens/TeamContext";
 import CheckScreen from "./src/screens/CheckScreen";
 
+
+// 새로 만든 UserContext import
+import { UserProvider } from "./src/screens/UserContext";
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
@@ -40,6 +44,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
+      <UserProvider>
       <TeamProvider>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
@@ -105,6 +110,7 @@ export default function App() {
           />
         </Stack.Navigator>
       </TeamProvider>
+      </UserProvider>
     </NavigationContainer>
   );
 }
