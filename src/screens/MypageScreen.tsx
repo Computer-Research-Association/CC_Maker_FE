@@ -2,13 +2,13 @@ import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
-import styles from "../styles/MypageScreen.syles";
 //@ts-ignore
 import Ionicons from "react-native-vector-icons/Ionicons";
 import api from "../api/apiClient";
 import { TeamContext } from "./TeamContext";
 import { useIsFocused } from "@react-navigation/native";
-import { UserContext } from "./UserContext"; // UserContext 경로에 맞게 수정
+import { UserContext } from "./UserContext";
+import styles from "../styles/MypageScreen.syles"; // ✅ 스타일 파일 적용
 
 type MyPageScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "MypageScreen">;
@@ -18,26 +18,19 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
   const [isSurveyCompleted, setIsSurveyCompleted] = useState(false);
   const [matchedNames, setMatchedNames] = useState<string[]>([]);
   const { teamId, subGroupIdMap, setSubGroupIdMap } = useContext(TeamContext);
-  const { userId } = useContext(UserContext); // userId 받아오기
+  const { userId } = useContext(UserContext);
   const isFocused = useIsFocused();
 
-  // teamId가 있을 때 subGroupId 뽑기
   const subGroupId = teamId ? subGroupIdMap[teamId] : null;
   const month = "7월";
   const writtenCount = 0;
 
-  // 1) teamId 변경 또는 포커스 시 subGroupId 조회
+  // ✅ subGroupId 확인 및 저장
   useEffect(() => {
-    if (!teamId || !isFocused) return;
-    if (!userId) {
-      console.warn("UserId가 없습니다. 로그인 상태를 확인하세요.");
-      return;
-    }
-
+    if (!teamId || !isFocused || !userId) return;
     const fetchSubGroupIdIfNeeded = async () => {
       if (!subGroupId) {
         try {
-          console.log("현재 subGroupId가 없어서 새로고침 합니다.", subGroupId);
           const response = await api.get(`/api/matching/subgroup/${teamId}`, {
             params: { userId },
           });
@@ -51,23 +44,14 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
         }
       }
     };
-
     fetchSubGroupIdIfNeeded();
   }, [teamId, isFocused, subGroupId, userId, setSubGroupIdMap]);
 
-  // 2) subGroupId가 준비되면 매칭된 이름 조회
+  // ✅ 매칭된 멤버 이름 불러오기
   useEffect(() => {
-    if (!teamId || !subGroupId || !isFocused) return;
-    if (!userId) {
-      console.warn("UserId가 없습니다. 로그인 상태를 확인하세요.");
-      return;
-    }
-
+    if (!teamId || !subGroupId || !isFocused || !userId) return;
     const fetchMatchedNames = async () => {
       try {
-        console.log("현재subGroupId : ", subGroupId);
-        console.log("현재teamId: ", teamId);
-        console.log("현재isFocused : ", isFocused);
         const response = await api.get(`/api/matching/matched-names/${teamId}`, {
           params: { userId },
         });
@@ -76,14 +60,12 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
         console.error("매칭된 이름 조회 실패", error);
       }
     };
-
     fetchMatchedNames();
   }, [teamId, subGroupId, isFocused, userId]);
 
-  // 3) 설문 상태 조회 (teamId, 포커스 시)
+  // ✅ 설문 완료 여부 확인
   useEffect(() => {
     if (!teamId || !isFocused) return;
-
     const fetchSurveyStatus = async () => {
       try {
         const response = await api.get(`/api/team/${teamId}/survey-status`);
@@ -92,7 +74,6 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
         console.error("설문 완료 상태 조회 실패", error);
       }
     };
-
     fetchSurveyStatus();
   }, [teamId, isFocused]);
 
@@ -108,68 +89,27 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
         />
       </TouchableOpacity>
 
-      {/* 프로필 영역 */}
-      <View style={styles.profileRow}>
-        <View style={styles.profileBlock}>
-          <View style={styles.avatar} />
-          <Text style={styles.name}>{userId}</Text>
+      {/* ✅ 프로필 영역 */}
+      <View style={styles.profileContainer}>
+        {/* 본인 프로필 */}
+        <View style={styles.myProfileBlock}>
+          <View style={styles.myAvatar} />
+          <Text style={styles.myName}>{userId}</Text>
         </View>
 
-        {/* 매칭된 상대 프로필 */}
-        {(() => {
-          switch (matchedNames.length) {
-            case 0:
-              return (
-                <View style={styles.profileBlock}>
-                  <Text style={styles.name}>아직 매칭된 상대가 없어요</Text>
-                </View>
-              );
-            case 1:
-              return (
-                <View style={styles.profileBlock}>
-                  <View style={styles.avatar} />
-                  <Text style={styles.name}>{matchedNames[0]}</Text>
-                </View>
-              );
-            case 2:
-              return (
-                <>
-                  <View style={styles.profileBlock}>
-                    <View style={styles.avatar} />
-                    <Text style={styles.name}>{matchedNames[0]}</Text>
-                  </View>
-                  <View style={styles.profileBlock}>
-                    <View style={styles.avatar} />
-                    <Text style={styles.name}>{matchedNames[1]}</Text>
-                  </View>
-                </>
-              );
-            case 3:
-              return (
-                <>
-                  <View style={styles.profileBlock}>
-                    <View style={styles.avatar} />
-                    <Text style={styles.name}>{matchedNames[0]}</Text>
-                  </View>
-                  <View style={styles.profileBlock}>
-                    <View style={styles.avatar} />
-                    <Text style={styles.name}>{matchedNames[1]}</Text>
-                  </View>
-                  <View style={styles.profileBlock}>
-                    <View style={styles.avatar} />
-                    <Text style={styles.name}>{matchedNames[2]}</Text>
-                  </View>
-                </>
-              );
-            default:
-              return matchedNames.map((name) => (
-                <View key={name} style={styles.profileBlock}>
-                  <View style={styles.avatar} />
-                  <Text style={styles.name}>{name}</Text>
-                </View>
-              ));
-          }
-        })()}
+        {/* 나머지 멤버 프로필 */}
+        <View style={styles.otherProfilesContainer}>
+          {matchedNames.length === 0 ? (
+            <Text style={styles.noMatchText}>아직 매칭된 상대가 없어요</Text>
+          ) : (
+            matchedNames.map((name, idx) => (
+              <View key={idx} style={styles.otherProfileBlock}>
+                <View style={styles.otherAvatar} />
+                <Text style={styles.otherName}>{name}</Text>
+              </View>
+            ))
+          )}
+        </View>
       </View>
 
       {/* 다이어리 탭 */}
@@ -184,7 +124,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
         </Text>
       </View>
 
-      {/* 매칭 상대 없으면 설문 버튼 노출 */}
+      {/* 매칭 상대 없으면 설문 버튼 */}
       {matchedNames.length === 0 && (
         <View style={styles.emptyNoteContainer}>
           <TouchableOpacity
