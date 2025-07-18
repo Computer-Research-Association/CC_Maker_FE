@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useContext  } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,9 @@ import { RootStackParamList } from "../navigation/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"; //네비게이션을 타입안정성있게 쓰기 위한 도구
 import { login } from "../api/authApi";
 import styles from "../styles/LoginScreen.styles";
+import { TeamContext } from "../screens/TeamContext";
+import { UserContext } from "./UserContext"; // 경로 맞게 수정
+
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -21,11 +24,20 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   //react는 객체로 props를 받음
   const [email, setemail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const { setTeamId, setSubGroupIdMap } = useContext(TeamContext);
+  const { setUserId } = useContext(UserContext);
+
+
   const handleLogin = async () => {
     try {
       const response = await login({ email, password });
       Alert.alert("로그인 성공", "환영합니다!");
+      setUserId(response.userId);
+      setTeamId(null);
+      setSubGroupIdMap({});
+      
       navigation.navigate("MainHomeScreen");
+
     } catch (error: unknown) {
       // 다시 공부 하기 =
       const errorMessage =

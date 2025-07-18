@@ -11,6 +11,7 @@ import api from "../api/apiClient";
 import { TeamContext } from "../screens/TeamContext";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
+import { UserContext } from "./UserContext";  // UserContext 경로에 맞게 수정
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "CheckScreen">;
@@ -26,6 +27,7 @@ export default function CheckScreen({ navigation }: Props) {
   const [members, setMembers] = useState<Member[]>([]);
   const [isMatchingStarted, setIsMatchingStarted] = useState(false);
   const { teamId, subGroupIdMap, setSubGroupIdMap } = useContext(TeamContext);
+  const { userId } = useContext(UserContext);  // userId 받아오기
   const [matchingStatus, setMatchingStatus] = useState<
     "idle" | "loading" | "done"
   >("idle");
@@ -33,14 +35,15 @@ export default function CheckScreen({ navigation }: Props) {
   // 0. 팀 아이디 변경 시 최신 subGroupId 받아오기
   useEffect(() => {
     if (!teamId) return;
-
+    if (!userId) {
+      console.warn("UserId가 없습니다. 로그인 상태를 확인하세요.");
+      return;
+    }
     const fetchSubGroupId = async () => {
       try {
-        //나중에 수정하기
-        const userId = 1; // 임시 userId
-      const response = await api.get(`/api/matching/subgroup/${teamId}`, {
-        params: { userId },
-      });
+          const response = await api.get(`/api/matching/subgroup/${teamId}`, {
+          params: { userId },
+        });
 
         //const response = await api.get(`/api/matching/subgroup/${teamId}`);
         const subGroupId = response.data.subGroupId ?? null;
@@ -61,36 +64,12 @@ export default function CheckScreen({ navigation }: Props) {
     };
 
     fetchSubGroupId();
-  }, [teamId, setSubGroupIdMap]);
+  }, [teamId, userId, setSubGroupIdMap]);
 
-  // 1. subGroupId가 있을 때 => 매칭된 이름 조회
-  useEffect(() => {
-    if (teamId == null || !subGroupIdMap) return;
 
-    const subGroupId = subGroupIdMap[teamId];    
-    if (!subGroupId) return;
-
-    const fetchMatchedNames = async () => {
-      try {
-        const response = await api.get(
-          `/api/matching/matched-names/${teamId}/${subGroupId}`
-        );
-        console.log("팀읽어왔어용")
-        setMembers(response.data);
-      } catch (error) {
-        console.error("매칭된 이름 조회 실패", error);
-      }
-    };
-
-    fetchMatchedNames();
-  }, [teamId, subGroupIdMap]);
-
-  // 2. subGroupId가 없을 때 => 매칭 전 팀 멤버 조회 및 매칭 시작 여부 조회
+  // 1. subGroupId가 없을 때 => 매칭 전 팀 멤버 조회 및 매칭 시작 여부 조회
   useEffect(() => {
     if (!teamId) return;
-
-    if (subGroupIdMap[teamId] !== null) return; // subGroupId가 있으면 여기서 멤버를 안 불러오도록 함
-
     const fetchMembers = async () => {
       try {
         const response = await api.get(`/api/team/${teamId}/survey-status/all`);
@@ -117,6 +96,11 @@ export default function CheckScreen({ navigation }: Props) {
       alert("팀 정보가 없습니다.");
       return;
     }
+    
+    if (!userId) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
 
     const allCompleted = members.every((member) => member.surveyCompleted);
     if (!allCompleted) {
@@ -136,10 +120,11 @@ export default function CheckScreen({ navigation }: Props) {
         alert("매칭이 완료되었습니다!");
 
         // 서브그룹 아이디 가져오기 및 미션 부여 처리 (임시 userId 사용)
-        const userId = 1;
         const subgroupResponse = await api.get(
-          `/api/matching/subgroup/${teamId}?userId=${userId}`
+          `/api/matching/subgroup/${teamId}`,
+          { params: { userId } }
         );
+
         const newSubGroupId = subgroupResponse.data.subGroupId;
 
         if (newSubGroupId) {
