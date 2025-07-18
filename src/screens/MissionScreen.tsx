@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import {
+  Alert,
   View,
   Text,
   ScrollView,
@@ -7,6 +8,7 @@ import {
   TouchableOpacity,
   Modal,
   Button,
+  TextInput,
 } from "react-native";
 import { TeamContext } from "../screens/TeamContext";
 import MissionBox from "../component/MissionBox";
@@ -22,6 +24,8 @@ export default function MissionScreen() {
   const [missions, setMissions] = useState<any[]>([]);
   const [selectedBoxIndex, setSelectedBoxIndex] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [minScore, setMinScore] = useState<string>("");
+
 
   // teamId가 있을 때 subGroupId 뽑기
   const subGroupId = teamId ? subGroupIdMap[teamId] : undefined;
@@ -31,6 +35,7 @@ export default function MissionScreen() {
 
     console.log("subGroupId:", subGroupId);
     // 팀 미션 목록 API 호출
+
     api.get(`/api/missions/subgroup/${subGroupId}`)
       .then((res) => {
         setMissions(res.data);
@@ -39,6 +44,23 @@ export default function MissionScreen() {
         console.error("미션 불러오기 실패:", err);
       });
   }, [teamId, subGroupId]);
+
+  // 최소학점 저장 함수
+  const saveMinScore = async () => {
+    const parsedScore = parseInt(minScore, 10);
+    if (isNaN(parsedScore) || parsedScore < 0) {
+      Alert.alert("오류", "유효한 최소 학점을 입력해주세요.");
+      return;
+    }
+    try {
+      await api.post(`/api/team/${teamId}/min-credit`, { minScore: parsedScore });
+      Alert.alert("성공", "최소 학점이 저장되었습니다.");
+    } catch (error) {
+      console.error("최소 학점 저장 실패:", error);
+      Alert.alert("오류", "최소 학점 저장에 실패했습니다.");
+    }
+  };
+
 
   const handleBoxPress = (index: number) => {
     setSelectedBoxIndex(index);
@@ -98,6 +120,26 @@ const handleComplete = async () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+
+
+      {role === "LEADER" && (
+  <View style={styles.minScoreContainer}>
+    <Text style={styles.label}>최소 학점 :</Text>
+    <TextInput
+      style={styles.input}
+      value={minScore}
+      onChangeText={setMinScore}
+      keyboardType="number-pad"
+      placeholder="숫자"
+    />
+    <TouchableOpacity style={styles.saveButton} onPress={saveMinScore}>
+      <Text style={styles.saveButtonText}>저장</Text>
+    </TouchableOpacity>
+  </View>
+)}
+
+
+      {/* 기존 미션 UI */}
       {[1, 3, 5, 10].map((score) => (
         <View key={score} style={styles.section}>
           <Text style={styles.title}>{score}학점</Text>
@@ -150,13 +192,51 @@ const handleComplete = async () => {
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     marginTop: 50,
     paddingVertical: 20,
     alignItems: "center",
   },
+  // ✅ 최소 학점 한 줄 UI
+  minScoreContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+    width: "100%",
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginRight: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 6,
+    width: 80,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    fontSize: 14,
+    marginRight: 8,
+    textAlign: "center",
+  },
+  saveButton: {
+    backgroundColor: "#4CAF50",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  saveButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
   section: {
     marginBottom: 40,
     alignItems: "center",
@@ -227,6 +307,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#d3d3d3",
   },
   disabledRefreshButton: {
-  opacity: 0.3,
+    opacity: 0.3,
   },
 });
