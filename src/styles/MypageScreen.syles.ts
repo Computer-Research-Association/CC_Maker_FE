@@ -3,25 +3,28 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
     backgroundColor: "#fff",
     paddingTop: 100,
   },
 
-  // ✅ 새로 추가: 중앙 정렬된 프로필 영역
-  profileRow: {
-    flexDirection: "row",
-    justifyContent: "center", // 가운데 정렬
-    alignItems: "center",
-    marginTop: 20,
-    gap: 80, // ← 두 블럭 사이 간격 (React Native 0.71+만 지원됨)
-  },
+  // styles.ts 수정 예시
+profileContainer: {
+  flexDirection: "row",
+  paddingTop: 20,
+  paddingLeft : 50,
+  paddingHorizontal: 20,
+  justifyContent: "space-between",  // 좌우 끝 정렬
+  alignItems: "flex-start",
+},
 
-  profileBlock: {
-    alignItems: "center", // 아바타와 텍스트 수직 정렬
-  },
 
-  avatar: {
+  // ✅ 본인 프로필
+  myProfileBlock: {
+  alignItems: "center",
+
+},
+
+  myAvatar: {
     width: 120,
     height: 120,
     backgroundColor: "#ccc",
@@ -29,57 +32,43 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
-  // ✅ 새로 추가: 이름 + 아이디 중앙 정렬
-  nameBox: {
+  myName: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  // ✅ 나머지 프로필 컨테이너 (세로 evenly)
+otherProfilesContainer: {
+  flexDirection: "column",
+  justifyContent: "space-evenly",
+  alignItems: "flex-end",   // 오른쪽 정렬
+  paddingRight : 40,
+  flex: 1,
+},
+
+  otherProfileBlock: {
     alignItems: "center",
   },
 
-  name: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  avatar_2: {
-    width: 64,
-    height: 64,
-    backgroundColor: "#ccc",
+  otherAvatar: {
+    width: 80,
+    height: 80,
+    backgroundColor: "#ddd",
     borderRadius: 12,
-    marginBottom: 12,
+    marginBottom: 8,
   },
 
-  // ✅ 새로 추가: 이름 + 아이디 중앙 정렬
-  nameBox_2: {
-    alignItems: "center",
+  otherName: {
+    fontSize: 14,
   },
 
-  name_2: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
-  friendButton: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-
-  friendText: {
-    fontSize: 12,
-  },
-
-  // ❌ 제거된 스타일
-  // profileRow: { ... },
-  // avatarWrapper: { ... },
-  // editButton: { ... },a
-  // iconRow: { ... },
-  // iconBox: { ... },
-
+  // ✅ 기존 탭, 버튼 영역 유지
   tabRow: {
     flexDirection: "row",
     marginTop: 24,
     borderBottomWidth: 1,
     borderColor: "#ccc",
+    paddingHorizontal: 20,
   },
 
   tabText: {
@@ -100,6 +89,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     flexDirection: "row",
     justifyContent: "space-between",
+    paddingHorizontal: 20,
   },
 
   statusText: {
@@ -107,20 +97,9 @@ const styles = StyleSheet.create({
     color: "#555",
   },
 
-  switchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-
   emptyNoteContainer: {
     marginTop: 80,
     alignItems: "center",
-  },
-
-  emptyNoteText: {
-    color: "#999",
-    marginBottom: 16,
   },
 
   writeButtonMain: {
@@ -135,35 +114,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  writeButton: {
-    position: "absolute",
-    bottom: 32,
-    right: 24,
-    backgroundColor: "#007bff",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-  },
-
-  writeButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    paddingRight: 8,
-    marginTop: 12,
-  },
-
   settingIcon: {
     position: "absolute",
     top: -40,
     right: 10,
     zIndex: 999,
     padding: 13,
-    // elevation: 10,
   },
+  noMatchText: {
+  fontSize: 14,
+  color: "#999",
+  textAlign: "center",
+  marginTop: 20,
+},
+
 });
 
 export default styles;

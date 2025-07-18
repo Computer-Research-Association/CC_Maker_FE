@@ -18,7 +18,7 @@ const BOX_PER_ROW = 3;
 const GRID_WIDTH = BOX_PER_ROW * (BOX_SIZE + BOX_MARGIN * 2);
 
 export default function MissionScreen() {
-  const { teamId, subGroupIdMap } = useContext(TeamContext);
+  const { role,teamId, subGroupIdMap } = useContext(TeamContext);
   const [missions, setMissions] = useState<any[]>([]);
   const [selectedBoxIndex, setSelectedBoxIndex] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
