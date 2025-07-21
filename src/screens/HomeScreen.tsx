@@ -8,7 +8,6 @@ import { UserContext } from "./UserContext";
 import { useFocusEffect } from "@react-navigation/native";
 import AnimatedProgressBar from "../component/AnimatedProgressBar";
 
-
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "HomeScreen">;
 };
@@ -17,6 +16,7 @@ type SubGroupScore = {
   subGroupId: number;
   name: string;
   score: number;
+  members: string[];
 };
 
 type ScoreboardResponse = {
@@ -25,12 +25,41 @@ type ScoreboardResponse = {
   otherSubGroups: SubGroupScore[];
 };
 
+// ✅ 백분율 계산 함수 추가
+const calculatePercent = (score: number, minScore: number) => {
+  if (minScore === 0) return 0;
+  return Math.min(100, Math.round((score / minScore) * 100));
+};
+
 export default function HomeScreen({ navigation }: HomeScreenProps) {
-  const { teamId } = useContext(TeamContext);
+  const { teamId, subGroupIdMap, teamName, setSubGroupIdMap } = useContext(TeamContext);
   const { userId } = useContext(UserContext);
   const [scoreboard, setScoreboard] = useState<ScoreboardResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+
+  const subGroupId = teamId ? subGroupIdMap[teamId] : null;
+
+  const fetchSubGroupIdIfNeeded = useCallback(async () => {
+    if (!teamId || !userId || subGroupId) return;
+
+    try {
+      const response = await api.get(`/api/matching/subgroup/${teamId}`, {
+        params: { userId },
+      });
+      const newSubGroupId = response.data.subGroupId ?? null;
+
+      setSubGroupIdMap((prev) => {
+        if (prev[teamId] === newSubGroupId) return prev;
+        return { ...prev, [teamId]: newSubGroupId };
+      });
+
+      console.log("✅ HomeScreen: subGroupId 업데이트 완료:", newSubGroupId);
+    } catch (error) {
+      console.error("subGroupId 조회 실패:", error);
+    }
+  }, [teamId, userId, subGroupId, setSubGroupIdMap]);
 
   const fetchScoreboard = useCallback(() => {
     if (!teamId || !userId) return;
@@ -51,8 +80,8 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
 
   useFocusEffect(
     useCallback(() => {
-      fetchScoreboard();
-    }, [fetchScoreboard])
+      fetchSubGroupIdIfNeeded().then(fetchScoreboard);
+    }, [fetchSubGroupIdIfNeeded, fetchScoreboard])
   );
 
   if (loading) {
@@ -79,30 +108,40 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       </View>
     );
   }
+return (
+  <ScrollView contentContainerStyle={styles.container}>
+    {/* ✅ 팀 이름 표시 */}
+    <Text style={styles.teamNameText}>
+      {teamName ? `팀: ${teamName}` : "팀 이름 없음"}
+    </Text>
 
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>팀 최소 학점: {scoreboard.minScore}</Text>
+    <Text style={styles.title}>팀 최소 학점: {scoreboard.minScore}</Text>
 
-        <AnimatedProgressBar
-          current={scoreboard.mySubGroup.score}
-          max={scoreboard.minScore}
-          label={`내 서브그룹 (${scoreboard.mySubGroup.name})`}
-        />
+    <View style={{ marginBottom: 30, width: "100%" }}>
+      {/* ✅ 내 서브그룹 백분율 포함 */}
+      <AnimatedProgressBar
+        current={scoreboard.mySubGroup.score}
+        max={scoreboard.minScore}
+        label={`${scoreboard.mySubGroup.members.join(", ")} (${calculatePercent(scoreboard.mySubGroup.score, scoreboard.minScore)}%)`}
+      />
+    </View>
 
-        <View style={styles.section}>
-          <Text style={styles.subtitle}>다른 서브그룹 달성도</Text>
-          {scoreboard.otherSubGroups.map((sg) => (
+    <View style={styles.section}>
+      {[...scoreboard.otherSubGroups]
+        .sort((a, b) => b.score - a.score)
+        .map((sg) => (
+          <View key={sg.subGroupId} style={{ marginBottom: 20 }}>
             <AnimatedProgressBar
-              key={sg.subGroupId}
               current={sg.score}
               max={scoreboard.minScore}
-              label={sg.name}
+              label={`${sg.members.join(", ")} (${calculatePercent(sg.score, scoreboard.minScore)}%)`}
             />
-          ))}
-        </View>
-      </ScrollView>
-  );
+          </View>
+        ))}
+    </View>
+  </ScrollView>
+);
+
 }
 
 const styles = StyleSheet.create({
@@ -110,5 +149,15 @@ const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: "bold", marginBottom: 20 },
   section: { marginBottom: 30, width: "100%" },
   subtitle: { fontSize: 16, fontWeight: "600", marginBottom: 10 },
-  subGroupText: { fontSize: 14, marginVertical: 4 },
+  members: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 4,
+  },
+  teamNameText: {
+  fontSize: 24,
+  fontWeight: "bold",
+  marginBottom: 10,
+  color: "#333",
+},
 });
