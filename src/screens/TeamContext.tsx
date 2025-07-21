@@ -6,6 +6,8 @@ interface TeamContextType {
   role: string | null;
   setRole: React.Dispatch<React.SetStateAction<string | null>>;
   userName: string | null;
+  teamName: string | null; // ✅ 추가
+  setTeamName: React.Dispatch<React.SetStateAction<string | null>>; // ✅ 추가
   setUserName: React.Dispatch<React.SetStateAction<string | null>>;
   subGroupIdMap: Record<number, number | null>;   // 팀별 서브그룹 아이디 맵
   setSubGroupIdMap: React.Dispatch<React.SetStateAction<Record<number, number | null>>>;
@@ -18,6 +20,8 @@ export const TeamContext = createContext<TeamContextType>({
   teamId: null,
   setTeamId: noop,
   role: null,
+  teamName: null, // ✅ 기본값
+  setTeamName: noop,
   setRole: noop,
   userName: null,
   setUserName: noop,
@@ -29,6 +33,7 @@ export const TeamContext = createContext<TeamContextType>({
 export const TeamProvider = ({ children }: { children: ReactNode }) => {
   const [teamId, setTeamId] = useState<number | null>(null);
   const [role, setRole] = useState<string | null>(null);
+  const [teamName, setTeamName] = useState<string | null>(null); // ✅ 추가
   const [userName, setUserName] = useState<string | null>(null);
   const [subGroupIdMap, setSubGroupIdMap] = useState<Record<number, number | null>>({});
 
@@ -44,11 +49,13 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
         setTeamId,
         role,
         setRole,
+        teamName,
+        setTeamName,
         userName,
         setUserName,
         subGroupIdMap,
         setSubGroupIdMap,
-        updateSubGroupId,  // 추가
+        updateSubGroupId, 
       }}
     >
       {children}
