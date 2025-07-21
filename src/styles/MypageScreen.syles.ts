@@ -7,29 +7,25 @@ const styles = StyleSheet.create({
     paddingTop: 100,
   },
 
-  // styles.ts 수정 예시
-profileContainer: {
-  flexDirection: "row",
-  paddingTop: 20,
-  paddingLeft : 50,
-  paddingHorizontal: 20,
-  justifyContent: "space-between",  // 좌우 끝 정렬
-  alignItems: "flex-start",
-},
-
+  profileContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center", // ✅ 수직 중앙 맞추기
+    paddingHorizontal: 40,
+    paddingTop: 40,
+  },
 
   // ✅ 본인 프로필
   myProfileBlock: {
-  alignItems: "center",
-
-},
+    alignItems: "center",
+  },
 
   myAvatar: {
     width: 120,
     height: 120,
     backgroundColor: "#ccc",
     borderRadius: 12,
-    marginBottom: 12,
+    marginBottom: 8,
   },
 
   myName: {
@@ -38,13 +34,11 @@ profileContainer: {
   },
 
   // ✅ 나머지 프로필 컨테이너 (세로 evenly)
-otherProfilesContainer: {
-  flexDirection: "column",
-  justifyContent: "space-evenly",
-  alignItems: "flex-end",   // 오른쪽 정렬
-  paddingRight : 40,
-  flex: 1,
-},
+  otherProfilesContainer: {
+    justifyContent: "center", // ✅ 아예 중앙 정렬
+    alignItems: "center", // ✅ 텍스트 포함 중앙
+    gap: 12, // ✅ RN 0.71+ 또는 아래처럼 대체
+  },
 
   otherProfileBlock: {
     alignItems: "center",
@@ -122,12 +116,11 @@ otherProfilesContainer: {
     padding: 13,
   },
   noMatchText: {
-  fontSize: 14,
-  color: "#999",
-  textAlign: "center",
-  marginTop: 20,
-},
-
+    fontSize: 14,
+    color: "#999",
+    textAlign: "center",
+    marginTop: 20,
+  },
 });
 
 export default styles;
