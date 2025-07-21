@@ -39,7 +39,7 @@ export default function MainHomeScreen({
 }: MainHomeScreenNavigationProp) {
   const [teams, setTeams] = useState<Team[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const { setTeamId, setRole } = useContext(TeamContext);
+  const { setTeamId, setRole, setTeamName } = useContext(TeamContext);
 
 
   useEffect(() => {
@@ -71,6 +71,7 @@ export default function MainHomeScreen({
         console.log(`선택한 팀 ID: ${item.id}, 팀 이름: ${item.teamName}, role: ${item.role}`);
         setTeamId(item.id);
         setRole(item.role);
+        setTeamName(item.teamName);
         navigation.navigate("HomeScreen", { teamId: item.id });
       }}
     >
