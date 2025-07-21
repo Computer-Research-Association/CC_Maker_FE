@@ -20,76 +20,73 @@ const BOX_PER_ROW = 3;
 const GRID_WIDTH = BOX_PER_ROW * (BOX_SIZE + BOX_MARGIN * 2);
 
 export default function MissionScreen() {
-  const { role,teamId, subGroupIdMap } = useContext(TeamContext);
+  const { role, teamId, subGroupIdMap } = useContext(TeamContext);
   const [missions, setMissions] = useState<any[]>([]);
   const [selectedBoxIndex, setSelectedBoxIndex] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [minScore, setMinScore] = useState<string>("");
 
-
   // teamId가 있을 때 subGroupId 뽑기
   const subGroupId = teamId ? subGroupIdMap[teamId] : undefined;
 
-useEffect(() => {
-  console.log("✅ teamId:", teamId);
-  console.log("✅ subGroupIdMap:", subGroupIdMap);
-  console.log("✅ subGroupId:", subGroupId);
+  useEffect(() => {
+    console.log("✅ teamId:", teamId);
+    console.log("✅ subGroupIdMap:", subGroupIdMap);
+    console.log("✅ subGroupId:", subGroupId);
 
-  if (!teamId || !subGroupId) return;
+    if (!teamId || !subGroupId) return;
 
-  const fetchMissions = async () => {
-    try {
-      // 1. 미션 목록 가져오기
-      const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
-      console.log("✅ 미션 API 응답:", res.data);
+    const fetchMissions = async () => {
+      try {
+        // 1. 미션 목록 가져오기
+        const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
+        console.log("✅ 미션 API 응답:", res.data);
 
-      // 2. 미션이 없으면 미션 부여 API 호출
-      if (res.data.length === 0) {
-        console.log("⚠️ 미션 없음 → 미션 부여 API 호출");
-        try {
-          await api.post(`/api/missions/assign/subgroup/${subGroupId}`);
-          console.log("✅ 미션 부여 완료 → 다시 목록 요청");
+        // 2. 미션이 없으면 미션 부여 API 호출
+        if (res.data.length === 0) {
+          console.log("⚠️ 미션 없음 → 미션 부여 API 호출");
+          try {
+            await api.post(`/api/missions/assign/subgroup/${subGroupId}`);
+            console.log("✅ 미션 부여 완료 → 다시 목록 요청");
 
-          // 3. 다시 미션 목록 불러오기
-          const newRes = await api.get(`/api/missions/subgroup/${subGroupId}`);
-          setMissions(newRes.data);
-        } catch (assignError) {
-          console.error("❌ 미션 부여 실패:", assignError);
-          alert("미션 부여 중 오류가 발생했습니다.");
+            // 3. 다시 미션 목록 불러오기
+            const newRes = await api.get(
+              `/api/missions/subgroup/${subGroupId}`
+            );
+            setMissions(newRes.data);
+          } catch (assignError) {
+            console.error("❌ 미션 부여 실패:", assignError);
+            alert("미션 부여 중 오류가 발생했습니다.");
+          }
+        } else {
+          // 미션이 있으면 그대로 저장
+          setMissions(res.data);
         }
-      } else {
-        // 미션이 있으면 그대로 저장
-        setMissions(res.data);
+      } catch (err) {
+        console.error("❌ 미션 불러오기 실패:", err);
       }
-    } catch (err) {
-      console.error("❌ 미션 불러오기 실패:", err);
-    }
-  };
+    };
 
-  fetchMissions();
-}, [teamId, subGroupId]);
-
-
+    fetchMissions();
+  }, [teamId, subGroupId]);
 
   console.log("✅ missions:", missions);
 
-
   // 최소학점 저장 함수
-  const saveMinScore = async () => {
-    const parsedScore = parseInt(minScore, 10);
-    if (isNaN(parsedScore) || parsedScore < 0) {
-      Alert.alert("오류", "유효한 최소 학점을 입력해주세요.");
-      return;
-    }
-    try {
-      await api.post(`/api/team/${teamId}/min-credit`, { minScore: parsedScore });
-      Alert.alert("성공", "최소 학점이 저장되었습니다.");
-    } catch (error) {
-      console.error("최소 학점 저장 실패:", error);
-      Alert.alert("오류", "최소 학점 저장에 실패했습니다.");
-    }
-  };
-
+  // const saveMinScore = async () => {
+  //   const parsedScore = parseInt(minScore, 10);
+  //   if (isNaN(parsedScore) || parsedScore < 0) {
+  //     Alert.alert("오류", "유효한 최소 학점을 입력해주세요.");
+  //     return;
+  //   }
+  //   try {
+  //     await api.post(`/api/team/${teamId}/min-credit`, { minScore: parsedScore });
+  //     Alert.alert("성공", "최소 학점이 저장되었습니다.");
+  //   } catch (error) {
+  //     console.error("최소 학점 저장 실패:", error);
+  //     Alert.alert("오류", "최소 학점 저장에 실패했습니다.");
+  //   }
+  // };
 
   const handleBoxPress = (index: number) => {
     setSelectedBoxIndex(index);
@@ -97,32 +94,32 @@ useEffect(() => {
   };
 
   // 미션 완료 관리
-const handleComplete = async () => {
-  if (selectedBoxIndex === null) return;
-  const mission = missions[selectedBoxIndex];
+  const handleComplete = async () => {
+    if (selectedBoxIndex === null) return;
+    const mission = missions[selectedBoxIndex];
 
-  try {
-    await api.post("/api/missions/complete", {
-      teamId,
-      subGroupId,
-      missionId: mission.missionTemplateId,
-    });
-    alert(`${mission.title} 미션이 완료 처리되었습니다.`);
+    try {
+      await api.post("/api/missions/complete", {
+        teamId,
+        subGroupId,
+        missionId: mission.missionTemplateId,
+      });
+      alert(`${mission.title} 미션이 완료 처리되었습니다.`);
 
-    // 1) 미션 리스트 다시 불러오기 대신,
-    // 2) 상태를 직접 업데이트 (즉시 UI 반영)
-    setMissions((prev) =>
-      prev.map((m, i) =>
-        i === selectedBoxIndex ? { ...m, completed: true } : m
-      )
-    );
-  } catch (error) {
-    console.error("미션 완료 처리 실패:", error);
-    alert("미션 완료 처리에 실패했습니다.");
-  } finally {
-    setModalVisible(false);
-  }
-};
+      // 1) 미션 리스트 다시 불러오기 대신,
+      // 2) 상태를 직접 업데이트 (즉시 UI 반영)
+      setMissions((prev) =>
+        prev.map((m, i) =>
+          i === selectedBoxIndex ? { ...m, completed: true } : m
+        )
+      );
+    } catch (error) {
+      console.error("미션 완료 처리 실패:", error);
+      alert("미션 완료 처리에 실패했습니다.");
+    } finally {
+      setModalVisible(false);
+    }
+  };
 
   // 미션 새로고침
   const handleRefresh = async (index: number) => {
@@ -149,24 +146,21 @@ const handleComplete = async () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-
-
-      {role === "LEADER" && (
-  <View style={styles.minScoreContainer}>
-    <Text style={styles.label}>최소 학점 :</Text>
-    <TextInput
-      style={styles.input}
-      value={minScore}
-      onChangeText={setMinScore}
-      keyboardType="number-pad"
-      placeholder="숫자"
-    />
-    <TouchableOpacity style={styles.saveButton} onPress={saveMinScore}>
-      <Text style={styles.saveButtonText}>저장</Text>
-    </TouchableOpacity>
-  </View>
-)}
-
+      {/* {role === "LEADER" && (
+        <View style={styles.minScoreContainer}>
+          <Text style={styles.label}>최소 학점 :</Text>
+          <TextInput
+            style={styles.input}
+            value={minScore}
+            onChangeText={setMinScore}
+            keyboardType="number-pad"
+            placeholder="숫자"
+          />
+          <TouchableOpacity style={styles.saveButton} onPress={saveMinScore}>
+            <Text style={styles.saveButtonText}>저장</Text>
+          </TouchableOpacity>
+        </View>
+      )} */}
 
       {/* 기존 미션 UI */}
       {[1, 3, 5, 10].map((score) => (
@@ -177,16 +171,22 @@ const handleComplete = async () => {
               <TouchableOpacity
                 key={`${score}-credit-${mission.subGroupMissionId}`}
                 style={[styles.box, mission.completed && styles.completedBox]}
-                 onPress={() => !mission.completed && handleBoxPress(missions.indexOf(mission))}
-                 disabled={mission.completed}
+                onPress={() =>
+                  !mission.completed &&
+                  handleBoxPress(missions.indexOf(mission))
+                }
+                disabled={mission.completed}
               >
                 <Text style={{ padding: 10 }}>{mission.description}</Text>
                 <TouchableOpacity
-                   style={[
-                            styles.refreshButton,
-                            mission.completed && styles.disabledRefreshButton,
-                          ]}
-                  onPress={() => !mission.completed && handleRefresh(missions.indexOf(mission))}
+                  style={[
+                    styles.refreshButton,
+                    mission.completed && styles.disabledRefreshButton,
+                  ]}
+                  onPress={() =>
+                    !mission.completed &&
+                    handleRefresh(missions.indexOf(mission))
+                  }
                   disabled={mission.completed}
                 >
                   <Text style={styles.refreshText}>↻</Text>

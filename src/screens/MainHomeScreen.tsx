@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   View,
   Text,
@@ -14,8 +14,6 @@ import { RootStackParamList } from "../navigation/types";
 import { TeamResponseDto } from "../types/team";
 import api from "../api/apiClient";
 import { TeamContext } from "../screens/TeamContext";
-
-
 
 type MainHomeScreenNavigationProp = {
   navigation: NativeStackNavigationProp<RootStackParamList, "MainHomeScreen">;
@@ -41,7 +39,6 @@ export default function MainHomeScreen({
   const [modalVisible, setModalVisible] = useState(false);
   const { setTeamId, setRole } = useContext(TeamContext);
 
-
   useEffect(() => {
     fetchUserTeams();
   }, []);
@@ -50,13 +47,13 @@ export default function MainHomeScreen({
     try {
       const response = await api.get<TeamResponseDto[]>("/api/team/mine");
       // teamId(Long)를 string id로 변환하여 맞춰줌
-      
+
       const mappedTeams = response.data.map((team) => ({
-      id: team.teamId, // number
-      teamName: team.teamName,
-      role: team.role,
-    }));
-      
+        id: team.teamId, // number
+        teamName: team.teamName,
+        role: team.role,
+      }));
+
       setTeams(mappedTeams);
     } catch (error) {
       console.error("팀 목록 불러오기 실패", error);
@@ -68,7 +65,9 @@ export default function MainHomeScreen({
     <TouchableOpacity
       style={styles.teamCard}
       onPress={() => {
-        console.log(`선택한 팀 ID: ${item.id}, 팀 이름: ${item.teamName}, role: ${item.role}`);
+        console.log(
+          `선택한 팀 ID: ${item.id}, 팀 이름: ${item.teamName}, role: ${item.role}`
+        );
         setTeamId(item.id);
         setRole(item.role);
         navigation.navigate("HomeScreen", { teamId: item.id });
