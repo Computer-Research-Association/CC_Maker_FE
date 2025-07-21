@@ -30,20 +30,49 @@ export default function MissionScreen() {
   // teamId가 있을 때 subGroupId 뽑기
   const subGroupId = teamId ? subGroupIdMap[teamId] : undefined;
 
-  useEffect(() => {
-    if (!teamId || !subGroupId) return;
+useEffect(() => {
+  console.log("✅ teamId:", teamId);
+  console.log("✅ subGroupIdMap:", subGroupIdMap);
+  console.log("✅ subGroupId:", subGroupId);
 
-    console.log("subGroupId:", subGroupId);
-    // 팀 미션 목록 API 호출
+  if (!teamId || !subGroupId) return;
 
-    api.get(`/api/missions/subgroup/${subGroupId}`)
-      .then((res) => {
+  const fetchMissions = async () => {
+    try {
+      // 1. 미션 목록 가져오기
+      const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
+      console.log("✅ 미션 API 응답:", res.data);
+
+      // 2. 미션이 없으면 미션 부여 API 호출
+      if (res.data.length === 0) {
+        console.log("⚠️ 미션 없음 → 미션 부여 API 호출");
+        try {
+          await api.post(`/api/missions/assign/subgroup/${subGroupId}`);
+          console.log("✅ 미션 부여 완료 → 다시 목록 요청");
+
+          // 3. 다시 미션 목록 불러오기
+          const newRes = await api.get(`/api/missions/subgroup/${subGroupId}`);
+          setMissions(newRes.data);
+        } catch (assignError) {
+          console.error("❌ 미션 부여 실패:", assignError);
+          alert("미션 부여 중 오류가 발생했습니다.");
+        }
+      } else {
+        // 미션이 있으면 그대로 저장
         setMissions(res.data);
-      })
-      .catch((err) => {
-        console.error("미션 불러오기 실패:", err);
-      });
-  }, [teamId, subGroupId]);
+      }
+    } catch (err) {
+      console.error("❌ 미션 불러오기 실패:", err);
+    }
+  };
+
+  fetchMissions();
+}, [teamId, subGroupId]);
+
+
+
+  console.log("✅ missions:", missions);
+
 
   // 최소학점 저장 함수
   const saveMinScore = async () => {

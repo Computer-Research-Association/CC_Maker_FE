@@ -6,6 +6,8 @@ import { TeamContext } from "./TeamContext";
 import api from "../api/apiClient";
 import { UserContext } from "./UserContext";
 import { useFocusEffect } from "@react-navigation/native";
+import AnimatedProgressBar from "../component/AnimatedProgressBar";
+
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "HomeScreen">;
@@ -80,23 +82,26 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>팀 최소 학점: {scoreboard.minScore}</Text>
+        <Text style={styles.title}>팀 최소 학점: {scoreboard.minScore}</Text>
 
-      <View style={styles.section}>
-        <Text style={styles.subtitle}>
-          내 서브그룹 ({scoreboard.mySubGroup.name}) 점수: {scoreboard.mySubGroup.score}
-        </Text>
-      </View>
+        <AnimatedProgressBar
+          current={scoreboard.mySubGroup.score}
+          max={scoreboard.minScore}
+          label={`내 서브그룹 (${scoreboard.mySubGroup.name})`}
+        />
 
-      <View style={styles.section}>
-        <Text style={styles.subtitle}>다른 서브그룹 점수</Text>
-        {scoreboard.otherSubGroups.map((sg) => (
-          <Text key={sg.subGroupId} style={styles.subGroupText}>
-            {sg.name}: {sg.score}
-          </Text>
-        ))}
-      </View>
-    </ScrollView>
+        <View style={styles.section}>
+          <Text style={styles.subtitle}>다른 서브그룹 달성도</Text>
+          {scoreboard.otherSubGroups.map((sg) => (
+            <AnimatedProgressBar
+              key={sg.subGroupId}
+              current={sg.score}
+              max={scoreboard.minScore}
+              label={sg.name}
+            />
+          ))}
+        </View>
+      </ScrollView>
   );
 }
 
