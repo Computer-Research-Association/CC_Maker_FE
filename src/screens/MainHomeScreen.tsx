@@ -37,7 +37,7 @@ export default function MainHomeScreen({
 }: MainHomeScreenNavigationProp) {
   const [teams, setTeams] = useState<Team[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const { setTeamId, setRole } = useContext(TeamContext);
+  const { setTeamId, setRole, setTeamName } = useContext(TeamContext);
 
   useEffect(() => {
     fetchUserTeams();
@@ -70,6 +70,7 @@ export default function MainHomeScreen({
         );
         setTeamId(item.id);
         setRole(item.role);
+        setTeamName(item.teamName);
         navigation.navigate("HomeScreen", { teamId: item.id });
       }}
     >
