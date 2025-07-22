@@ -11,7 +11,7 @@ import api from "../api/apiClient";
 import { TeamContext } from "../screens/TeamContext";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
-import { UserContext } from "./UserContext";  // UserContext 경로에 맞게 수정
+import { UserContext } from "./UserContext"; // UserContext 경로에 맞게 수정
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "CheckScreen">;
@@ -27,7 +27,7 @@ export default function CheckScreen({ navigation }: Props) {
   const [members, setMembers] = useState<Member[]>([]);
   const [isMatchingStarted, setIsMatchingStarted] = useState(false);
   const { teamId, subGroupIdMap, setSubGroupIdMap } = useContext(TeamContext);
-  const { userId } = useContext(UserContext);  // userId 받아오기
+  const { userId } = useContext(UserContext); // userId 받아오기
   const [matchingStatus, setMatchingStatus] = useState<
     "idle" | "loading" | "done"
   >("idle");
@@ -41,7 +41,7 @@ export default function CheckScreen({ navigation }: Props) {
     }
     const fetchSubGroupId = async () => {
       try {
-          const response = await api.get(`/api/matching/subgroup/${teamId}`, {
+        const response = await api.get(`/api/matching/subgroup/${teamId}`, {
           params: { userId },
         });
 
@@ -65,7 +65,6 @@ export default function CheckScreen({ navigation }: Props) {
 
     fetchSubGroupId();
   }, [teamId, userId, setSubGroupIdMap]);
-
 
   // 1. subGroupId가 없을 때 => 매칭 전 팀 멤버 조회 및 매칭 시작 여부 조회
   useEffect(() => {
@@ -96,7 +95,7 @@ export default function CheckScreen({ navigation }: Props) {
       alert("팀 정보가 없습니다.");
       return;
     }
-    
+
     if (!userId) {
       alert("로그인이 필요합니다.");
       return;
@@ -145,7 +144,7 @@ export default function CheckScreen({ navigation }: Props) {
 
         setTimeout(() => {
           setMatchingStatus("done");
-        }, 1000);
+        }, 2000);
       } else {
         alert("매칭이 시작되지 않았습니다.");
         setMatchingStatus("idle");
