@@ -72,22 +72,6 @@ export default function MissionScreen() {
 
   console.log("✅ missions:", missions);
 
-  // 최소학점 저장 함수
-  // const saveMinScore = async () => {
-  //   const parsedScore = parseInt(minScore, 10);
-  //   if (isNaN(parsedScore) || parsedScore < 0) {
-  //     Alert.alert("오류", "유효한 최소 학점을 입력해주세요.");
-  //     return;
-  //   }
-  //   try {
-  //     await api.post(`/api/team/${teamId}/min-credit`, { minScore: parsedScore });
-  //     Alert.alert("성공", "최소 학점이 저장되었습니다.");
-  //   } catch (error) {
-  //     console.error("최소 학점 저장 실패:", error);
-  //     Alert.alert("오류", "최소 학점 저장에 실패했습니다.");
-  //   }
-  // };
-
   const handleBoxPress = (index: number) => {
     setSelectedBoxIndex(index);
     setModalVisible(true);
@@ -146,22 +130,6 @@ export default function MissionScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* {role === "LEADER" && (
-        <View style={styles.minScoreContainer}>
-          <Text style={styles.label}>최소 학점 :</Text>
-          <TextInput
-            style={styles.input}
-            value={minScore}
-            onChangeText={setMinScore}
-            keyboardType="number-pad"
-            placeholder="숫자"
-          />
-          <TouchableOpacity style={styles.saveButton} onPress={saveMinScore}>
-            <Text style={styles.saveButtonText}>저장</Text>
-          </TouchableOpacity>
-        </View>
-      )} */}
-
       {/* 기존 미션 UI */}
       {[1, 3, 5, 10].map((score) => (
         <View key={score} style={styles.section}>
@@ -227,51 +195,13 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     alignItems: "center",
   },
-  // ✅ 최소 학점 한 줄 UI
-  minScoreContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderColor: "#eee",
-    width: "100%",
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginRight: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 6,
-    width: 80,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    fontSize: 14,
-    marginRight: 8,
-    textAlign: "center",
-  },
-  saveButton: {
-    backgroundColor: "#4CAF50",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-  },
-  saveButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-
   section: {
     marginBottom: 40,
     alignItems: "center",
   },
   title: {
-    backgroundColor: "#FFC0C0",
+    backgroundColor: "#FFD1D1",
+    // color: "#fff",
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 10,

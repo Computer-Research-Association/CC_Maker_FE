@@ -407,10 +407,9 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>문의하기</Text>
             <Text style={styles.modalCode}>
-              문의는 아래 이메일로 보내주세요.{"\n"}
-              📧 example@email.com
+              문의는 아래 이메일로 보내주세요.
             </Text>
-
+            <Text style={styles.modalCodeEmail}>📧 example@email.com</Text>
             <TouchableOpacity
               onPress={() => setInquiryModalVisible(false)}
               style={styles.closeButton}
@@ -431,12 +430,12 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>최소 학점 설정</Text>
             <Text style={styles.modalCode}>
-              원하는 최소 학점을 입력해주세요 (예: 2.5)
+              원하는 최소 학점을 입력해주세요
             </Text>
 
             <TextInput
               style={styles.input}
-              placeholder="예: 2.5"
+              placeholder="예: 30"
               keyboardType="numeric"
               value={minScore}
               onChangeText={setMinScore}
@@ -532,7 +531,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   modalCode: {
-    fontSize: 20,
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 16,
+  },
+  modalCodeEmail: {
+    fontSize: 14,
     fontWeight: "bold",
     color: "#333",
     marginBottom: 16,
@@ -540,7 +545,7 @@ const styles = StyleSheet.create({
   copyButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: "#009bff",
+    backgroundColor: "#ff9494",
     borderRadius: 6,
   },
   copyText: {
@@ -551,9 +556,12 @@ const styles = StyleSheet.create({
     marginTop: 12,
     paddingHorizontal: 16,
     paddingVertical: 8,
+    backgroundColor: "#ff9494",
+    borderRadius: 5,
   },
   closeText: {
-    color: "#888",
+    color: "#fff",
+    fontWeight: "bold",
   },
   // ⭐ 최소 학점 입력 필드 스타일 추가
   input: {
@@ -584,7 +592,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 5,
     padding: 10,
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#FF9494",
     borderRadius: 5,
     alignItems: "center",
   },
