@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 //이놈 나중에 공인 도메인/ip로 변경해야한다
 //지금은 cra와이파이로 고정해놓자
-const BASE_URL = "http://192.168.29.133:8080";
+const BASE_URL = "http://192.168.29.245:8080";
 
 const ACCESS_TOKEN_KEY = "ACCESS_TOKEN";
 const REFRESH_TOKEN_KEY = "REFRESH_TOKEN";
