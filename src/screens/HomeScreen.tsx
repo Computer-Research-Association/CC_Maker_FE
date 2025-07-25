@@ -6,6 +6,8 @@ import {
   ActivityIndicator,
   ScrollView,
   SafeAreaView,
+  StatusBar,
+  Platform,
 } from "react-native";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -32,7 +34,6 @@ type ScoreboardResponse = {
   otherSubGroups: SubGroupScore[];
 };
 
-// ✅ 백분율 계산 함수 추가
 const calculatePercent = (score: number, minScore: number) => {
   if (minScore === 0) return 0;
   return Math.min(100, Math.round((score / minScore) * 100));
@@ -76,7 +77,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       .get(`/api/teams/${teamId}/scoreboard`, { params: { userId } })
       .then((res) => {
         setScoreboard(res.data);
-        console.log("✅ Scoreboard API 응답:", res.data); // 여기에 콘솔 찍기
+        console.log("✅ Scoreboard API 응답:", res.data);
         setError(null);
       })
       .catch((err) => {
@@ -117,74 +118,87 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     );
   }
 
-  const sortedOtherSubGroups = scoreboard.otherSubGroups
-    .filter((sg) => sg.subGroupId !== scoreboard.mySubGroup.subGroupId) // ✅ 내 그룹 제외
-    .sort((a, b) => b.score - a.score); // 점수순 정렬
+  // ✅ 전체 그룹 정렬 및 1등/내 그룹 분리
+  const allGroups = [scoreboard.mySubGroup, ...scoreboard.otherSubGroups];
+  const sortedGroups = [...allGroups].sort((a, b) => b.score - a.score);
+  const topTeam = sortedGroups[0];
+  const isMyTeamTop = topTeam.subGroupId === scoreboard.mySubGroup.subGroupId;
+  const mySubGroupId = scoreboard.mySubGroup.subGroupId;
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.container}>
-        {/* ✅ 팀 이름 표시 */}
-        <View style={styles.groupTitleContainer}>
-          <Text style={styles.crown}>👑</Text>
-          <Text style={styles.teamNameText}>
-            {scoreboard.mySubGroup.members?.join(", ") ?? "멤버 없음"}
-          </Text>
-        </View>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+        <ScrollView contentContainerStyle={styles.container}>
+          {/* ✅ 왕관 + 내 그룹 멤버 표시 */}
+          <View style={styles.groupTitleContainer}>
+            <Text style={styles.crown}>👑</Text>
+            <Text
+              style={styles.teamNameText}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.7} // 너무 작아지는 것 방지
+            >
+              {topTeam.members?.join(" ❣️ ") ?? "멤버 없음"}
+            </Text>
+          </View>
 
-        <Text style={styles.title}>팀 최소 학점: {scoreboard.minScore}</Text>
+          {/* ✅ 1등 그룹 카드 */}
+          <View style={[styles.progressCard, styles.topTeamCard]}>
+            {/* <Text style={styles.subtitle}>🥇</Text> */}
+            <Text style={styles.cardTitle}>
+              {topTeam.members?.join(" 😉 ") ?? "멤버 없음"}
+            </Text>
+            <AnimatedProgressBar
+              current={topTeam.score}
+              max={scoreboard.minScore}
+              barHeight={30}
+            />
+          </View>
+          <View style={styles.divider} />
 
-        <View style={{ marginBottom: 30, width: "100%" }}>
-          {/* ✅ 내 서브그룹 백분율 포함 */}
-          <AnimatedProgressBar
-            current={scoreboard.mySubGroup.score}
-            max={scoreboard.minScore}
-            // label={`${scoreboard.mySubGroup.members.join(", ")} (${calculatePercent(scoreboard.mySubGroup.score, scoreboard.minScore)}%)`}
-            label={`${
-              scoreboard.mySubGroup.members?.join(", ") ?? "멤버 없음"
-            } (${calculatePercent(
-              scoreboard.mySubGroup.score,
-              scoreboard.minScore
-            )}%)`}
-          />
-        </View>
-
-        <View style={styles.section}>
-          {sortedOtherSubGroups.map((sg) => (
-            <View key={sg.subGroupId} style={{ marginBottom: 20 }}>
-              <AnimatedProgressBar
-                current={sg.score}
-                max={scoreboard.minScore}
-                label={`${
-                  sg.members?.join(", ") ?? "멤버 없음"
-                } (${calculatePercent(sg.score, scoreboard.minScore)}%)`}
-                barHeight={25} // ✅ 다른 애들은 얇게
-              />
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          {/* ✅ 나머지 그룹들 (점수순 + 내 그룹 강조) */}
+          <View style={styles.section}>
+            {sortedGroups
+              .filter((sg) => sg.subGroupId !== topTeam.subGroupId)
+              .map((sg) => {
+                const isMyTeam = sg.subGroupId === mySubGroupId;
+                return (
+                  <View
+                    key={sg.subGroupId}
+                    style={[styles.progressCard, isMyTeam && styles.myCard]}
+                  >
+                    <Text style={styles.cardTitle}>
+                      {sg.members?.join(" ⭐ ") ?? "멤버 없음"}
+                    </Text>
+                    <AnimatedProgressBar
+                      current={sg.score}
+                      max={scoreboard.minScore}
+                      barHeight={25}
+                    />
+                  </View>
+                );
+              })}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1, // ⭐ ScrollView에서 전체 영역 채움
-    justifyContent: "flex-start", // ⭐ 위에서부터 정렬
+    flexGrow: 1,
+    justifyContent: "flex-start",
     alignItems: "center",
     padding: 20,
-    paddingBottom: 80, // ⭐ 하단 safe 영역 확보
-    paddingTop: 60,
+    paddingBottom: 80,
+    paddingTop: 20,
+    backgroundColor: "#fff",
   },
   title: { fontSize: 20, fontWeight: "bold", marginBottom: 20 },
   section: { marginBottom: 30, width: "100%" },
   subtitle: { fontSize: 16, fontWeight: "600", marginBottom: 10 },
-  members: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 4,
-  },
   teamNameText: {
     fontSize: 24,
     fontWeight: "bold",
@@ -192,12 +206,46 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   groupTitleContainer: {
-    alignItems: "center", // 수직 가운데 정렬
-    marginBottom: 20, // 아래 여백
+    alignItems: "center",
+    marginBottom: 20,
   },
   crown: {
-    fontSize: 48, // 크게!
-    color: "#FFD700", // 금색 왕관 느낌
-    marginBottom: 4, // 왕관 아래 살짝 간격
+    fontSize: 48,
+    color: "#FFD700",
+    marginBottom: 4,
+  },
+  progressCard: {
+    width: "100%",
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  myCard: {
+    backgroundColor: "#F0F8FF",
+    borderColor: "#007AFF",
+    borderWidth: 1,
+  },
+  topTeamCard: {
+    backgroundColor: "#FFE3E1",
+    borderColor: "#FF9494",
+    borderWidth: 1.5,
+  },
+  cardTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    marginBottom: 10,
+    color: "#333",
+  },
+  divider: {
+    width: "100%",
+    height: 1,
+    backgroundColor: "#ccc",
+    marginVertical: 16, // 위아래 간격 조절
   },
 });
