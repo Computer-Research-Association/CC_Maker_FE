@@ -13,18 +13,21 @@ import {
 import { TeamContext } from "../screens/TeamContext";
 import MissionBox from "../component/MissionBox";
 import api from "../api/apiClient";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
-const BOX_SIZE = 120;
-const BOX_MARGIN = 6;
+const BOX_SIZE = 108;
+const BOX_MARGIN = 4;
 const BOX_PER_ROW = 3;
 const GRID_WIDTH = BOX_PER_ROW * (BOX_SIZE + BOX_MARGIN * 2);
 
 export default function MissionScreen() {
-  const { role, teamId, subGroupIdMap } = useContext(TeamContext);
+  const { role, teamId, subGroupIdMap, teamName } = useContext(TeamContext);
   const [missions, setMissions] = useState<any[]>([]);
   const [selectedBoxIndex, setSelectedBoxIndex] = useState<number | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [minScore, setMinScore] = useState<string>("");
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
 
   // teamId가 있을 때 subGroupId 뽑기
   const subGroupId = teamId ? subGroupIdMap[teamId] : undefined;
@@ -124,89 +127,215 @@ export default function MissionScreen() {
     }
   };
 
+  const handleRefreshRequest = () => {
+    console.log("🟢 새로고침 확인 모달 열기 시도!");
+    setConfirmModalVisible(true);
+  };
+
+  const confirmRefresh = async () => {
+    if (selectedBoxIndex === null) return;
+    const mission = missions[selectedBoxIndex];
+
+    try {
+      await api.post(
+        `/api/missions/refresh/subgroup/${subGroupId}/${mission.subGroupMissionId}/${mission.score}`
+      );
+      alert(`${mission.title} 미션이 새로고침되었습니다.`);
+
+      const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
+      setMissions(res.data);
+    } catch (error) {
+      console.error("미션 새로고침 실패:", error);
+      alert("미션 새로고침에 실패했습니다.");
+    } finally {
+      setConfirmModalVisible(false);
+    }
+  };
+
   // 학점별 미션 분류
   const missionsByScore = (score: number) =>
     missions.filter((m) => m.score === score);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* 기존 미션 UI */}
-      {[1, 3, 5, 10].map((score) => (
-        <View key={score} style={styles.section}>
-          <Text style={styles.title}>{score}학점</Text>
-          <View style={styles.grid}>
-            {missionsByScore(score).map((mission, i) => (
-              <TouchableOpacity
-                key={`${score}-credit-${mission.subGroupMissionId}`}
-                style={[styles.box, mission.completed && styles.completedBox]}
-                onPress={() =>
-                  !mission.completed &&
-                  handleBoxPress(missions.indexOf(mission))
-                }
-                disabled={mission.completed}
-              >
-                <Text style={{ padding: 10 }}>{mission.description}</Text>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "#fff" }}
+      edges={["bottom"]}
+    >
+      <View style={styles.topheader}></View>
+
+      <ScrollView
+        contentContainerStyle={styles.container}
+        style={{ backgroundColor: "#fff" }}
+      >
+        <View style={styles.header}>
+          <Text style={styles.logoText}>
+            🌟 {teamName ?? "팀 이름이 없습니다"} 팀 CC 미션 🌟
+          </Text>
+        </View>
+        {/* 기존 미션 UI */}
+        {[1, 3, 5, 10].map((score) => (
+          <View key={score} style={styles.section}>
+            <Text style={styles.title}>{score}학점</Text>
+            <View style={styles.grid}>
+              {missionsByScore(score).map((mission, i) => (
                 <TouchableOpacity
-                  style={[
-                    styles.refreshButton,
-                    mission.completed && styles.disabledRefreshButton,
-                  ]}
+                  key={`${score}-credit-${mission.subGroupMissionId}`}
+                  style={[styles.box, mission.completed && styles.completedBox]}
                   onPress={() =>
                     !mission.completed &&
-                    handleRefresh(missions.indexOf(mission))
+                    handleBoxPress(missions.indexOf(mission))
                   }
                   disabled={mission.completed}
                 >
-                  <Text style={styles.refreshText}>↻</Text>
+                  <Text style={{ padding: 10, textAlign: "center" }}>
+                    {mission.description}
+                  </Text>
                 </TouchableOpacity>
-              </TouchableOpacity>
-            ))}
+              ))}
+            </View>
           </View>
-        </View>
-      ))}
+        ))}
+      </ScrollView>
 
-      {/* ✅ 모달 */}
       <Modal
         transparent
-        animationType="slide"
+        animationType="fade"
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={() => {
+          setModalVisible(false);
+          setConfirmModalVisible(false);
+        }}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>이 미션을 완료하시겠습니까?</Text>
-            <View style={styles.modalButtons}>
-              <Button title="완료" onPress={handleComplete} />
-              <Button
-                title="취소"
-                color="gray"
-                onPress={() => setModalVisible(false)}
-              />
-            </View>
+            {confirmModalVisible ? (
+              // ✅ 새로고침 확인 화면
+              <>
+                <Text style={styles.missionTitle}>
+                  정말 이 미션을 새로고침할까요?
+                </Text>
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity
+                    style={styles.confirmButton}
+                    onPress={confirmRefresh}
+                  >
+                    <Text style={styles.buttonText}>새로고침</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => setConfirmModalVisible(false)}
+                  >
+                    <Text style={styles.buttonText}>아니오</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            ) : (
+              // ✅ 미션 상세 화면
+              <>
+                <Text style={styles.missionTitle}>
+                  {missions[selectedBoxIndex!]?.score}학점
+                </Text>
+
+                <View style={styles.missionBox}>
+                  <View style={styles.missionContentWrapper}>
+                    <Text style={styles.missionContent}>
+                      {selectedBoxIndex !== null
+                        ? missions[selectedBoxIndex].description
+                        : ""}
+                    </Text>
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.refreshButton}
+                    onPress={() => setConfirmModalVisible(true)}
+                    disabled={
+                      selectedBoxIndex === null ||
+                      missions[selectedBoxIndex].completed
+                    }
+                  >
+                    <Text style={styles.refreshText}>↻ 새로고침</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity
+                    style={styles.confirmButton}
+                    onPress={handleComplete}
+                  >
+                    <Text style={styles.buttonText}>미션 완료</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Text style={styles.buttonText}>취소</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
           </View>
         </View>
       </Modal>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
-    paddingVertical: 20,
+    paddingTop: 15, // 여백 여기서 조절
+    paddingBottom: 60,
     alignItems: "center",
+    backgroundColor: "#fff",
   },
+  topheader: {
+    paddingTop: 50,
+    paddingBottom: 12,
+    paddingHorizontal: 20,
+    alignItems: "flex-start", // 이미 잘 되어 있음
+    justifyContent: "center",
+    backgroundColor: "#fff",
+  },
+
+  header: {
+    paddingTop: 20,
+    paddingBottom: 12,
+    paddingHorizontal: 20,
+    alignItems: "flex-start", // 이미 잘 되어 있음
+    justifyContent: "center",
+    backgroundColor: "#fff",
+  },
+
+  logoText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "left",
+    width: "100%", // ✅ 또는 alignSelf: "stretch"
+  },
+
   section: {
-    marginBottom: 40,
+    marginBottom: 10,
+    padding: 16, // 내부 여백
+    backgroundColor: "#fff", // 흰색 배경
+    borderRadius: 20,
+    width: GRID_WIDTH + 15,
     alignItems: "center",
+
+    shadowColor: "#000", // 그림자 색 (iOS)
+    shadowOpacity: 0.05, // 투명도 (0~1)
+    shadowOffset: { width: 0, height: 4 }, // 그림자 위치
+    shadowRadius: 6, // 퍼짐 정도
+    elevation: 5, // Android 그림자
   },
   title: {
-    backgroundColor: "#FFD1D1",
-    // color: "#fff",
+    // 학점
+    backgroundColor: "#FF9494",
     paddingHorizontal: 16,
     paddingVertical: 6,
-    borderRadius: 10,
+    borderRadius: 12,
+    marginBottom: 16,
     fontWeight: "bold",
-    marginBottom: 12,
+    fontSize: 14,
+    color: "#fff",
   },
   grid: {
     width: GRID_WIDTH,
@@ -217,15 +346,13 @@ const styles = StyleSheet.create({
   box: {
     width: BOX_SIZE,
     height: BOX_SIZE,
-    backgroundColor: "#f6f6f6",
+    backgroundColor: "#fff",
     borderRadius: 20,
     borderWidth: 0.5,
     borderColor: "#ddd",
     margin: BOX_MARGIN,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 4,
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalOverlay: {
     flex: 1,
@@ -246,14 +373,72 @@ const styles = StyleSheet.create({
   },
   modalButtons: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    gap: 16,
+    justifyContent: "center",
+    gap: 12,
   },
+  confirmButton: {
+    backgroundColor: "#FF9494", // 코랄색
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    elevation: 2, // 안드로이드 그림자
+  },
+  cancelButton: {
+    backgroundColor: "#bbb", // 회색
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    elevation: 1,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  missionBox: {
+    backgroundColor: "#fefefe",
+    padding: 20,
+    borderRadius: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 2,
+    width: "100%",
+    minHeight: 360,
+  },
+
+  missionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: "#333",
+    textAlign: "center",
+  },
+
+  missionContent: {
+    fontSize: 15,
+    // color: "#555",
+    color: "#333", // 배경과 대비되게
+    textAlign: "center",
+    lineHeight: 22,
+  },
+
+  missionContentWrapper: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+
   refreshButton: {
     position: "absolute",
-    top: 6,
-    right: 6,
+    bottom: 6,
+    right: 8,
     backgroundColor: "#eee",
     padding: 4,
     borderRadius: 10,

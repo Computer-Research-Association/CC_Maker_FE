@@ -1,96 +1,3 @@
-// import React, { useEffect, useRef, useState } from "react";
-// import {
-//   View,
-//   Text,
-//   StyleSheet,
-//   Animated,
-//   LayoutChangeEvent,
-// } from "react-native";
-
-// type ProgressBarProps = {
-//   current: number;
-//   max: number;
-//   label?: string;
-// };
-
-// export default function AnimatedProgressBar({
-//   current,
-//   max,
-//   label,
-// }: ProgressBarProps) {
-//   const progress = current / max; // 100% 넘는 값 허용
-//   const animatedWidth = useRef(new Animated.Value(0)).current;
-//   const [barWidth, setBarWidth] = useState(0);
-
-//   useEffect(() => {
-//     if (barWidth > 0) {
-//       Animated.timing(animatedWidth, {
-//         toValue: barWidth * progress,
-//         duration: 800,
-//         useNativeDriver: false,
-//       }).start();
-//     }
-//   }, [progress, barWidth]);
-
-//   const getBarColor = () => {
-//     if (progress < 0.5) return "#f44336"; // 빨강
-//     if (progress < 0.8) return "#ffeb3b"; // 노랑
-//     return "#4caf50"; // 초록
-//   };
-
-//   const handleLayout = (event: LayoutChangeEvent) => {
-//     setBarWidth(event.nativeEvent.layout.width);
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       {label ? <Text style={styles.label}>{label}</Text> : null}
-//       <View style={styles.barBackground} onLayout={handleLayout}>
-//         <Animated.View
-//           style={[
-//             styles.barFill,
-//             {
-//               width: animatedWidth, // px 단위로 계산된 값
-//               backgroundColor: getBarColor(),
-//             },
-//           ]}
-//         />
-//       </View>
-//       <Text style={styles.text}>
-//         {current} / {max} ({Math.round(progress * 100)}%)
-//       </Text>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     width: "100%",
-//     marginBottom: 20,
-//   },
-//   label: {
-//     fontSize: 16,
-//     fontWeight: "600",
-//     marginBottom: 8,
-//   },
-//   barBackground: {
-//     width: "100%",
-//     height: 20,
-//     backgroundColor: "#e0e0e0",
-//     borderRadius: 10,
-//     overflow: "hidden",
-//   },
-//   barFill: {
-//     height: "100%",
-//     borderRadius: 10,
-//   },
-//   text: {
-//     marginTop: 8,
-//     textAlign: "center",
-//     fontSize: 14,
-//   },
-// });
-
 import React, { useEffect, useRef, useState } from "react";
 import {
   View,
@@ -104,16 +11,16 @@ type ProgressBarProps = {
   current: number;
   max: number;
   label?: string;
-  barHeight?: number; // ⭐ 추가됨
+  barHeight?: number;
 };
 
 export default function AnimatedProgressBar({
   current,
   max,
   label,
-  barHeight = 20, // ⭐ 기본값
+  barHeight = 20,
 }: ProgressBarProps) {
-  const progress = current / max;
+  const progress = max === 0 ? 0 : current / max;
   const animatedWidth = useRef(new Animated.Value(0)).current;
   const [barWidth, setBarWidth] = useState(0);
 
@@ -128,46 +35,47 @@ export default function AnimatedProgressBar({
   }, [progress, barWidth]);
 
   const getBarColor = () => {
-    if (progress < 0.5) return "#f44336";
-    if (progress < 0.8) return "#ffeb3b";
-    return "#4caf50";
+    if (progress < 0.3) return "#FFF5E4";
+    if (progress < 0.5) return "#FFE3E1";
+    if (progress < 0.8) return "#FFD1D1";
+    return "#FF9494";
   };
 
   const handleLayout = (event: LayoutChangeEvent) => {
     setBarWidth(event.nativeEvent.layout.width);
   };
 
+  const formattedLabel = `${current} / ${max} (${Math.round(progress * 100)}%)`;
+
   return (
     <View style={styles.container}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
-
+      {/* ✅ 퍼센트 바 영역 */}
       <View
         style={[
+          styles.barContainer,
           {
-            height: barHeight, // ⭐ 적용
-            backgroundColor: "#e0e0e0",
-            borderRadius: barHeight / 2, // ⭐ 적용
-            overflow: "hidden",
-            width: "100%",
+            height: barHeight - 10,
+            borderRadius: barHeight / 2,
           },
         ]}
         onLayout={handleLayout}
       >
         <Animated.View
           style={[
+            styles.barFill,
             {
-              height: "100%",
               width: animatedWidth,
               backgroundColor: getBarColor(),
-              borderRadius: barHeight / 2, // ⭐ 적용
+              borderRadius: barHeight / 2,
             },
           ]}
         />
-      </View>
 
-      <Text style={styles.text}>
-        {current} / {max} ({Math.round(progress * 100)}%)
-      </Text>
+        {/* ✅ 바 안 텍스트 */}
+        <View style={styles.labelOverlay}>
+          <Text style={styles.labelText}>{formattedLabel}</Text>
+        </View>
+      </View>
     </View>
   );
 }
@@ -175,16 +83,30 @@ export default function AnimatedProgressBar({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 1,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 8,
+  barContainer: {
+    width: "100%",
+    backgroundColor: "#fff",
+    position: "relative",
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#ddd", // 필요 시 "#000" 등으로 변경
   },
-  text: {
-    marginTop: 8,
-    textAlign: "center",
-    fontSize: 14,
+  barFill: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+  },
+  labelOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  labelText: {
+    fontSize: 10,
+    fontWeight: "300",
+    color: "#000", // 필요하면 contrast 고려해서 white로 바꿔도 됨
   },
 });

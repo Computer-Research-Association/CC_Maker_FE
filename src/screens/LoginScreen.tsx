@@ -1,4 +1,4 @@
-import React, { useState,useContext  } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import { login } from "../api/authApi";
 import styles from "../styles/LoginScreen.styles";
 import { TeamContext } from "../screens/TeamContext";
 import { UserContext } from "./UserContext"; // 경로 맞게 수정
-
+import { Ionicons } from "@expo/vector-icons"; // 비밀번호 토글
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -26,7 +26,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   const [password, setPassword] = useState<string>("");
   const { setTeamId, setSubGroupIdMap } = useContext(TeamContext);
   const { setUserId } = useContext(UserContext);
-
+  const [secure, setSecure] = useState(true); // 비밀번호 토글
 
   const handleLogin = async () => {
     try {
@@ -35,9 +35,8 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       setUserId(response.userId);
       setTeamId(null);
       setSubGroupIdMap({});
-      
-      navigation.navigate("MainHomeScreen");
 
+      navigation.navigate("MainHomeScreen");
     } catch (error: unknown) {
       // 다시 공부 하기 =
       const errorMessage =
@@ -65,13 +64,29 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         autoCapitalize="none"
       />
 
-      <TextInput
-        style={styles.input}
-        placeholder="비밀번호"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+      {/* 비밀번호 토글 기능 수정 */}
+      <View
+        style={[
+          styles.input,
+          {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          },
+        ]}
+      >
+        <TextInput
+          style={{ flex: 1 }}
+          placeholder="비밀번호"
+          secureTextEntry={secure} // 위의 secure 상태값 사용
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity onPress={() => setSecure(!secure)}>
+          <Ionicons name={secure ? "eye-off" : "eye"} size={22} color="gray" />
+        </TouchableOpacity>
+      </View>
+      {/* 수정완 25.07.25 박진우 */}
 
       <View style={styles.linkRow}>
         <Text style={styles.separator}>|</Text>
