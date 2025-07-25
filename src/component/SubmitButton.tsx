@@ -16,7 +16,12 @@ type Props = {
   disabled?: boolean;
 };
 
-export default function SubmitButton({ title, onPress, disabled }: Props) {
+export default function SubmitButton({
+  title,
+  onPress,
+  disabled,
+  style,
+}: Props) {
   const yAnim = useRef(new Animated.Value(0)).current;
 
   const handlePressIn = () => {
@@ -38,7 +43,11 @@ export default function SubmitButton({ title, onPress, disabled }: Props) {
   return (
     <View style={styles.shadowWrapper}>
       <View
-        style={[styles.shadowLayer, disabled && styles.disabledShadowLayer]}
+        style={[
+          styles.shadowLayer,
+          disabled && styles.disabledShadowLayer,
+          style,
+        ]}
       />
       <Pressable
         onPressIn={handlePressIn}
@@ -51,6 +60,7 @@ export default function SubmitButton({ title, onPress, disabled }: Props) {
             styles.submitButton,
             disabled && styles.disabledButton, // ✅ 비활성화 스타일 추가
             { transform: [{ translateY: yAnim }] },
+            style,
           ]}
         >
           <Text style={styles.submitText}>{title}</Text>
