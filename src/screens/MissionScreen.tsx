@@ -127,11 +127,6 @@ export default function MissionScreen() {
     }
   };
 
-  const handleRefreshRequest = () => {
-    console.log("🟢 새로고침 확인 모달 열기 시도!");
-    setConfirmModalVisible(true);
-  };
-
   const confirmRefresh = async () => {
     if (selectedBoxIndex === null) return;
     const mission = missions[selectedBoxIndex];

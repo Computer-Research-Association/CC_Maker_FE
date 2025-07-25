@@ -12,6 +12,7 @@ import { TeamContext } from "../screens/TeamContext";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { UserContext } from "./UserContext"; // UserContext 경로에 맞게 수정
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "CheckScreen">;
@@ -159,24 +160,35 @@ export default function CheckScreen({ navigation }: Props) {
     }
   };
 
+  // surveyCompleted가 false인 사람이 먼저 오게
+  const sortedMembers = [...members].sort((a, b) => {
+    if (a.surveyCompleted === b.surveyCompleted) return 0;
+    return a.surveyCompleted ? 1 : -1;
+  });
+
   return (
     <View style={styles.container}>
       <Text style={styles.role}>팀원 설문 상태</Text>
       <Text style={styles.count}>{members.length}명</Text>
 
       <FlatList
-        data={members}
+        data={sortedMembers}
         keyExtractor={(item) => item.userId.toString()}
         contentContainerStyle={styles.listContainer}
-        renderItem={({ item }) => (
-          <View style={styles.listItem}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{item.userName.charAt(0)}</Text>
+        renderItem={({ item, index }) => (
+          <View>
+            {index !== 0 && <View style={styles.divider} />}
+            <View style={styles.listItem}>
+              <Text style={styles.name}>{item.userName}</Text>
+              <Ionicons
+                name={
+                  item.surveyCompleted ? "checkmark-circle" : "ellipse-outline"
+                }
+                size={90}
+                color={item.surveyCompleted ? "#50B889" : "#ccc"}
+                style={styles.checkbox}
+              />
             </View>
-            <Text style={styles.name}>{item.userName}</Text>
-            <Text style={styles.checkbox}>
-              {item.surveyCompleted ? "✅" : "⬜️"}
-            </Text>
           </View>
         )}
       />
@@ -229,7 +241,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 40,
+    paddingTop: 70,
   },
   role: {
     textAlign: "center",
@@ -238,9 +250,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   count: {
-    textAlign: "left",
-    marginBottom: 12,
-    fontSize: 14,
+    textAlign: "right",
+    paddingTop: 10,
+    marginBottom: 15,
+    fontSize: 16,
+    marginRight: 12,
   },
   listContainer: {
     borderRadius: 10,
@@ -252,32 +266,19 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
-  avatar: {
-    backgroundColor: "#d1b3ff",
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  avatarText: {
-    color: "white",
-    fontWeight: "bold",
-  },
   name: {
     flex: 1,
     fontSize: 16,
   },
   checkbox: {
-    fontSize: 18,
+    fontSize: 26,
     color: "purple",
   },
   button: {
     position: "absolute",
     bottom: 20,
     alignSelf: "center",
-    backgroundColor: "#ff85d0",
+    backgroundColor: "#ff9494",
     paddingHorizontal: 100,
     paddingVertical: 14,
     borderRadius: 12,
@@ -320,5 +321,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     textAlign: "center",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#eee",
+    marginHorizontal: 12,
+    marginVertical: 4,
   },
 });
