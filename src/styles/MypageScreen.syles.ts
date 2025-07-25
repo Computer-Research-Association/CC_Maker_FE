@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
 
   writeButtonMain: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#FF9494",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 20,

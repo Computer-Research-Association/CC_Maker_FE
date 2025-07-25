@@ -25,7 +25,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   const [email, setemail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { setTeamId, setSubGroupIdMap } = useContext(TeamContext);
-  const { setUserId } = useContext(UserContext);
+  const { setUserId, setName } = useContext(UserContext);
   const [secure, setSecure] = useState(true); // 비밀번호 토글
 
   const handleLogin = async () => {
@@ -33,6 +33,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       const response = await login({ email, password });
       Alert.alert("로그인 성공", "환영합니다!");
       setUserId(response.userId);
+      setName(response.name);
       setTeamId(null);
       setSubGroupIdMap({});
 

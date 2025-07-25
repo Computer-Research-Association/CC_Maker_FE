@@ -18,7 +18,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
   const [isSurveyCompleted, setIsSurveyCompleted] = useState(false);
   const [matchedNames, setMatchedNames] = useState<string[]>([]);
   const { teamId, subGroupIdMap, setSubGroupIdMap } = useContext(TeamContext);
-  const { userId } = useContext(UserContext);
+  const { userId, name } = useContext(UserContext);
   const isFocused = useIsFocused();
 
   const subGroupId = teamId ? subGroupIdMap[teamId] : null;
@@ -52,9 +52,12 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
     if (!teamId || !subGroupId || !isFocused || !userId) return;
     const fetchMatchedNames = async () => {
       try {
-        const response = await api.get(`/api/matching/matched-names/${teamId}`, {
-          params: { userId },
-        });
+        const response = await api.get(
+          `/api/matching/matched-names/${teamId}`,
+          {
+            params: { userId },
+          }
+        );
         setMatchedNames(response.data.matchedNames || []);
       } catch (error) {
         console.error("매칭된 이름 조회 실패", error);
@@ -94,7 +97,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
         {/* 본인 프로필 */}
         <View style={styles.myProfileBlock}>
           <View style={styles.myAvatar} />
-          <Text style={styles.myName}>{userId}</Text>
+          <Text style={styles.myName}>{name}</Text>
         </View>
 
         {/* 나머지 멤버 프로필 */}
@@ -114,7 +117,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
 
       {/* 다이어리 탭 */}
       <View style={styles.tabRow}>
-        <Text style={[styles.tabText, styles.selectedTab]}>다이어리</Text>
+        <Text style={[styles.tabText, styles.selectedTab]}>아여기뭐넣지</Text>
       </View>
 
       {/* 미션 작성 현황 */}
@@ -131,7 +134,9 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
             style={styles.writeButtonMain}
             onPress={() => {
               if (isSurveyCompleted) {
-                Alert.alert("알림", "이미 설문조사를 완료했습니다.", [{ text: "확인" }]);
+                Alert.alert("알림", "이미 설문조사를 완료했습니다.", [
+                  { text: "확인" },
+                ]);
               } else {
                 navigation.navigate("MbtiScreen");
               }
