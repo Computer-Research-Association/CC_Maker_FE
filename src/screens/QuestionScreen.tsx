@@ -61,24 +61,24 @@ export default function QuestionScreen({ route, navigation }: Props) {
 
   const completeSurvey = async (answersToSend: number[]) => {
     try {
-    // questionId와 score 매핑
-    const answerDtos = answersToSend.map((score, idx) => ({
-      questionId: questions[idx].id,  // 질문 id 추가
-      score: score + 1,
-    }));
-    
-    //설문조사 완료 api
-    await api.post("/api/team/survey/complete", {
-      teamId
-    });
-    console.log("내가 1번쨰 보낸거");
-    
-    //설문조사 결과 api보내기
-    await api.post("/api/matching/answer", {
-      teamId,
-      mbti,
-      answers: answerDtos,
-    });
+      // questionId와 score 매핑
+      const answerDtos = answersToSend.map((score, idx) => ({
+        questionId: questions[idx].id, // 질문 id 추가
+        score: score + 1,
+      }));
+
+      //설문조사 완료 api
+      await api.post("/api/team/survey/complete", {
+        teamId,
+      });
+      console.log("내가 1번쨰 보낸거");
+
+      //설문조사 결과 api보내기
+      await api.post("/api/matching/answer", {
+        teamId,
+        mbti,
+        answers: answerDtos,
+      });
 
       console.log("내가 2번째 보낸거", { teamId, mbti, answers: answerDtos });
     } catch (error) {
@@ -89,19 +89,32 @@ export default function QuestionScreen({ route, navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>질문 {index + 1}</Text>
-      <Text style={styles.questionText}>{current.question}</Text>
+      <View style={styles.contentArea}>
+        <Text style={styles.title}>질문 {index + 1}</Text>
+        <Text style={styles.questionText}>{current.question}</Text>
+        <LikertScale question={current.question} onSelect={setSelected} />
+      </View>
 
-      <LikertScale question={current.question} onSelect={setSelected} />
-
-      <SubmitButton
-        title="다음"
-        onPress={goToNext}
-        disabled={selected === null}
-      />
-      {index > 0 && (
-        <SubmitButton title="이전" onPress={goToPrevious} disabled={false} />
-      )}
+      <View style={styles.buttonRow}>
+        <View style={{ flex: 1, alignItems: "flex-start" }}>
+          {index > 0 && (
+            <SubmitButton
+              title="이전"
+              onPress={goToPrevious}
+              disabled={false}
+              style={{ width: 150 }}
+            />
+          )}
+        </View>
+        <View style={{ flex: 1, alignItems: "flex-end" }}>
+          <SubmitButton
+            title="다음"
+            onPress={goToNext}
+            disabled={selected === null}
+            style={{ width: 150 }}
+          />
+        </View>
+      </View>
     </View>
   );
 }
@@ -109,9 +122,14 @@ export default function QuestionScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    padding: 24,
     backgroundColor: "#fff",
+    paddingHorizontal: 24,
+    paddingTop: 280,
+    paddingBottom: 24,
+  },
+  contentArea: {
+    flex: 1,
+    justifyContent: "flex-start",
   },
   title: {
     fontSize: 20,
@@ -119,20 +137,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 12,
   },
-  questionText: { fontSize: 18, textAlign: "center", marginBottom: 24 },
-  button: {
-    backgroundColor: "#FF9898",
-    paddingVertical: 14,
-    borderRadius: 30,
+  questionText: {
+    fontSize: 18,
+    textAlign: "center",
+    marginBottom: 24,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 32,
-  },
-  disabledButton: {
-    backgroundColor: "#ccc",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
+    marginTop: "auto",
+    paddingHorizontal: 2, // 좌우 여백
+    marginBottom: 40,
   },
 });
