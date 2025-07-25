@@ -3,8 +3,17 @@
 export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
-  TeamMemberScreen: undefined; // 로그인 성공 시 이동할 화면이 있다면 추가
-  TeamLeaderScreen:undefined;
+  JoinScreen: undefined;
+  InviteScreen: undefined;
+  SettingScreen: undefined;
+  StartScreen: undefined;
+  HomeScreen: { teamId: number };
+  MbtiScreen: undefined;
+  MainHomeScreen: undefined;
+  MypageScreen: undefined;
+  MissionScreen: undefined;
+  CheckScreen: undefined;
+  QuestionScreen: { index: number; mbti: string; answers: number[] };
 };
 
 export interface LoginResponse {
@@ -12,7 +21,6 @@ export interface LoginResponse {
   refreshToken: string;
   email: string;
   name: string;
-  role: 'LEADER' | 'MEMBER';
   teamId: number | null;
   teamName: string | null;
   userId: number;
