@@ -8,6 +8,7 @@ import LikertScale from "../function/LikertScale"; // Likert 컴포넌트 불러
 import SubmitButton from "../component/SubmitButton";
 import HomeScreen from "./HomeScreen";
 import api from "../api/apiClient";
+import styles from "../styles/QuestionScreenStyles";
 
 // QuestionScreen.tsx
 type Props = NativeStackScreenProps<RootStackParamList, "QuestionScreen">;
@@ -100,6 +101,8 @@ export default function QuestionScreen({ route, navigation }: Props) {
           {index > 0 && (
             <SubmitButton
               title="이전"
+              buttonColor="#bbb"
+              shadowColor="#aaa"
               onPress={goToPrevious}
               disabled={false}
               style={{ width: 150 }}
@@ -111,6 +114,8 @@ export default function QuestionScreen({ route, navigation }: Props) {
             title="다음"
             onPress={goToNext}
             disabled={selected === null}
+            buttonColor="#FF9898"
+            shadowColor="#E08B8B"
             style={{ width: 150 }}
           />
         </View>
@@ -119,35 +124,35 @@ export default function QuestionScreen({ route, navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingHorizontal: 24,
-    paddingTop: 280,
-    paddingBottom: 24,
-  },
-  contentArea: {
-    flex: 1,
-    justifyContent: "flex-start",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 12,
-  },
-  questionText: {
-    fontSize: 18,
-    textAlign: "center",
-    marginBottom: 24,
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: "auto",
-    paddingHorizontal: 2, // 좌우 여백
-    marginBottom: 40,
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#fff",
+//     paddingHorizontal: 24,
+//     paddingTop: 280,
+//     paddingBottom: 24,
+//   },
+//   contentArea: {
+//     flex: 1,
+//     justifyContent: "flex-start",
+//   },
+//   title: {
+//     fontSize: 20,
+//     fontWeight: "bold",
+//     textAlign: "center",
+//     marginBottom: 12,
+//   },
+//   questionText: {
+//     fontSize: 18,
+//     textAlign: "center",
+//     marginBottom: 24,
+//   },
+//   buttonRow: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     marginTop: "auto",
+//     paddingHorizontal: 2, // 좌우 여백
+//     marginBottom: 40,
+//   },
+// });

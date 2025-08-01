@@ -15,7 +15,7 @@ import { TeamContext } from "../screens/TeamContext";
 import api from "../api/apiClient";
 import * as Clipboard from "expo-clipboard";
 import Ionicons from "react-native-vector-icons/Ionicons";
-
+import SubmitButton from "../component/SubmitButton";
 // 분리된 스타일 파일
 import creditModalStyles from "../styles/SettingScreen/CreditModalStyles";
 import inquiryModalStyles from "../styles/SettingScreen/InquiryModalStyles";
@@ -125,12 +125,17 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
                 <Ionicons name="copy-outline" size={24} color="#555" />
               </TouchableOpacity>
             </View>
-            <TouchableOpacity
+            <SubmitButton
               onPress={() => setModalVisible(false)}
-              style={inviteCodeModalStyles.closeButton}
+              title="취소"
+              width={130}
+              height={50}
+              buttonColor="#FF9898"
+              shadowColor="#E08B8B"
+              style={{ marginTop: 2 }}
             >
               <Text style={inviteCodeModalStyles.closeText}>닫기</Text>
-            </TouchableOpacity>
+            </SubmitButton>
           </View>
         </View>
       </Modal>
@@ -151,12 +156,18 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
             <Text style={inquiryModalStyles.modalCodeEmail}>
               📧 example@email.com
             </Text>
-            <TouchableOpacity
+
+            <SubmitButton
+              title="확인"
+              buttonColor="#bbb"
+              width={130}
+              height={50}
+              shadowColor="#aaa"
               onPress={() => setInquiryModalVisible(false)}
-              style={inquiryModalStyles.closeButton}
-            >
-              <Text style={inquiryModalStyles.closeText}>확인</Text>
-            </TouchableOpacity>
+              style={{ marginTop: 2 }}
+
+              // style={inquiryModalStyles.closeButton}
+            ></SubmitButton>
           </View>
         </View>
       </Modal>
@@ -182,18 +193,26 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
               onChangeText={setMinScore}
             />
             <View style={creditModalStyles.buttonRow}>
-              <TouchableOpacity
-                style={creditModalStyles.confirmButton}
-                onPress={saveMinScore}
-              >
-                <Text style={creditModalStyles.closeText}>확인</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+              <SubmitButton
+                title="취소"
+                buttonColor="#bbb"
+                width={130}
+                height={50}
+                shadowColor="#aaa"
                 onPress={() => setMinCreditModalVisible(false)}
-                style={creditModalStyles.cancelButton}
-              >
-                <Text style={creditModalStyles.closeText}>취소</Text>
-              </TouchableOpacity>
+                style={{ marginTop: 2 }}
+                // style={creditModalStyles.cancelButton}
+              ></SubmitButton>
+              <SubmitButton
+                title="확인"
+                width={130}
+                height={50}
+                buttonColor="#FF9898"
+                shadowColor="#E08B8B"
+                // style={creditModalStyles.confirmButton}
+                onPress={saveMinScore}
+                style={{ marginTop: 2 }}
+              ></SubmitButton>
             </View>
           </View>
         </View>
