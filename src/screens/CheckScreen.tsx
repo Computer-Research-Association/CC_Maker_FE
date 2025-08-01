@@ -23,7 +23,7 @@ type Props = {
 type Member = {
   userId: number;
   userName: string;
-  surveyCompleted: boolean;
+  surveyCompleted: boolean; 
 };
 
 export default function CheckScreen({ navigation }: Props) {
