@@ -16,7 +16,7 @@ import api from "../api/apiClient";
 import { UserContext } from "./UserContext";
 import { useFocusEffect } from "@react-navigation/native";
 import AnimatedProgressBar from "../component/AnimatedProgressBar";
-
+import styles from "../styles/HomeScreenStyles";
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "HomeScreen">;
 };
@@ -40,9 +40,11 @@ const calculatePercent = (score: number, minScore: number) => {
 };
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
+  //내가 속한팀ID,ID별 소그룹 ID저장 객체, 소그룹 ID저장 함수,현재 로그인한 사용자ID
   const { teamId, subGroupIdMap, teamName, setSubGroupIdMap } =
     useContext(TeamContext);
   const { userId } = useContext(UserContext);
+  //서버에서 받아온 팀 점수데이터, 데이터를 불러오는 중인지 여부, 에러 발생시 에러메시지 저장
   const [scoreboard, setScoreboard] = useState<ScoreboardResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -68,7 +70,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       console.error("subGroupId 조회 실패:", error);
     }
   }, [teamId, userId, subGroupId, setSubGroupIdMap]);
-
+  //서브 그룹 ID불러오기(첫진입시)
   const fetchScoreboard = useCallback(() => {
     if (!teamId || !userId) return;
 
@@ -86,13 +88,13 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       })
       .finally(() => setLoading(false));
   }, [teamId, userId]);
-
+  //화면 진입시 자동적인 실행, API호출
   useFocusEffect(
     useCallback(() => {
       fetchSubGroupIdIfNeeded().then(fetchScoreboard);
     }, [fetchSubGroupIdIfNeeded, fetchScoreboard])
   );
-
+  ///로딩,에러, 데이터없음 처리
   if (loading) {
     return (
       <View style={styles.container}>
@@ -151,7 +153,11 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
             </Text>
             <AnimatedProgressBar
               current={topTeam.score}
-              max={scoreboard.minScore}
+              max={
+                typeof scoreboard.minScore === "number"
+                  ? scoreboard.minScore
+                  : 0
+              }
               barHeight={30}
             />
           </View>
@@ -173,7 +179,11 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
                     </Text>
                     <AnimatedProgressBar
                       current={sg.score}
-                      max={scoreboard.minScore}
+                      max={
+                        typeof scoreboard.minScore === "number"
+                          ? scoreboard.minScore
+                          : 0
+                      }
                       barHeight={25}
                     />
                   </View>
@@ -186,66 +196,66 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    padding: 20,
-    paddingBottom: 80,
-    paddingTop: 20,
-    backgroundColor: "#fff",
-  },
-  title: { fontSize: 20, fontWeight: "bold", marginBottom: 20 },
-  section: { marginBottom: 30, width: "100%" },
-  subtitle: { fontSize: 16, fontWeight: "600", marginBottom: 10 },
-  teamNameText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
-  },
-  groupTitleContainer: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  crown: {
-    fontSize: 48,
-    color: "#FFD700",
-    marginBottom: 4,
-  },
-  progressCard: {
-    width: "100%",
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  myCard: {
-    backgroundColor: "#F0F8FF",
-    borderColor: "#007AFF",
-    borderWidth: 1,
-  },
-  topTeamCard: {
-    backgroundColor: "#FFE3E1",
-    borderColor: "#FF9494",
-    borderWidth: 1.5,
-  },
-  cardTitle: {
-    fontSize: 13,
-    fontWeight: "600",
-    marginBottom: 10,
-    color: "#333",
-  },
-  divider: {
-    width: "100%",
-    height: 1,
-    backgroundColor: "#ccc",
-    marginVertical: 16, // 위아래 간격 조절
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flexGrow: 1,
+//     justifyContent: "flex-start",
+//     alignItems: "center",
+//     padding: 20,
+//     paddingBottom: 80,
+//     paddingTop: 20,
+//     backgroundColor: "#fff",
+//   },
+//   title: { fontSize: 20, fontWeight: "bold", marginBottom: 20 },
+//   section: { marginBottom: 30, width: "100%" },
+//   subtitle: { fontSize: 16, fontWeight: "600", marginBottom: 10 },
+//   teamNameText: {
+//     fontSize: 24,
+//     fontWeight: "bold",
+//     marginBottom: 10,
+//     color: "#333",
+//   },
+//   groupTitleContainer: {
+//     alignItems: "center",
+//     marginBottom: 20,
+//   },
+//   crown: {
+//     fontSize: 48,
+//     color: "#FFD700",
+//     marginBottom: 4,
+//   },
+//   progressCard: {
+//     width: "100%",
+//     backgroundColor: "#fff",
+//     padding: 16,
+//     borderRadius: 12,
+//     marginBottom: 10,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.05,
+//     shadowRadius: 4,
+//     elevation: 2,
+//   },
+//   myCard: {
+//     backgroundColor: "#F0F8FF",
+//     borderColor: "#007AFF",
+//     borderWidth: 1,
+//   },
+//   topTeamCard: {
+//     backgroundColor: "#FFE3E1",
+//     borderColor: "#FF9494",
+//     borderWidth: 1.5,
+//   },
+//   cardTitle: {
+//     fontSize: 13,
+//     fontWeight: "600",
+//     marginBottom: 10,
+//     color: "#333",
+//   },
+//   divider: {
+//     width: "100%",
+//     height: 1,
+//     backgroundColor: "#ccc",
+//     marginVertical: 16, // 위아래 간격 조절
+//   },
+// });
