@@ -14,6 +14,7 @@ export type RootStackParamList = {
   MissionScreen: undefined;
   CheckScreen: undefined;
   QuestionScreen: { index: number; mbti: string; answers: number[] };
+  AccountSettings: undefined;
 };
 
 export interface LoginResponse {
