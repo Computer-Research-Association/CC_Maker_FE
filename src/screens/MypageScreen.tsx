@@ -9,7 +9,7 @@ import { TeamContext } from "./TeamContext";
 import { useIsFocused } from "@react-navigation/native";
 import { UserContext } from "./UserContext";
 import styles from "../styles/MypageScreen.syles"; // ✅ 스타일 파일 적용
-
+import SubmitButton from "../component/SubmitButton";
 type MyPageScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "MypageScreen">;
 };
@@ -130,8 +130,11 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
       {/* 매칭 상대 없으면 설문 버튼 */}
       {matchedNames.length === 0 && (
         <View style={styles.emptyNoteContainer}>
-          <TouchableOpacity
-            style={styles.writeButtonMain}
+          <SubmitButton
+            title="설문시작하기"
+            buttonColor="#FF9898"
+            shadowColor="#E08B8B"
+            // style={styles.writeButtonMain}
             onPress={() => {
               if (isSurveyCompleted) {
                 Alert.alert("알림", "이미 설문조사를 완료했습니다.", [
@@ -143,7 +146,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
             }}
           >
             <Text style={styles.writeButtonMainText}>설문시작하기</Text>
-          </TouchableOpacity>
+          </SubmitButton>
         </View>
       )}
     </View>
