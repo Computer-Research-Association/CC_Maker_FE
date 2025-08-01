@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { initializeTokens } from "./src/api/apiClient";
 import { RootStackParamList } from "./src/navigation/types";
 
 import HomeScreen from "./src/screens/HomeScreen";
@@ -26,20 +25,6 @@ import { UserProvider } from "./src/screens/UserContext";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    const init = async () => {
-      await initializeTokens();
-      setIsReady(true);
-    };
-    init();
-  }, []);
-
-  if (!isReady) {
-    return null;
-  }
-
   return (
     <NavigationContainer>
       <UserProvider>
