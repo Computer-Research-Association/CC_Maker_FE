@@ -7,7 +7,7 @@ import { RootStackParamList } from "../navigation/types";
 import * as Clipboard from "expo-clipboard";
 import styles from "../styles/TeamLeaderScreen.styles";
 import { TeamContext } from "./TeamContext";
-
+import SubmitButton from "../component/SubmitButton";
 type InviteScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "InviteScreen">;
 };
@@ -106,39 +106,55 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
             placeholderTextColor="#ccc"
           />
 
-          <TouchableOpacity style={styles.Button} onPress={onCreateTeam}>
-            <Text style={styles.laterButtonText}>팀 생성하기</Text>
-          </TouchableOpacity>
+          <SubmitButton
+            // style={styles.Button}
+            onPress={onCreateTeam}
+            title="팀 생성하기"
+            buttonColor="#FFFFFF"
+            shadowColor="#ddd"
+            textColor="#808080"
+          >
+            {/* <Text style={styles.laterButtonText}>팀 생성하기</Text> */}
+          </SubmitButton>
         </>
       )}
       {step === 2 && (
         <>
-          <TouchableOpacity
-            style={styles.Button}
+          <SubmitButton
+            title="팀코드 생성하기"
+            // style={styles.Button}
+            buttonColor="#FFFFFF"
+            shadowColor="#ddd"
             onPress={fetchInviteCode}
             disabled={loading}
+            textColor="#808080"
           >
             <Text style={styles.laterButtonText}>
               {loading ? "생성 중..." : "팀 코드 생성"}
             </Text>
-          </TouchableOpacity>
+          </SubmitButton>
 
           {teamCode !== "" && (
             <View style={{ alignItems: "center" }}>
               <Text style={styles.codeText}>생성된 팀 코드: {teamCode}</Text>
-              <TouchableOpacity
-                style={styles.copyButton}
+              <SubmitButton
+                title="코드복사하기"
+                buttonColor="#FF9898"
+                shadowColor="#E08B8B"
+                // style={styles.copyButton}
                 onPress={copyToClipboard}
               >
-                <Text style={styles.copyButtonText}>코드 복사하기</Text>
-              </TouchableOpacity>
+                {/* <Text style={styles.copyButtonText}>코드 복사하기</Text> */}
+              </SubmitButton>
 
-              <TouchableOpacity
-                style={styles.startButton}
+              <SubmitButton
+                title="시작하기"
+                buttonColor="#FF9898"
+                shadowColor="#E08B8B"
                 onPress={onStartPress}
               >
                 <Text style={styles.startButtonText}>시작하기</Text>
-              </TouchableOpacity>
+              </SubmitButton>
             </View>
           )}
         </>

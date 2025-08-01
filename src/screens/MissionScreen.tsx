@@ -15,6 +15,7 @@ import MissionBox from "../component/MissionBox";
 import api from "../api/apiClient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import SubmitButton from "../component/SubmitButton";
 
 const BOX_SIZE = 108;
 const BOX_MARGIN = 4;
@@ -253,18 +254,26 @@ export default function MissionScreen() {
                 </View>
 
                 <View style={styles.modalButtons}>
-                  <TouchableOpacity
-                    style={styles.confirmButton}
+                  <SubmitButton
+                    title="미션완료"
+                    // style={styles.confirmButton}
                     onPress={handleComplete}
+                    width={100}
+                    height={100}
                   >
                     <Text style={styles.buttonText}>미션 완료</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.cancelButton}
+                  </SubmitButton>
+                  <SubmitButton
+                    // style={styles.cancelButton}
+                    title="취소"
                     onPress={() => setModalVisible(false)}
+                    buttonColor="#bbb"
+                    width={100}
+                    height={100}
+                    shadowColor="#aaa"
                   >
                     <Text style={styles.buttonText}>취소</Text>
-                  </TouchableOpacity>
+                  </SubmitButton>
                 </View>
               </>
             )}
