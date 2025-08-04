@@ -51,6 +51,7 @@ export default function MainHomeScreen({
     try {
       const response = await api.get<TeamResponseDto[]>("/api/team/mine");
       // teamId(Long)를 string id로 변환하여 맞춰줌
+console.log("받아온 팀 목록:", response.data);
 
       const mappedTeams = response.data.map((team) => ({
         id: team.teamId, // number
