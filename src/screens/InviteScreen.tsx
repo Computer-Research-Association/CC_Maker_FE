@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 import api from "../api/apiClient";
 import { RootStackParamList } from "../navigation/types";
 import * as Clipboard from "expo-clipboard";
@@ -24,7 +24,12 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
       setLoading(true);
       console.log("🚀 fetchInviteCode 실행");
 
-      const accessToken = await AsyncStorage.getItem("ACCESS_TOKEN");
+      // 🔧 수정된 부분: auth_tokens에서 accessToken 추출
+      const tokenData = await SecureStore.getItemAsync("auth_tokens");
+      const accessToken = tokenData ? JSON.parse(tokenData).accessToken : null;
+
+      console.log("정상적으로 작동하는토큰 :", accessToken);
+
       if (!accessToken) {
         Alert.alert("로그인 필요", "로그인 후 이용해주세요.");
         setLoading(false);
