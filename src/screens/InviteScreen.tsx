@@ -93,7 +93,10 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
   };
 
   const onStartPress = async () => {
-    navigation.navigate("MainHomeScreen");
+     navigation.reset({
+        index: 0,
+        routes: [{ name: "MainHomeScreen" }],
+      });
   };
 
   return (

@@ -260,6 +260,8 @@ export default function MissionScreen() {
                     onPress={handleComplete}
                     width={100}
                     height={100}
+                    buttonColor="#FF9898"
+                    shadowColor="#E08B8B"
                   >
                     <Text style={styles.buttonText}>미션 완료</Text>
                   </SubmitButton>

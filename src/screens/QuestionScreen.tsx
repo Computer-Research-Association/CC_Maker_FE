@@ -53,10 +53,10 @@ export default function QuestionScreen({ route, navigation }: Props) {
     } else {
       await completeSurvey(updatedAnswers);
       alert("모든 질문이 끝났습니다!");
-      // navigation.reset({
-      //   routes: [{ name: "HomeScreen", params: { teamId } }],
-      // });
-      navigation.navigate("HomeScreen", { teamId });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "HomeScreen", params: { teamId } }],
+      });
     }
   };
 

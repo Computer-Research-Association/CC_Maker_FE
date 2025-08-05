@@ -90,7 +90,7 @@ export default function BottomTabNavigator() {
       <Tab.Screen
         name="Profile"
         component={MyPageScreen}
-        options={{ title: "CC" }}
+        options={{ title: "프로필" }}
       />
       {/* <Tab.Screen name="Profile" component={ProfileScreen} /> */}
     </Tab.Navigator>

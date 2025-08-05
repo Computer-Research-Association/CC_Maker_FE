@@ -39,8 +39,11 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       setName(response.name);
       setTeamId(null);
       setSubGroupIdMap({});
-
-      navigation.navigate("MainHomeScreen");
+      //
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "MainHomeScreen" }],
+      });
     } catch (error: unknown) {
       // 다시 공부 하기 =
       const errorMessage =
@@ -48,6 +51,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       Alert.alert("로그인 실패", errorMessage); //팝업 에러 메세지
     }
   };
+  //
 
   // const handleLogin = async () => {
   //   try {
