@@ -12,8 +12,9 @@ import { ItemType } from "react-native-dropdown-picker";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import DropDownPicker from "react-native-dropdown-picker";
-import { signup } from "../api/authApi"; // api 함수 import
+import { login, signup } from "../api/authApi"; // api 함수 import
 import styles from "../styles/SignupScreen.styles";
+import LoginScreen from "./LoginScreen";
 
 type SignupScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Signup">;
@@ -137,11 +138,20 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
       return;
     }
 
+    if (password !== confirmPassword) {
+      Alert.alert("입력 오류", "비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
     try {
       //log 남기기 나중에 지우기
       const result = await signup({ name, birthdate, email, password, gender });
       Alert.alert("회원가입 성공", "로그인 화면으로 이동합니다.");
       navigation.navigate("Login");
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [{ name: "Login" }],
+      // });
       console.log("서버 응답:", result);
     } catch (error: any) {
       Alert.alert("회원가입 실패", error.message || "서버 오류");

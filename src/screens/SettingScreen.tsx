@@ -20,7 +20,7 @@ import SubmitButton from "../component/SubmitButton";
 import creditModalStyles from "../styles/SettingScreen/CreditModalStyles";
 import inquiryModalStyles from "../styles/SettingScreen/InquiryModalStyles";
 import inviteCodeModalStyles from "../styles/SettingScreen/InviteModalStyles";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 type SettingScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "SettingScreen">;
 };
@@ -32,10 +32,27 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
   const [inquiryModalVisible, setInquiryModalVisible] = useState(false);
   const [minCreditModalVisible, setMinCreditModalVisible] = useState(false);
   const [minScore, setMinScore] = useState("");
+  const [isMatchingStarted, setIsMatchingStarted] = useState(false);
 
   useEffect(() => {
     console.log("현재 role:", role);
   }, [role]);
+  
+  useEffect(() => {
+  const checkMatchingStatus = async () => {
+    try {
+      const value = await AsyncStorage.getItem(`@matching_started_team_${teamId}`);
+      if (value === "true") {
+        setIsMatchingStarted(true);
+      }
+    } catch (error) {
+      console.warn("AsyncStorage 불러오기 실패", error);
+    }
+  };
+
+  if (teamId) checkMatchingStatus();
+}, [teamId]);
+
 
   const createInviteCode = async () => {
     try {
@@ -93,11 +110,16 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
             onPress={createInviteCode}
             external
           />
-          <SettingItem
-            label="매칭 시작하기"
-            onPress={() => navigation.navigate("CheckScreen")}
-            external
-          />
+          {!isMatchingStarted && (
+            <SettingItem
+              label="매칭 시작하기"
+              onPress={() => {
+                navigation.navigate("CheckScreen");
+              }}
+              external
+            />
+          )}
+
           <SettingItem
             label="최소학점 설정"
             onPress={() => setMinCreditModalVisible(true)}

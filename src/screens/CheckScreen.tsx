@@ -15,7 +15,7 @@ import { UserContext } from "./UserContext"; // UserContext 경로에 맞게 수
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SubmitButton from "../component/SubmitButton";
 import styles from "../styles/CheckScreenStyles";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, "CheckScreen">;
 };
@@ -23,7 +23,7 @@ type Props = {
 type Member = {
   userId: number;
   userName: string;
-  surveyCompleted: boolean; 
+  surveyCompleted: boolean;
 };
 
 export default function CheckScreen({ navigation }: Props) {
@@ -119,6 +119,8 @@ export default function CheckScreen({ navigation }: Props) {
 
       if (response.data && response.data.matchingStarted) {
         setIsMatchingStarted(true);
+        await AsyncStorage.setItem(`@matching_started_team_${teamId}`, "true");
+
         alert("매칭이 완료되었습니다!");
 
         // 서브그룹 아이디 가져오기 및 미션 부여 처리 (임시 userId 사용)
@@ -202,7 +204,7 @@ export default function CheckScreen({ navigation }: Props) {
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalText}>⏳ 매칭 중입니다...</Text>
+            <Text style={styles.modalText}> 매칭 중입니다...</Text>
           </View>
         </View>
       </Modal>
@@ -217,13 +219,21 @@ export default function CheckScreen({ navigation }: Props) {
             <Text
               style={[styles.modalText, { color: "green", marginBottom: 16 }]}
             >
-              ✅ 매칭이 완료되었습니다!
+              매칭이 완료되었습니다!
             </Text>
             <TouchableOpacity
               style={styles.modalButton}
               onPress={() => {
                 setMatchingStatus("idle");
-                navigation.navigate("HomeScreen", { teamId: teamId! });
+                navigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: "HomeScreen",
+                      params: { teamId: teamId! },
+                    },
+                  ],
+                });
               }}
             >
               <Text style={styles.modalButtonText}>확인</Text>
