@@ -33,26 +33,28 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
   const [minCreditModalVisible, setMinCreditModalVisible] = useState(false);
   const [minScore, setMinScore] = useState("");
   const [isMatchingStarted, setIsMatchingStarted] = useState(false);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   useEffect(() => {
     console.log("현재 role:", role);
   }, [role]);
-  
+
   useEffect(() => {
-  const checkMatchingStatus = async () => {
-    try {
-      const value = await AsyncStorage.getItem(`@matching_started_team_${teamId}`);
-      if (value === "true") {
-        setIsMatchingStarted(true);
+    const checkMatchingStatus = async () => {
+      try {
+        const value = await AsyncStorage.getItem(
+          `@matching_started_team_${teamId}`
+        );
+        if (value === "true") {
+          setIsMatchingStarted(true);
+        }
+      } catch (error) {
+        console.warn("AsyncStorage 불러오기 실패", error);
       }
-    } catch (error) {
-      console.warn("AsyncStorage 불러오기 실패", error);
-    }
-  };
+    };
 
-  if (teamId) checkMatchingStatus();
-}, [teamId]);
-
+    if (teamId) checkMatchingStatus();
+  }, [teamId]);
 
   const createInviteCode = async () => {
     try {
@@ -96,6 +98,10 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
       <Text style={styles.sectionTitle}>내 계정</Text>
       <SettingItem label="계정 관리" onPress={() => {}} />
       <SettingItem label="알림 설정" onPress={() => {}} />
+      <SettingItem
+        label="로그아웃"
+        onPress={() => setLogoutModalVisible(true)}
+      />
 
       <Text style={styles.sectionTitle}>서비스</Text>
       <SettingItem
@@ -235,6 +241,57 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
                 onPress={saveMinScore}
                 style={{ marginTop: 2 }}
               ></SubmitButton>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/*로그아웃모달 */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={logoutModalVisible}
+        onRequestClose={() => setLogoutModalVisible(false)}
+      >
+        <View style={inquiryModalStyles.modalOverlay}>
+          <View style={inquiryModalStyles.modalContent}>
+            <Text style={inquiryModalStyles.modalTitle}>
+              로그아웃 하시겠습니까?
+            </Text>
+            <View style={creditModalStyles.buttonRow}>
+              <SubmitButton
+                title="아니오"
+                width={130}
+                height={50}
+                buttonColor="#bbb"
+                shadowColor="#aaa"
+                onPress={() => setLogoutModalVisible(false)}
+                style={{ marginTop: 2 }}
+              />
+              <SubmitButton
+                title="예"
+                width={130}
+                height={50}
+                buttonColor="#FF9898"
+                shadowColor="#E08B8B"
+                onPress={async () => {
+                  try {
+                    // ✅ AsyncStorage 초기화
+                    await AsyncStorage.removeItem("accessToken");
+                    await AsyncStorage.removeItem("refreshToken");
+                    await AsyncStorage.removeItem("userId");
+
+                    // ✅ 네비게이션 스택 초기화 후 Login으로 이동
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: "Login" }],
+                    });
+                  } catch (error) {
+                    Alert.alert("오류", "로그아웃 중 문제가 발생했습니다.");
+                    console.error(error);
+                  }
+                }}
+                style={{ marginTop: 2 }}
+              />
             </View>
           </View>
         </View>

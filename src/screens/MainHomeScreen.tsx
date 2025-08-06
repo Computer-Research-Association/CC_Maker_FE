@@ -55,18 +55,18 @@ export default function MainHomeScreen({
       console.log("passhere1");
       // teamId(Long)를 string id로 변환하여 맞춰줌
       console.log("여기에요 여기:", response.data);
-      
+
       const mappedTeams = response.data.map((team) => ({
         id: team.teamId, // number
         teamName: team.teamName,
         role: team.role,
       }));
       console.log("passhere2");
-      
+
       setTeams(mappedTeams);
     } catch (error) {
       console.log("passhere in catch");
-      
+
       console.error("팀 목록 불러오기 실패", error);
       Alert.alert("오류", "팀 목록을 불러오는데 실패했습니다.");
     }
@@ -83,6 +83,15 @@ export default function MainHomeScreen({
         setRole(item.role);
         setTeamName(item.teamName);
         navigation.navigate("HomeScreen", { teamId: item.id });
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [
+        //     {
+        //       name: "HomeScreen",
+        //       params: { teamId: item.id },
+        //     },
+        //   ],
+        // });
       }}
     >
       <Text style={styles.teamName}>{item.teamName}</Text>
