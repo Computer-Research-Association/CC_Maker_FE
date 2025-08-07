@@ -52,7 +52,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   const subGroupId = teamId ? subGroupIdMap[teamId] : null;
 
   const fetchSubGroupIdIfNeeded = useCallback(async () => {
-    if (!teamId || !userId || subGroupId) return;
+    if (!teamId || !userId || !subGroupId) return;
 
     try {
       const response = await api.get(`/api/matching/subgroup/${teamId}`, {
@@ -70,6 +70,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       console.error("subGroupId 조회 실패:", error);
     }
   }, [teamId, userId, subGroupId, setSubGroupIdMap]);
+
   //서브 그룹 ID불러오기(첫진입시)
   const fetchScoreboard = useCallback(() => {
     if (!teamId || !userId) return;
@@ -84,6 +85,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       })
       .catch((err) => {
         setError(err.message || "데이터를 불러오는 중 오류가 발생했습니다.");
+        console.log("✅ Scoreboard API 응답:");
         setScoreboard(null);
       })
       .finally(() => setLoading(false));
@@ -104,10 +106,10 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     );
   }
 
-  if (error) {
+  if (!subGroupId) {
     return (
       <View style={styles.container}>
-        <Text>에러 발생: {error}</Text>
+        <Text style={styles.matchingMessage}>매칭을 설정해주세요</Text>
       </View>
     );
   }
@@ -115,7 +117,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   if (!scoreboard) {
     return (
       <View style={styles.container}>
-        <Text>데이터가 없습니다.</Text>
+        <Text style={styles.matchingMessage}>최소학점을 설정해주세요</Text>
       </View>
     );
   }
@@ -123,7 +125,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   // ✅ 전체 그룹 정렬 및 1등/내 그룹 분리
   const allGroups = [scoreboard.mySubGroup, ...scoreboard.otherSubGroups];
   const sortedGroups = [...allGroups].sort((a, b) => b.score - a.score);
-  const topTeam = sortedGroups[0];
+  const topTeam = scoreboard!.mySubGroup;
   const isMyTeamTop = topTeam.subGroupId === scoreboard.mySubGroup.subGroupId;
   const mySubGroupId = scoreboard.mySubGroup.subGroupId;
 
