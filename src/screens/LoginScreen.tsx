@@ -45,10 +45,22 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         routes: [{ name: "MainHomeScreen" }],
       });
     } catch (error: unknown) {
-      // 다시 공부 하기 =
-      const errorMessage =
-        error instanceof Error ? error.message : "알 수 없는 오류";
-      Alert.alert("로그인 실패", errorMessage); //팝업 에러 메세지
+      let errorMessage = "로그인에 실패했어요.";
+      
+      if (error instanceof Error) {
+        const msg = error.message;
+        if (msg.includes("비밀번호") || msg.includes("password")) {
+          errorMessage = "비밀번호가 올바르지 않아요.";
+        } else if (msg.includes("이메일") || msg.includes("email")) {
+          errorMessage = "등록되지 않은 이메일이에요.";
+        } else if (msg.includes("계정") || msg.includes("account")) {
+          errorMessage = "계정을 찾을 수 없어요.";
+        } else {
+          errorMessage = msg;
+        }
+      }
+      
+      Alert.alert("로그인 실패", errorMessage);
     }
   };
   //

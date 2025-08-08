@@ -96,7 +96,12 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.sectionTitle}>내 계정</Text>
-      <SettingItem label="계정 관리" onPress={() => {}} />
+      <SettingItem
+        label="계정 관리"
+        onPress={() => navigation.navigate("AccountSettings")}
+        external
+      />
+
       <SettingItem label="알림 설정" onPress={() => {}} />
       <SettingItem
         label="로그아웃"

@@ -12,6 +12,9 @@ import MyPageScreen from "../screens/MypageScreen";
 import MissionScreen from "../screens/MissionScreen";
 // import ProfileScreen from '../screens/ProfileScreen';
 
+// 25.08.07 추가
+import NeonProgressTestScreen from "../screens/TestScreen";
+
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
@@ -69,6 +72,11 @@ export default function BottomTabNavigator() {
             case "Profile":
               iconName = "heart-outline";
               break;
+
+            // 25.08.07 추가
+            case "NeonTest":
+              iconName = "color-wand-outline"; // 네온 느낌의 아이콘
+              break;
           }
 
           return (
@@ -93,6 +101,13 @@ export default function BottomTabNavigator() {
         options={{ title: "프로필" }}
       />
       {/* <Tab.Screen name="Profile" component={ProfileScreen} /> */}
+
+      {/* 25.08.07 추가 */}
+      <Tab.Screen
+        name="NeonTest"
+        component={NeonProgressTestScreen}
+        options={{ title: "네온" }}
+      />
     </Tab.Navigator>
   );
 }
