@@ -18,7 +18,7 @@ import QuestionScreen from "./src/screens/QuestionScreen";
 import signup from "./src/screens/SignupScreen";
 import { TeamProvider } from "./src/screens/TeamContext";
 import CheckScreen from "./src/screens/CheckScreen";
-
+import AccountSettings from "./src/screens/AccountSettings";
 // 새로 만든 UserContext import
 import { UserProvider } from "./src/screens/UserContext";
 
@@ -89,6 +89,11 @@ export default function App() {
             <Stack.Screen
               name="CheckScreen"
               component={CheckScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="AccountSettings"
+              component={AccountSettings}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>
