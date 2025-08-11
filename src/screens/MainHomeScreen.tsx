@@ -82,16 +82,15 @@ export default function MainHomeScreen({
         setTeamId(item.id);
         setRole(item.role);
         setTeamName(item.teamName);
-        navigation.navigate("HomeScreen", { teamId: item.id });
-        // navigation.reset({
-        //   index: 0,
-        //   routes: [
-        //     {
-        //       name: "HomeScreen",
-        //       params: { teamId: item.id },
-        //     },
-        //   ],
-        // });
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: "HomeScreen",
+              params: { teamId: item.id },
+            },
+          ],
+        });
       }}
     >
       <Text style={styles.teamName}>{item.teamName}</Text>

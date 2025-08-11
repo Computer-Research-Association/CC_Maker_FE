@@ -303,12 +303,26 @@ import api from "../api/apiClient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import SubmitButton from "../component/SubmitButton";
+import { UserContext } from "./UserContext";
+import { useFocusEffect } from "@react-navigation/native";
 
 const BOX_SIZE = 108;
 const BOX_MARGIN = 4;
 const BOX_PER_ROW = 3;
 const GRID_WIDTH = BOX_PER_ROW * (BOX_SIZE + BOX_MARGIN * 2);
 
+type SubGroupScore = {
+  subGroupId: number;
+  name: string;
+  score: number;
+  members: string[];
+};
+
+type ScoreboardResponse = {
+  minScore: number;
+  mySubGroup: SubGroupScore;
+  otherSubGroups: SubGroupScore[];
+};
 export default function MissionScreen() {
   const { role, teamId, subGroupIdMap, teamName } = useContext(TeamContext);
   const [missions, setMissions] = useState<any[]>([]);
@@ -316,9 +330,46 @@ export default function MissionScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [minScore, setMinScore] = useState<string>("");
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const [scoreboard, setScoreboard] = useState<ScoreboardResponse | null>(null);
+  const [sbLoading, setSbLoading] = useState(false);
+  const [sbError, setSbError] = useState<string | null>(null);
 
   const subGroupId = teamId ? subGroupIdMap[teamId] : undefined;
+  const { userId } = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
+  const fetchScoreboard = useCallback(() => {
+    if (!teamId || !userId) return;
+    setSbLoading(true);
+    api
+      .get(`/api/teams/${teamId}/scoreboard`, { params: { userId } })
+      .then((res) => {
+        setScoreboard(res.data);
+        setSbError(null);
+        // console.log("✅ MissionScreen scoreboard:", res.data);
+      })
+      .catch((err) => {
+        setScoreboard(null);
+        setSbError(err?.message ?? "점수판 불러오기 실패");
+      })
+      .finally(() => setSbLoading(false));
+  }, [teamId, userId]);
+
+  useEffect(() => {
+    console.log("나는 언제 실행될까?");
+  }, []);
+
+  useEffect(() => {
+    fetchScoreboard();
+  }, [fetchScoreboard]);
+
+  // 화면 재진입 시 최신값 반영 (최소학점 설정 화면 다녀온 뒤 포함)
+  useFocusEffect(
+    useCallback(() => {
+      fetchScoreboard();
+    }, [fetchScoreboard])
+  );
   useEffect(() => {
     if (!teamId || !subGroupId) return;
 
@@ -388,6 +439,29 @@ export default function MissionScreen() {
 
   const missionsByScore = (score: number) =>
     missions.filter((m) => m.score === score);
+
+  if (!teamId || !subGroupId) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+        <View
+          style={[
+            styles.container,
+            { justifyContent: "center", alignItems: "center" },
+          ]}
+        >
+          <Text>매칭을 먼저 진행해주세요.</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!scoreboard) {
+    return (
+      <View style={styles.container}>
+        <Text> 최소학점을 설정해주세요.</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView
