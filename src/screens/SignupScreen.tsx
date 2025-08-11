@@ -144,16 +144,16 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
     }
 
     try {
-      //log 남기기 나중에 지우기
+      console.log("📤 회원가입 데이터 전송:", { name, birthdate, email, password: "***", gender });
       const result = await signup({ name, birthdate, email, password, gender });
+      console.log("✅ 회원가입 성공:", result);
       Alert.alert("회원가입 성공", "로그인 화면으로 이동합니다.");
       navigation.navigate("Login");
-      // navigation.reset({
-      //   index: 0,
-      //   routes: [{ name: "Login" }],
-      // });
-      console.log("서버 응답:", result);
     } catch (error: any) {
+      console.error("❌ 회원가입 에러:", error);
+      console.error("❌ 에러 타입:", typeof error);
+      console.error("❌ 에러 메시지:", error.message);
+      console.error("❌ 에러 응답:", error.response?.data);
       Alert.alert("회원가입 실패", error.message || "서버 오류");
     }
   };

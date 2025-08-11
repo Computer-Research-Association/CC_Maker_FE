@@ -11,6 +11,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Modal,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,6 +22,9 @@ import {
 } from "react-native-safe-area-context";
 import api from "../api/apiClient"; // 저장 시에만 사용(진입시 GET 안 함)
 import { UserContext } from "./UserContext"; // userId, name, setName 제공
+
+import * as SecureStore from "expo-secure-store"; // 토큰 저장 및 삭제
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type AccountSettingsProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "AccountSettings">;
@@ -50,6 +54,7 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
   const [confirmPw, setConfirmPw] = useState<string>("");
 
   const [saving, setSaving] = useState<boolean>(false);
+  const [logoutModalVisible, setLogoutModalVisible] = useState<boolean>(false);
   const [errors, setErrors] = useState<{
     name?: string;
     email?: string;
@@ -140,8 +145,8 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
     }
   };
 
-  const handleLogout = async () => {
-    Alert.alert("로그아웃", "다음에 또 보자 👋");
+  const handleLogout = () => {
+    setLogoutModalVisible(true);
   };
 
   return (
@@ -309,13 +314,70 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
               }
             >
               <Text style={styles.dangerBtnText}>계정 탈퇴</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-};
+                         </TouchableOpacity>
+           </View>
+         </ScrollView>
+       </KeyboardAvoidingView>
+
+       {/* 로그아웃 모달 */}
+       <Modal
+         animationType="fade"
+         transparent={true}
+         visible={logoutModalVisible}
+         onRequestClose={() => setLogoutModalVisible(false)}
+       >
+         <View style={styles.modalOverlay}>
+           <View style={styles.modalContent}>
+             <Text style={styles.modalTitle}>로그아웃 하시겠습니까?</Text>
+             <View style={styles.modalButtonRow}>
+               <TouchableOpacity
+                 style={[styles.modalButton, styles.modalCancelButton]}
+                 onPress={() => setLogoutModalVisible(false)}
+               >
+                 <Text style={styles.modalCancelButtonText}>아니오</Text>
+               </TouchableOpacity>
+               <TouchableOpacity
+                 style={[styles.modalButton, styles.modalConfirmButton]}
+                 onPress={async () => {
+                   try {
+                     console.log("🚪 로그아웃 시작");
+                     
+                     // AsyncStorage 초기화 (SettingScreen 방식)
+                     await AsyncStorage.removeItem("accessToken");
+                     await AsyncStorage.removeItem("refreshToken");
+                     await AsyncStorage.removeItem("userId");
+                     
+                     // SecureStore 토큰 삭제
+                     await SecureStore.deleteItemAsync("auth_tokens");
+                     
+                     // 컨텍스트 초기화
+                     setCtxName("");
+                     
+                     // 모달 닫기
+                     setLogoutModalVisible(false);
+                     
+                     // 로그인 화면으로 이동
+                     navigation.reset({
+                       index: 0,
+                       routes: [{ name: "Login" }],
+                     });
+                     
+                     console.log("✅ 로그아웃 완료");
+                   } catch (error) {
+                     console.error("❌ 로그아웃 에러:", error);
+                     Alert.alert("오류", "로그아웃 중 문제가 발생했습니다.");
+                   }
+                 }}
+               >
+                 <Text style={styles.modalConfirmButtonText}>예</Text>
+               </TouchableOpacity>
+             </View>
+           </View>
+         </View>
+       </Modal>
+     </SafeAreaView>
+   );
+ };
 
 export default AccountSettings;
 
@@ -384,5 +446,59 @@ const styles = StyleSheet.create({
     color: "#d11",
     fontSize: 13,
     textDecorationLine: "underline",
+  },
+  // 모달 스타일
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 30,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalButtonRow: {
+    flexDirection: "row",
+    gap: 15,
+  },
+  modalButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    minWidth: 80,
+    alignItems: "center",
+  },
+  modalCancelButton: {
+    backgroundColor: "#bbb",
+  },
+  modalCancelButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  modalConfirmButton: {
+    backgroundColor: "#FF9898",
+  },
+  modalConfirmButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
