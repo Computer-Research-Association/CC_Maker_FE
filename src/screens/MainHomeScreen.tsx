@@ -82,7 +82,7 @@ export default function MainHomeScreen({
         setTeamId(item.id);
         setRole(item.role);
         setTeamName(item.teamName);
-        navigation.navigate("HomeScreen", { teamId: item.id });
+        navigation.navigate("HomeScreen", { teamId: item.id }); //reset으로 바꾸기
         // navigation.reset({
         //   index: 0,
         //   routes: [
