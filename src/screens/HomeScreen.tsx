@@ -48,7 +48,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   const [scoreboard, setScoreboard] = useState<ScoreboardResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+// 해당 팀에서 내가 속한 소그룹ID
   const subGroupId = teamId ? subGroupIdMap[teamId] : null;
 
   const fetchSubGroupIdIfNeeded = useCallback(async () => {
@@ -104,18 +104,27 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     );
   }
 
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text>에러 발생: {error}</Text>
-      </View>
-    );
-  }
+  
+// 📌 매칭 여부 체크 (옵셔널 체이닝)
+if (!subGroupId) {
+  return (
+    <View style={styles.container}>
+      <Text>매칭을 먼저 진행해주세요.</Text>
+    </View>
+  );
+}
+  // if (error) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <Text>에러 발생: {error}</Text>
+  //     </View>
+  //   );
+  // }
 
   if (!scoreboard) {
     return (
       <View style={styles.container}>
-        <Text>데이터가 없습니다.</Text>
+        <Text> 최소학점을 설정해주세요.</Text>
       </View>
     );
   }
