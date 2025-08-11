@@ -45,21 +45,35 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         routes: [{ name: "MainHomeScreen" }],
       });
     } catch (error: unknown) {
+      console.log("🚨 로그인 에러 발생:", error);
+      console.log("🚨 에러 타입:", typeof error);
+      console.log("🚨 에러 객체:", JSON.stringify(error, null, 2));
+      
       let errorMessage = "로그인에 실패했어요.";
       
       if (error instanceof Error) {
         const msg = error.message;
-        if (msg.includes("비밀번호") || msg.includes("password")) {
+        console.log("🔍 로그인 에러 메시지:", msg); // 디버깅용
+        
+        if (msg.includes("비밀번호") || msg.includes("password") || msg.includes("Password")) {
           errorMessage = "비밀번호가 올바르지 않아요.";
-        } else if (msg.includes("이메일") || msg.includes("email")) {
+        } else if (msg.includes("이메일") || msg.includes("email") || msg.includes("Email")) {
           errorMessage = "등록되지 않은 이메일이에요.";
-        } else if (msg.includes("계정") || msg.includes("account")) {
+        } else if (msg.includes("계정") || msg.includes("account") || msg.includes("Account")) {
           errorMessage = "계정을 찾을 수 없어요.";
+        } else if (msg.includes("인증") || msg.includes("authentication") || msg.includes("Authentication")) {
+          errorMessage = "이메일 또는 비밀번호가 올바르지 않아요.";
+        } else if (msg.includes("잘못") || msg.includes("incorrect") || msg.includes("Incorrect")) {
+          errorMessage = "이메일 또는 비밀번호가 올바르지 않아요.";
         } else {
           errorMessage = msg;
         }
+      } else {
+        console.log("🚨 Error 인스턴스가 아님:", error);
+        errorMessage = "알 수 없는 오류가 발생했어요.";
       }
       
+      console.log("📱 최종 에러 메시지:", errorMessage);
       Alert.alert("로그인 실패", errorMessage);
     }
   };

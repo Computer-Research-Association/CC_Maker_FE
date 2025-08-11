@@ -16,14 +16,24 @@ interface RetryAxiosRequestConfig extends AxiosRequestConfig {
 // ✅ 요청 인터셉터: 저장된 Access Token을 Authorization 헤더에 추가
 api.interceptors.request.use(
   async (config) => {
-    const tokenData = await SecureStore.getItemAsync("auth_tokens");
+    // 로그인과 회원가입 요청에는 토큰을 추가하지 않음
+    const isAuthRequest =
+      config.url?.includes("/api/auth/login") ||
+      config.url?.includes("/api/user/register") ||
+      config.url?.includes("/api/auth/register") ||
+      config.url?.includes("/api/auth/signup");
 
-    if (tokenData) {
-      const { accessToken } = JSON.parse(tokenData);
-      if (accessToken) {
-        config.headers["Authorization"] = `Bearer ${accessToken}`;
-        console.log("📤 요청 시 Authorization 추가:", accessToken);
+    if (!isAuthRequest) {
+      const tokenData = await SecureStore.getItemAsync("auth_tokens");
+      if (tokenData) {
+        const { accessToken } = JSON.parse(tokenData);
+        if (accessToken) {
+          config.headers["Authorization"] = `Bearer ${accessToken}`;
+          console.log("📤 요청 시 Authorization 추가:", accessToken);
+        }
       }
+    } else {
+      console.log("🔐 인증 요청 - 토큰 제외:", config.url);
     }
 
     console.log("🔼 요청 URL:", `${config.baseURL}${config.url}`);
@@ -56,6 +66,19 @@ api.interceptors.response.use(
   },
   async (error: AxiosError) => {
     const originalRequest = error.config as RetryAxiosRequestConfig;
+
+    // 로그인과 회원가입 API 호출 시에는 토큰 갱신을 시도하지 않음
+    if (
+      originalRequest.url?.includes("/api/auth/login") ||
+      originalRequest.url?.includes("/api/user/register") ||
+      originalRequest.url?.includes("/api/auth/register")
+    ) {
+      console.log(
+        "🔐 인증 API 에러 - 토큰 갱신 시도하지 않음:",
+        originalRequest.url
+      );
+      return Promise.reject(error);
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {

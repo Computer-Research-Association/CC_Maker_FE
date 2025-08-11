@@ -19,12 +19,27 @@ interface LoginParams {
 export async function signup(params: SignupParams): Promise<any> {
   try {
     console.log("📨 회원가입 요청:", params);
-    const response = await api.post("/register", params);
+    const response = await api.post("/api/user/register", params);
     console.log("✅ 회원가입 성공:", response.data);
     return response.data;
   } catch (error: any) {
-    console.error("회원가입 에러:", error);
-    throw new Error(error.response?.data?.message || "회원가입 실패");
+    console.error("❌ 회원가입 에러:", error);
+    console.error("❌ 에러 상태:", error.response?.status);
+    console.error("❌ 에러 데이터:", error.response?.data);
+    console.error("❌ 에러 헤더:", error.response?.headers);
+
+    // 서버에서 오는 구체적인 에러 메시지 처리
+    let errorMessage = "회원가입에 실패했습니다.";
+
+    if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.response?.data?.error) {
+      errorMessage = error.response.data.error;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    throw new Error(errorMessage);
   }
 }
 
@@ -33,12 +48,19 @@ export async function login({
   email,
   password,
 }: LoginParams): Promise<LoginResponse> {
-  console.log("로그인 API 호출:", { email, password });
+  console.log("🔐 로그인 API 호출 시작:", { email, password: "***" });
   try {
+    console.log("📤 서버로 로그인 요청 전송...");
     const response = await api.post("/api/auth/login", { email, password });
+    console.log("✅ 로그인 응답 받음:", response.status);
 
     // ✅ 서버 응답에서 토큰 추출
     const { accessToken, refreshToken, data } = response.data;
+    console.log("🔑 토큰 추출:", {
+      hasAccessToken: !!accessToken,
+      hasRefreshToken: !!refreshToken,
+      hasData: !!data,
+    });
 
     if (!accessToken || !refreshToken) {
       throw new Error("토큰이 응답에 없습니다.");
@@ -53,8 +75,26 @@ export async function login({
     console.log("✅ 토큰 저장 완료");
     return data as LoginResponse;
   } catch (error: any) {
-    console.error("로그인 에러:", error);
-    throw new Error(error.response?.data?.message || "로그인에 실패했습니다.");
+    console.error("❌ 로그인 에러 발생");
+    console.error("❌ 에러 타입:", typeof error);
+    console.error("❌ 에러 객체:", error);
+    console.error("❌ 에러 응답:", error.response?.data);
+    console.error("❌ 에러 상태:", error.response?.status);
+    console.error("❌ 에러 메시지:", error.message);
+
+    // 서버에서 오는 구체적인 에러 메시지 처리
+    let errorMessage = "로그인에 실패했습니다.";
+
+    if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+      console.log("📨 서버 에러 메시지:", errorMessage);
+    } else if (error.message) {
+      errorMessage = error.message;
+      console.log("📨 클라이언트 에러 메시지:", errorMessage);
+    }
+
+    console.log("📤 최종 에러 메시지 전달:", errorMessage);
+    throw new Error(errorMessage);
   }
 }
 
