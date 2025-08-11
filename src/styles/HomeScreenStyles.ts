@@ -2,12 +2,14 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
+    flexGrow: 1,
+    justifyContent: "flex-start",
     alignItems: "center",
+    padding: 20,
+    paddingBottom: 80,
+    paddingTop: 20,
     backgroundColor: "#fff",
   },
-
   title: { fontSize: 20, fontWeight: "bold", marginBottom: 20 },
   section: { marginBottom: 30, width: "100%" },
   subtitle: { fontSize: 16, fontWeight: "600", marginBottom: 10 },
@@ -59,14 +61,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#ccc",
     marginVertical: 16, // 위아래 간격 조절
-  },
-  matchingMessage: {
-    fontSize: 24, // ✅ 큰 텍스트
-    fontWeight: "600", // ✅ 반굵게
-    color: "#999", // ✅ 연한 회색
-    textAlign: "center", // ✅ 중앙 정렬
-    marginTop: "0%", // ✅ 세로 중앙 근처 배치 (안정적)
-    transform: [{ translateY: -20 }], // ✅ 텍스트 높이 보정 (정중앙에 더 가깝게)
   },
 });
 

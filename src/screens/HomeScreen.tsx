@@ -48,11 +48,11 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   const [scoreboard, setScoreboard] = useState<ScoreboardResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+// 해당 팀에서 내가 속한 소그룹ID
   const subGroupId = teamId ? subGroupIdMap[teamId] : null;
 
   const fetchSubGroupIdIfNeeded = useCallback(async () => {
-    if (!teamId || !userId || !subGroupId) return;
+    if (!teamId || !userId || subGroupId) return;
 
     try {
       const response = await api.get(`/api/matching/subgroup/${teamId}`, {
@@ -70,7 +70,6 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       console.error("subGroupId 조회 실패:", error);
     }
   }, [teamId, userId, subGroupId, setSubGroupIdMap]);
-
   //서브 그룹 ID불러오기(첫진입시)
   const fetchScoreboard = useCallback(() => {
     if (!teamId || !userId) return;
@@ -85,7 +84,6 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       })
       .catch((err) => {
         setError(err.message || "데이터를 불러오는 중 오류가 발생했습니다.");
-        console.log("✅ Scoreboard API 응답:");
         setScoreboard(null);
       })
       .finally(() => setLoading(false));
@@ -106,18 +104,27 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     );
   }
 
-  if (!subGroupId) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.matchingMessage}>매칭을 설정해주세요</Text>
-      </View>
-    );
-  }
+  
+// 📌 매칭 여부 체크 (옵셔널 체이닝)
+if (!subGroupId) {
+  return (
+    <View style={styles.container}>
+      <Text>매칭을 먼저 진행해주세요.</Text>
+    </View>
+  );
+}
+  // if (error) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <Text>에러 발생: {error}</Text>
+  //     </View>
+  //   );
+  // }
 
   if (!scoreboard) {
     return (
       <View style={styles.container}>
-        <Text style={styles.matchingMessage}>최소학점을 설정해주세요</Text>
+        <Text> 최소학점을 설정해주세요.</Text>
       </View>
     );
   }
@@ -125,7 +132,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   // ✅ 전체 그룹 정렬 및 1등/내 그룹 분리
   const allGroups = [scoreboard.mySubGroup, ...scoreboard.otherSubGroups];
   const sortedGroups = [...allGroups].sort((a, b) => b.score - a.score);
-  const topTeam = scoreboard!.mySubGroup;
+  const topTeam = sortedGroups[0];
   const isMyTeamTop = topTeam.subGroupId === scoreboard.mySubGroup.subGroupId;
   const mySubGroupId = scoreboard.mySubGroup.subGroupId;
 
