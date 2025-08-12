@@ -23,7 +23,7 @@ export default function BottomTabNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: true, // 아이콘 밑에 글씨 보이게
-        tabBarActiveTintColor: "#000", // 선택 시 색상 조정
+        tabBarActiveTintColor: "#ff6b6b", // 선택 시 분홍색
         tabBarInactiveTintColor: "#bbb", // 비선택 시 색
         tabBarStyle: {
           backgroundColor: "#fff",
@@ -47,15 +47,27 @@ export default function BottomTabNavigator() {
             },
           }),
         },
-        tabBarButton: (props) => (
-          <TouchableOpacity
-            activeOpacity={0.6}
-            onPress={props.onPress}
-            style={props.style}
-          >
-            <View>{props.children}</View>
-          </TouchableOpacity>
-        ),
+        tabBarButton: (props) => {
+          const selected = (props as any)?.accessibilityState?.selected;
+          return (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={props.onPress}
+              style={[
+                props.style,
+                {
+                  marginHorizontal: 6,
+                  borderRadius: 14,
+                  backgroundColor: selected
+                    ? "rgba(255, 107, 107, 0.12)" // 선택 시 은은한 분홍 배경
+                    : "transparent",
+                },
+              ]}
+            >
+              <View>{props.children}</View>
+            </TouchableOpacity>
+          );
+        },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: string = "";
 
@@ -74,9 +86,9 @@ export default function BottomTabNavigator() {
               break;
 
             // 25.08.07 추가
-            case "NeonTest":
-              iconName = "color-wand-outline"; // 네온 느낌의 아이콘
-              break;
+            // case "NeonTest":
+            //   iconName = "color-wand-outline"; // 네온 느낌의 아이콘
+            //   break;
           }
 
           return (
@@ -103,11 +115,11 @@ export default function BottomTabNavigator() {
       {/* <Tab.Screen name="Profile" component={ProfileScreen} /> */}
 
       {/* 25.08.07 추가 */}
-      <Tab.Screen
+      {/* <Tab.Screen
         name="NeonTest"
         component={NeonProgressTestScreen}
         options={{ title: "네온" }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 }

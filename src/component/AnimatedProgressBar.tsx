@@ -6,12 +6,20 @@ import {
   Animated,
   LayoutChangeEvent,
 } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
 
 type ProgressBarProps = {
   current: number;
   max: number;
   label?: string;
   barHeight?: number;
+  gradient?: [string, string]; // 수정: 그라데이션 색상 타입을 튜플로 변경
+  textColor?: string;  // 추가: 점수/퍼센트 글씨색
+  percentColor?: string; // 추가: 퍼센트만 별도 색
+  isTopTeam?: boolean; // 추가: 1등 그룹 여부
+  hideBorder?: boolean; // 추가: 테두리 숨김 여부
+  showInnerShadow?: boolean; // 추가: 테두리 안쪽에 인너 섀도우 표시
+  containerBackgroundColor?: string; // 추가: 남은 부분(컨테이너 배경) 색상 오버라이드
 };
 
 export default function AnimatedProgressBar({
@@ -19,6 +27,13 @@ export default function AnimatedProgressBar({
   max,
   label,
   barHeight = 20,
+  gradient = ["#FFD1E1", "#FFB6D1"], // 기본 분홍 그라데이션
+  textColor = "#888",
+  percentColor = "#ff5a5a",
+  isTopTeam = false, // 기본값 false
+  hideBorder = false,
+  showInnerShadow = true,
+  containerBackgroundColor,
 }: ProgressBarProps) {
   const progress = max === 0 ? 0 : current / max;
   const animatedWidth = useRef(new Animated.Value(0)).current;
@@ -34,18 +49,24 @@ export default function AnimatedProgressBar({
     }
   }, [progress, barWidth]);
 
-  const getBarColor = () => {
-    if (progress < 0.3) return "#FFF5E4";
-    if (progress < 0.5) return "#FFE3E1";
-    if (progress < 0.8) return "#FFD1D1";
-    return "#FF9494";
-  };
-
   const handleLayout = (event: LayoutChangeEvent) => {
     setBarWidth(event.nativeEvent.layout.width);
   };
 
-  const formattedLabel = `${current} / ${max} (${Math.round(progress * 100)}%)`;
+  // 1등 그룹과 다른 그룹의 스타일 분기
+  const getBarContainerStyle = () => {
+    if (isTopTeam) {
+      return {
+        backgroundColor: "#fff", // 1등: 흰색 배경
+        borderColor: "#FFE2E2", // 1등: 얇은 분홍 테두리
+      };
+    } else {
+      return {
+        backgroundColor: "#f3f4f6", // 다른 그룹: 옅은 회색 배경 (남은 부분)
+        // borderColor: "#e5e7eb", // 다른 그룹: 옅은 회색 테두리
+      };
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -53,39 +74,52 @@ export default function AnimatedProgressBar({
         style={[
           styles.barContainer,
           {
-            height: barHeight - 10,
+            height: barHeight,
             borderRadius: barHeight / 2,
+            borderWidth: hideBorder ? 0 : 1,
+            ...getBarContainerStyle(),
           },
+          containerBackgroundColor
+            ? { backgroundColor: containerBackgroundColor }
+            : null,
         ]}
         onLayout={handleLayout}
       >
-        {/* ✅ 유리 느낌 오버레이 */}
-        <View style={styles.glassOverlay} />
-        <View style={styles.shineOverlay} />
-
-        {/* ✅ 진행도 채우기 */}
+        {/* 그라데이션 바 */}
         <Animated.View
           style={[
             styles.barFill,
             {
               width: animatedWidth,
-              backgroundColor: getBarColor(),
               borderRadius: barHeight / 2,
-
-              // ✅ 네온 느낌 그림자 추가
-              shadowColor: getBarColor(),
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.8,
-              shadowRadius: 10,
-              elevation: 10, // Android
+              overflow: 'hidden',
             },
           ]}
-        />
+        >
+          <LinearGradient
+            colors={gradient}
+            start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+            style={{ flex: 1, borderRadius: barHeight / 2 }}
+          />
+        </Animated.View>
 
-        {/* ✅ 바 중앙 라벨 */}
-        <View style={styles.labelOverlay}>
-          <Text style={styles.labelText}>{formattedLabel}</Text>
-        </View>
+        {/* 인너 섀도우 (상/하단) */}
+        {showInnerShadow && (
+          <LinearGradient
+            colors={["rgba(0,0,0,0.06)", "rgba(0,0,0,0)"]}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            pointerEvents="none"
+            style={[styles.innerShadowTop, { borderRadius: barHeight / 2 }]}
+          />
+        )}
+      </View>
+      {/* 바 오른쪽에 점수/퍼센트 라벨 */}
+      <View style={styles.labelRow}>
+        <Text style={[styles.scoreText, { color: textColor }]}>{current}</Text>
+        <Text style={[styles.slashText, { color: textColor }]}> / </Text>
+        <Text style={[styles.maxText, { color: textColor }]}>{max}</Text>
+        <Text style={[styles.percentText, { color: percentColor }]}>  ({Math.round(progress * 100)}%)</Text>
       </View>
     </View>
   );
@@ -98,17 +132,10 @@ const styles = StyleSheet.create({
   },
   barContainer: {
     width: "100%",
-    backgroundColor: "#fff",
     position: "relative",
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 999,
-    shadowColor: "#aaa",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 4,
   },
   barFill: {
     position: "absolute",
@@ -116,44 +143,37 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     zIndex: 1,
+    // 테두리 없음
   },
-  barFillGlow: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    bottom: 0,
-    zIndex: 1,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-
-  labelOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 4,
-  },
-  labelText: {
-    fontSize: 10,
-    fontWeight: "300",
-    color: "#000",
-  },
-  glassOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255, 255, 255, 0.07)",
-    zIndex: 2,
-  },
-  shineOverlay: {
-    position: "absolute",
-    top: 0,
+  innerShadowTop: {
+    position: 'absolute',
     left: 0,
     right: 0,
-    height: "50%",
-    backgroundColor: "rgba(255, 255, 255, 0.15)",
-    borderBottomRightRadius: 999,
-    borderBottomLeftRadius: 999,
-    zIndex: 3,
+    top: 0,
+    height: 3, // 더 얇게
+    zIndex: 2,
+  },
+  // 하단 섀도우는 사용하지 않음
+  labelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    marginTop: 8,
+    marginBottom: 2,
+  },
+  scoreText: {
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  slashText: {
+    fontSize: 15,
+  },
+  maxText: {
+    fontSize: 15,
+  },
+  percentText: {
+    fontSize: 15,
+    fontWeight: "bold",
+    marginLeft: 2,
   },
 });

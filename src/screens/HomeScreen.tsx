@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
+  Image,
 } from "react-native";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -17,6 +18,7 @@ import { UserContext } from "./UserContext";
 import { useFocusEffect } from "@react-navigation/native";
 import AnimatedProgressBar from "../component/AnimatedProgressBar";
 import styles from "../styles/HomeScreenStyles";
+// @ts-ignore
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "HomeScreen">;
 };
@@ -136,69 +138,109 @@ if (!subGroupId) {
   const isMyTeamTop = topTeam.subGroupId === scoreboard.mySubGroup.subGroupId;
   const mySubGroupId = scoreboard.mySubGroup.subGroupId;
 
+  // 1등, 내 그룹, 나머지 그룹 분리
+  const restGroups = sortedGroups.slice(1);
+  const myGroup = scoreboard.mySubGroup;
+  const isMyGroupTop = topTeam.subGroupId === myGroup.subGroupId;
+
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, backgroundColor: "#f7f8fa" }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-        <ScrollView contentContainerStyle={styles.container}>
-          {/* ✅ 왕관 + 내 그룹 멤버 표시 */}
+        <StatusBar barStyle="dark-content" backgroundColor="#f7f8fa" />
+        <ScrollView contentContainerStyle={[styles.container, { paddingTop: 32, paddingBottom: 32 }]}> 
+          {/* 상단 왕관 + 내 그룹명 + 하트 + 테스트명 */}
           <View style={styles.groupTitleContainer}>
-            <Text style={styles.crown}>👑</Text>
-            <Text
-              style={styles.teamNameText}
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              minimumFontScale={0.7} // 너무 작아지는 것 방지
-            >
-              {topTeam.members?.join(" ❣️ ") ?? "멤버 없음"}
-            </Text>
+                         <Image 
+               source={require('../../assets/free-icon-crown-6941697.png')} 
+               style={{ width: 44, height: 44, marginBottom: 2, marginLeft:4 }}
+             />
+            <View style={{ flexDirection: "row", alignItems: "center", marginTop: 2 }}>
+              <Text style={styles.myNameText}>{myGroup.members?.[0] ?? ""}</Text>
+                             <Image 
+                 source={require('../../assets/free-icon-hearts-18745836.png')} 
+                  style={{ width: 18, height: 18, marginHorizontal: 4 }}
+               />
+              <Text style={styles.myNameText}>{teamName || "테스트"}</Text>
+            </View>
           </View>
 
-          {/* ✅ 1등 그룹 카드 */}
-          <View style={[styles.progressCard, styles.topTeamCard]}>
-            {/* <Text style={styles.subtitle}>🥇</Text> */}
-            <Text style={styles.cardTitle}>
-              {topTeam.members?.join(" 😉 ") ?? "멤버 없음"}
-            </Text>
+          {/* 1등 그룹 카드 (항상 맨 위, 빨간색 강조) */}
+          <View style={styles.topCardBox}>
+            <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 6 }}>
+              <Text style={styles.topNameText}>{topTeam.members?.[0] ?? ""}</Text>
+                             <Image 
+                 source={require('../../assets/free-icon-hearts-18745836.png')} 
+                  style={{ width: 18, height: 18, marginHorizontal: 2 }}
+               />
+              <Text style={styles.topNameText}>{teamName || "테스트"}</Text>
+            </View>
             <AnimatedProgressBar
               current={topTeam.score}
-              max={
-                typeof scoreboard.minScore === "number"
-                  ? scoreboard.minScore
-                  : 0
-              }
-              barHeight={30}
+              max={scoreboard.minScore}
+              barHeight={28}
+              gradient={["#ffb6d1", "#ffd1e1"]}
+              textColor="#888"
+              percentColor="#ff5a5a"
+              isTopTeam={true}
             />
           </View>
+
+          {/* 1등과 나머지 그룹 구분선 */}
           <View style={styles.divider} />
 
-          {/* ✅ 나머지 그룹들 (점수순 + 내 그룹 강조) */}
-          <View style={styles.section}>
-            {sortedGroups
-              .filter((sg) => sg.subGroupId !== topTeam.subGroupId)
-              .map((sg) => {
-                const isMyTeam = sg.subGroupId === mySubGroupId;
-                return (
-                  <View
-                    key={sg.subGroupId}
-                    style={[styles.progressCard, isMyTeam && styles.myCard]}
-                  >
-                    <Text style={styles.cardTitle}>
-                      {sg.members?.join(" ⭐ ") ?? "멤버 없음"}
-                    </Text>
-                    <AnimatedProgressBar
-                      current={sg.score}
-                      max={
-                        typeof scoreboard.minScore === "number"
-                          ? scoreboard.minScore
-                          : 0
-                      }
-                      barHeight={25}
-                    />
-                  </View>
-                );
-              })}
-          </View>
+          {/* 나머지 그룹 카드들 (내 그룹은 파랑 강조) */}
+          {restGroups.map((sg) => {
+            const isMyTeam = sg.subGroupId === myGroup.subGroupId;
+            const isOtherGroup = !isMyTeam && sg.subGroupId !== topTeam.subGroupId;
+            return (
+              <View
+                key={sg.subGroupId}
+                style={[
+                  styles.otherCardBox,
+                  isMyTeam && !isMyGroupTop && styles.blueCardBox,
+                ]}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 6 }}>
+                  <Text style={isMyTeam && !isMyGroupTop ? styles.blueNameText : styles.otherNameText}>{sg.members?.[0] ?? ""}</Text>
+                                     <Image 
+                     source={require('../../assets/free-icon-hearts-18745836.png')} 
+                     style={{ width: 16, height: 16, marginHorizontal: 2 }}
+                   />
+                  {sg.members[1] && <Text style={isMyTeam && !isMyGroupTop ? styles.blueNameText : styles.otherNameText}>{sg.members[1]}</Text>}
+                </View>
+                <AnimatedProgressBar
+                  current={sg.score}
+                  max={scoreboard.minScore}
+                  barHeight={24}
+                  gradient={
+                    isMyTeam && !isMyGroupTop
+                      ? ["#b6d1ff", "#d1e1ff"]
+                      : isOtherGroup
+                      ? ["#D2D9E1", "#DDDFE3"] // 다른 그룹: 짙은 회색 그라데이션
+                      : undefined
+                  }
+                  textColor={
+                    isMyTeam && !isMyGroupTop
+                      ? "#2196f3"
+                      : isOtherGroup
+                      ? "#888"
+                      : undefined
+                  }
+                  percentColor={
+                    isMyTeam && !isMyGroupTop
+                      ? "#2196f3"
+                      : isOtherGroup
+                      ? "#888"
+                      : undefined
+                  }
+                  hideBorder={isOtherGroup || (isMyTeam && !isMyGroupTop)}
+                  containerBackgroundColor={
+                    isMyTeam && !isMyGroupTop ? "#DBEAFE" : undefined
+                  }
+                />
+              </View>
+            );
+          })}
         </ScrollView>
       </SafeAreaView>
     </View>
