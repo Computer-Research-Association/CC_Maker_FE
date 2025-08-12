@@ -100,6 +100,51 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     alignSelf: "center",
   },
+  // Add missing styles
+  teamNameText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
+    maxWidth: 280,
+  },
+  progressCard: {
+    width: 320,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    padding: 18,
+    marginBottom: 14,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  topTeamCard: {
+    backgroundColor: "#FDF2F7",
+    borderColor: "#ffdeec",
+    shadowColor: "#ff5a5a",
+    shadowOpacity: 0.2,
+  },
+  myCard: {
+    backgroundColor: "#ffe3ed",
+    borderColor: "#ffb6c1",
+    shadowColor: "#ffb6c1",
+    shadowOpacity: 0.15,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  section: {
+    width: "100%",
+    alignItems: "center",
+  },
 });
 
 export default styles;

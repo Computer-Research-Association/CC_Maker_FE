@@ -14,6 +14,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 8,
   },
+  settingIcon: {
+    // No additional styling needed for the icon itself
+  },
 
   // 프로필 섹션
   profileSection: {
