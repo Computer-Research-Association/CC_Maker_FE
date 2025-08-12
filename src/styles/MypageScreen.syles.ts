@@ -3,123 +3,255 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 100,
+    backgroundColor: "#f7f8fa",
+  },
+  
+  // 설정 버튼
+  settingButton: {
+    position: "absolute",
+    top: 60,
+    right: 20,
+    zIndex: 10,
+    padding: 8,
   },
 
+  // 프로필 섹션
+  profileSection: {
+    paddingTop: 100,
+    paddingBottom: 30,
+    alignItems: "center",
+  },
   profileContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center", // ✅ 수직 중앙 맞추기
-    paddingHorizontal: 40,
-    paddingTop: 40,
-  },
-
-  // ✅ 본인 프로필
-  myProfileBlock: {
     alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 40,
+    width: "100%",
+    maxWidth: 300,
   },
-
-  myAvatar: {
-    width: 120,
-    height: 120,
-    backgroundColor: "#ccc",
+  profileBlock: {
+    alignItems: "center",
+    flex: 1,
+    maxWidth: 100,
+  },
+  avatar: {
+    width: 60,
+    height: 60,
     borderRadius: 12,
+    backgroundColor: "#e5e7eb",
     marginBottom: 8,
   },
-
-  myName: {
-    fontSize: 16,
-    fontWeight: "bold",
+  profileName: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
   },
-
-  // ✅ 나머지 프로필 컨테이너 (세로 evenly)
-  otherProfilesContainer: {
-    justifyContent: "center", // ✅ 아예 중앙 정렬
-    alignItems: "center", // ✅ 텍스트 포함 중앙
-    gap: 12, // ✅ RN 0.71+ 또는 아래처럼 대체
-  },
-
-  otherProfileBlock: {
+  heartContainer: {
     alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 10,
+  },
+  heartIcon: {
+    width: 24,
+    height: 24,
   },
 
-  otherAvatar: {
+  // 매칭된 사람 프로필 (더 크게)
+  matchedProfileBlock: {
+    alignItems: "center",
+    flex: 1,
+    maxWidth: 120,
+  },
+  matchedAvatar: {
     width: 80,
     height: 80,
-    backgroundColor: "#ddd",
-    borderRadius: 12,
+    borderRadius: 16,
+    backgroundColor: "#e5e7eb",
+    marginBottom: 10,
+  },
+  matchedProfileName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
+  },
+
+  // 미션 히스토리 섹션
+  missionHistorySection: {
+    backgroundColor: "#fff",
+    marginHorizontal: 20,
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginLeft: 8,
+  },
+
+  // 타임라인
+  timelineContainer: {
+    position: "relative",
+  },
+  timelineLine: {
+    position: "absolute",
+    left: 20,
+    top: 0,
+    bottom: 0,
+    width: 2,
+    backgroundColor: "#ff6b6b",
+    opacity: 0.3,
+  },
+  missionItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: 20,
+    position: "relative",
+  },
+  missionIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 16,
+    zIndex: 2,
+  },
+  completedIcon: {
+    backgroundColor: "#ff6b6b",
+  },
+  pendingIcon: {
+    backgroundColor: "#e5e7eb",
+  },
+  missionCard: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  completedCard: {
+    backgroundColor: "#fdf2f7",
+    borderLeftWidth: 3,
+    borderLeftColor: "#ff6b6b",
+  },
+  pendingCard: {
+    backgroundColor: "#f9fafb",
+    borderLeftWidth: 3,
+    borderLeftColor: "#d1d5db",
+  },
+  missionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 4,
+  },
+  missionDate: {
+    fontSize: 14,
+    color: "#666",
     marginBottom: 8,
   },
-
-  otherName: {
-    fontSize: 14,
-  },
-
-  // ✅ 기존 탭, 버튼 영역 유지
-  tabRow: {
+  missionDescription: {
     flexDirection: "row",
-    marginTop: 24,
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
-    paddingHorizontal: 20,
-  },
-
-  tabText: {
-    marginRight: 16,
-    paddingBottom: 6,
-    fontSize: 14,
-    color: "#888",
-  },
-
-  selectedTab: {
-    borderBottomWidth: 2,
-    borderColor: "#000",
-    color: "#000",
-    fontWeight: "bold",
-  },
-
-  statusRow: {
-    marginTop: 16,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-  },
-
-  statusText: {
-    fontSize: 12,
-    color: "#555",
-  },
-
-  emptyNoteContainer: {
-    marginTop: 80,
     alignItems: "center",
   },
-
-  writeButtonMain: {
-    backgroundColor: "#FF9494",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 20,
+  descriptionText: {
+    fontSize: 14,
+    color: "#666",
+    marginLeft: 6,
+    flex: 1,
   },
 
-  writeButtonMainText: {
-    color: "#fff",
+  // 기존 스타일들 (필요시 사용)
+  myProfileBlock: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  myAvatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#e5e7eb",
+    marginBottom: 10,
+  },
+  myName: {
+    fontSize: 18,
     fontWeight: "bold",
+    color: "#333",
   },
-
-  settingIcon: {
-    position: "absolute",
-    top: -40,
-    right: 10,
-    zIndex: 999,
-    padding: 13,
+  otherProfilesContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    flexWrap: "wrap",
+  },
+  otherProfileBlock: {
+    alignItems: "center",
+    marginHorizontal: 15,
+  },
+  otherAvatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#e5e7eb",
+    marginBottom: 8,
+  },
+  otherName: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#666",
   },
   noMatchText: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#999",
     textAlign: "center",
     marginTop: 20,
+  },
+  tabRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  tabText: {
+    fontSize: 16,
+    color: "#666",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  selectedTab: {
+    color: "#ff6b6b",
+    fontWeight: "bold",
+  },
+  statusRow: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  statusText: {
+    fontSize: 14,
+    color: "#666",
+  },
+  emptyNoteContainer: {
+    alignItems: "center",
+    marginTop: 40,
+  },
+  writeButtonMainText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
