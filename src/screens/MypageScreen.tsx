@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Image, Alert } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 //@ts-ignore
@@ -9,23 +9,20 @@ import { TeamContext } from "./TeamContext";
 import { useIsFocused } from "@react-navigation/native";
 import { UserContext } from "./UserContext";
 import styles from "../styles/MypageScreen.syles";
+import { getMissionHistoryByUser } from "../api/missionApi";
+import { MissionHistory } from "../types/mission";
+
 
 type MyPageScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "MypageScreen">;
 };
 
-type MissionHistory = {
-  id: number;
-  title: string;
-  date: string;
-  description: string;
-  icon: string;
-  isCompleted: boolean;
-};
+
 
 export default function MyPageScreen({ navigation }: MyPageScreenProps) {
   const [matchedNames, setMatchedNames] = useState<string[]>([]);
   const [missionHistory, setMissionHistory] = useState<MissionHistory[]>([]);
+  const [isSurveyCompleted, setIsSurveyCompleted] = useState(false);
   const { teamId, subGroupIdMap, setSubGroupIdMap } = useContext(TeamContext);
   const { userId, name } = useContext(UserContext);
   const isFocused = useIsFocused();
@@ -75,63 +72,44 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
 
   // ✅ 완료된 미션 히스토리 불러오기
   useEffect(() => {
-    if (!teamId || !subGroupId || !isFocused || !userId) return;
+    if (!userId || !isFocused) return;
     const fetchMissionHistory = async () => {
       try {
-        const response = await api.get(
-          `/api/missions/completed/${teamId}`,
-          {
-            params: { userId, subGroupId },
-          }
-        );
-        // 실제 API 응답에 따라 데이터 구조 조정 필요
-        const missions = response.data.missions || [];
-        setMissionHistory(missions);
+        console.log("미션 히스토리 조회 시작 - userId:", userId);
+        const histories = await getMissionHistoryByUser(userId);
+        console.log("미션 히스토리 조회 결과:", histories);
+        setMissionHistory(histories || []);
       } catch (error) {
         console.error("미션 히스토리 조회 실패", error);
-        // 임시 데이터로 표시 (API 연동 후 제거)
-        setMissionHistory([
-          {
-            id: 1,
-            title: "첫 데이트 사진 찍기",
-            date: "8월 10일",
-            description: "카페에서 함께 찍은 첫 사진! ❤️",
-            icon: "camera",
-            isCompleted: true,
-          },
-          {
-            id: 2,
-            title: "함께 요리하기",
-            date: "8월 8일",
-            description: "파스타 만들기 성공!",
-            icon: "search",
-            isCompleted: true,
-          },
-          {
-            id: 3,
-            title: "영화 보기",
-            date: "8월 5일",
-            description: "이번 주말에 꼭!",
-            icon: "film",
-            isCompleted: false,
-          },
-        ]);
+        // 오류가 발생해도 빈 배열로 설정하여 앱이 크래시되지 않도록 함
+        setMissionHistory([]);
       }
     };
     fetchMissionHistory();
-  }, [teamId, subGroupId, isFocused, userId]);
+  }, [userId, isFocused]);
 
-  const getIconName = (iconType: string) => {
-    switch (iconType) {
-      case "camera":
-        return "camera-outline";
-      case "search":
-        return "search-outline";
-      case "film":
-        return "film-outline";
+  // 미션 점수에 따른 아이콘 반환
+  const getIconName = (score: number) => {
+    switch (score) {
+      case 1:
+        return "star-outline";
+      case 3:
+        return "heart-outline";
+      case 5:
+        return "diamond-outline";
+      case 10:
+        return "trophy-outline";
       default:
         return "star-outline";
     }
+  };
+
+  // 날짜 포맷팅 함수
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${month}월 ${day}일`;
   };
 
   return (
@@ -184,36 +162,75 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
             <View style={styles.timelineLine} />
             
             {/* 미션 항목들 */}
-            {missionHistory.map((mission, index) => (
-              <View key={mission.id} style={styles.missionItem}>
-                {/* 미션 아이콘 */}
-                <View style={[
-                  styles.missionIcon,
-                  mission.isCompleted ? styles.completedIcon : styles.pendingIcon
-                ]}>
-                  <Ionicons 
-                    name={getIconName(mission.icon)} 
-                    size={16} 
-                    color={mission.isCompleted ? "#fff" : "#999"} 
-                  />
-                </View>
+            {missionHistory.length > 0 ? (
+              missionHistory.map((mission, index) => (
+                <View key={mission.id} style={styles.missionItem}>
+                  {/* 미션 아이콘 */}
+                  <View style={[
+                    styles.missionIcon,
+                    styles.completedIcon
+                  ]}>
+                    <Ionicons 
+                      name={getIconName(mission.missionScore)} 
+                      size={16} 
+                      color="#fff"
+                    />
+                  </View>
 
-                {/* 미션 카드 */}
-                <View style={[
-                  styles.missionCard,
-                  mission.isCompleted ? styles.completedCard : styles.pendingCard
-                ]}>
-                  <Text style={styles.missionTitle}>{mission.title}</Text>
-                  <Text style={styles.missionDate}>{mission.date}</Text>
-                  <View style={styles.missionDescription}>
-                    <Ionicons name="chatbubble-outline" size={14} color="#999" />
-                    <Text style={styles.descriptionText}>{mission.description}</Text>
+                  {/* 미션 카드 */}
+                  <View style={[
+                    styles.missionCard,
+                    styles.completedCard
+                  ]}>
+                    <Text style={styles.missionTitle}>{mission.missionTitle}</Text>
+                    <Text style={styles.missionDate}>{formatDate(mission.completedAt)}</Text>
+                    <View style={styles.missionDescription}>
+                      <Ionicons name="chatbubble-outline" size={14} color="#999" />
+                      <Text style={styles.descriptionText}>{mission.missionDescription}</Text>
+                    </View>
+                    <Text style={styles.descriptionText}>+{mission.missionScore}점</Text>
                   </View>
                 </View>
+              ))
+            ) : (
+              <View style={{ alignItems: 'center', paddingVertical: 40 }}>
+                <Ionicons name="calendar-outline" size={40} color="#ccc" />
+                <Text style={{ marginTop: 10, fontSize: 16, color: '#666' }}>아직 완료된 미션이 없어요</Text>
+                <Text style={{ marginTop: 5, fontSize: 14, color: '#999' }}>미션을 완료하면 여기에 기록됩니다!</Text>
               </View>
-            ))}
+            )}
           </View>
         </View>
+
+        {/* 매칭 상대 없으면 설문 버튼 */}
+        {matchedNames.length === 0 && (
+          <View style={{ alignItems: 'center', paddingVertical: 20 }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#FF9898',
+                paddingHorizontal: 30,
+                paddingVertical: 15,
+                borderRadius: 25,
+                shadowColor: '#E08B8B',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 8,
+              }}
+              onPress={() => {
+                if (isSurveyCompleted) {
+                  Alert.alert("알림", "이미 설문조사를 완료했습니다.", [
+                    { text: "확인" },
+                  ]);
+                } else {
+                  navigation.navigate("MbtiScreen");
+                }
+              }}
+            >
+              <Text style={styles.writeButtonMainText}>설문시작하기</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
