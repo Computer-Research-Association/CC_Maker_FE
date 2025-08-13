@@ -10,18 +10,15 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "#fff",
   },
 
   teamCard: {
-    width: windowWidth * 0.6,
-    height: 150,
-    marginHorizontal: 10,
+    width: windowWidth - 60, // 좌우 패딩 30씩으로 늘림
+    height: 120,
     backgroundColor: "#fff",
     borderRadius: 10,
-    padding: 20,
+    padding: 15,
     elevation: 3,
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -33,9 +30,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   addCard: {
-    width: windowWidth * 0.6,
-    height: 150,
-    marginHorizontal: 10,
+    width: windowWidth - 60, // 좌우 패딩 30씩으로 늘림
+    height: 120,
     borderRadius: 10,
     borderWidth: 2,
     borderStyle: "dashed",

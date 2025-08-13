@@ -9,7 +9,7 @@ import { TeamContext } from "./TeamContext";
 import { useIsFocused } from "@react-navigation/native";
 import { UserContext } from "./UserContext";
 import styles from "../styles/MypageScreen.syles";
-import { getMissionHistoryByUser } from "../api/missionApi";
+import { getMissionHistoryByUser, getMissionHistoryByTeam } from "../api/missionApi";
 import { MissionHistory } from "../types/mission";
 
 
@@ -70,23 +70,33 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
     fetchMatchedNames();
   }, [teamId, subGroupId, isFocused, userId]);
 
-  // ✅ 완료된 미션 히스토리 불러오기
+  // ✅ 완료된 미션 히스토리 불러오기 (팀 전체)
   useEffect(() => {
-    if (!userId || !isFocused) return;
+    if (!teamId || !isFocused) return;
     const fetchMissionHistory = async () => {
       try {
-        console.log("미션 히스토리 조회 시작 - userId:", userId);
-        const histories = await getMissionHistoryByUser(userId);
-        console.log("미션 히스토리 조회 결과:", histories);
+        console.log("팀 전체 미션 히스토리 조회 시작 - teamId:", teamId);
+        const histories = await getMissionHistoryByTeam(teamId);
+        console.log("팀 전체 미션 히스토리 조회 결과:", histories);
+        
+        // 각 미션의 matchedNames 확인
+        histories?.forEach((mission: MissionHistory, index: number) => {
+          console.log(`미션 ${index + 1}:`, {
+            userName: mission.userName,
+            matchedNames: mission.matchedNames,
+            subGroupName: mission.subGroupName
+          });
+        });
+        
         setMissionHistory(histories || []);
       } catch (error) {
-        console.error("미션 히스토리 조회 실패", error);
+        console.error("팀 전체 미션 히스토리 조회 실패", error);
         // 오류가 발생해도 빈 배열로 설정하여 앱이 크래시되지 않도록 함
         setMissionHistory([]);
       }
     };
     fetchMissionHistory();
-  }, [userId, isFocused]);
+  }, [teamId, isFocused]);
 
   // 미션 점수에 따른 아이콘 반환
   const getIconName = (score: number) => {
@@ -132,21 +142,37 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
               <Text style={styles.profileName}>{name || "사용자"}</Text>
             </View>
 
-            {/* 하트 아이콘 */}
-            <View style={styles.heartContainer}>
-              <Image 
-                source={require('../../assets/free-icon-hearts-18745836.png')} 
-                style={styles.heartIcon} 
-              />
-            </View>
-
-            {/* 매칭된 상대 프로필 */}
-            <View style={styles.matchedProfileBlock}>
-              <View style={styles.matchedAvatar} />
-              <Text style={styles.matchedProfileName}>
-                {matchedNames[0] || "매칭 대기중"}
-              </Text>
-            </View>
+            {/* 매칭된 멤버들 표시  3명 4명일때도 표시되게 수정 0812*/}
+            {matchedNames.length > 0 ? (
+              <View style={styles.matchedMembersContainer}>
+                {matchedNames.map((memberName, index) => (
+                  <View key={index} style={styles.matchedMemberItem}>
+                    {/* 하트 아이콘 */}
+                    <View style={styles.heartContainer}>
+                      <Image 
+                        source={require('../../assets/free-icon-hearts-18745836.png')} 
+                        style={styles.heartIcon} 
+                      />
+                    </View>
+                    
+                    {/* 매칭된 멤버 프로필 */}
+                    <View style={styles.matchedProfileBlock}>
+                      <View style={styles.matchedAvatar} />
+                      <Text style={styles.matchedProfileName}>
+                        {memberName}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.matchedProfileBlock}>
+                <View style={styles.matchedAvatar} />
+                <Text style={styles.matchedProfileName}>
+                  매칭 대기중
+                </Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -177,19 +203,31 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
                     />
                   </View>
 
-                  {/* 미션 카드 */}
-                  <View style={[
-                    styles.missionCard,
-                    styles.completedCard
-                  ]}>
-                    <Text style={styles.missionTitle}>{mission.missionTitle}</Text>
-                    <Text style={styles.missionDate}>{formatDate(mission.completedAt)}</Text>
-                    <View style={styles.missionDescription}>
-                      <Ionicons name="chatbubble-outline" size={14} color="#999" />
-                      <Text style={styles.descriptionText}>{mission.missionDescription}</Text>
-                    </View>
-                    <Text style={styles.descriptionText}>+{mission.missionScore}점</Text>
-                  </View>
+                                     {/* 미션 카드 */}
+                   <View style={[
+                     styles.missionCard,
+                     styles.completedCard
+                   ]}>
+                                                                 <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Text style={styles.missionTitle}>{mission.userName}</Text>
+                        <Image 
+                          source={require('../../assets/free-icon-hearts-18745836.png')} 
+                          style={{ width: 18, height: 18, marginHorizontal: 8 }}
+                        />
+                        <Text style={styles.missionTitle}>
+                          {mission.matchedNames && mission.matchedNames.length > 0 
+                            ? mission.matchedNames.join(" ♥ ")
+                            : "매칭 대기중"
+                          }
+                        </Text>
+                      </View>
+                     <Text style={styles.missionDate}>{formatDate(mission.completedAt)}</Text>
+                     <View style={styles.missionDescription}>
+                       <Ionicons name="chatbubble-outline" size={14} color="#999" />
+                       <Text style={styles.descriptionText}>{mission.missionDescription}</Text>
+                     </View>
+                     <Text style={styles.descriptionText}>+{mission.missionScore}점</Text>
+                   </View>
                 </View>
               ))
             ) : (
