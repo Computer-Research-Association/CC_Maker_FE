@@ -1,10 +1,12 @@
 import api from './apiClient';
 
-// 미션 히스토리 조회
-export async function getMissionHistoryByUser(userId: number) {
+// 미션 히스토리 조회 (팀별)
+export async function getMissionHistoryByUser(userId: number, teamId: number) {
   try {
-    console.log('미션 히스토리 조회 요청:', userId);
-    const response = await api.get(`/api/mission/history/user/${userId}`);
+    console.log('미션 히스토리 조회 요청:', userId, teamId);
+    const response = await api.get(`/api/mission/history/user/${userId}`, {
+      params: { teamId }
+    });
     console.log('미션 히스토리 조회 성공:', response.data);
     return response.data;
   } catch (error: any) {

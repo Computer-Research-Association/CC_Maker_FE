@@ -23,19 +23,22 @@ const styles = StyleSheet.create({
     paddingTop: 100,
     paddingBottom: 30,
     alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
   },
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 40,
+    justifyContent: "center",
+    paddingHorizontal: 20,
     width: "100%",
-    maxWidth: 300,
+    maxWidth: 400,
+    alignSelf: "center",
   },
   profileBlock: {
     alignItems: "center",
-    flex: 1,
-    maxWidth: 100,
+    flex: 0,
+    width: 100,
   },
   avatar: {
     width: 60,
@@ -45,7 +48,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   profileName: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "600",
     color: "#333",
     textAlign: "center",
@@ -63,21 +66,35 @@ const styles = StyleSheet.create({
   // 매칭된 사람 프로필 (더 크게)
   matchedProfileBlock: {
     alignItems: "center",
-    flex: 1,
-    maxWidth: 120,
+    flex: 0,
+    width: 100,
   },
   matchedAvatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 16,
+    width: 60,
+    height: 60,
+    borderRadius: 12,
     backgroundColor: "#e5e7eb",
-    marginBottom: 10,
+    marginBottom: 8,
   },
   matchedProfileName: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "600",
     color: "#333",
     textAlign: "center",
+  },
+
+  // 여러 명 매칭된 멤버들 컨테이너 0812
+  matchedMembersContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 0,
+    alignSelf: "center",
+  },
+  matchedMemberItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   // 미션 히스토리 섹션
@@ -159,7 +176,7 @@ const styles = StyleSheet.create({
     borderLeftColor: "#d1d5db",
   },
   missionTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     color: "#333",
     marginBottom: 4,
