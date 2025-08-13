@@ -134,16 +134,16 @@ export default function MainHomeScreen({
       />
 
       <View style={styles.container}>
-        <View style={{ height: 170, justifyContent: "center" }}>
+        <View style={{ flex: 1, paddingHorizontal: 20 }}>
           <FlatList
-            horizontal
             data={[...teams, { id: "add-button" }]}
             keyExtractor={(item) => String(item.id)}
             renderItem={renderItem}
-            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={{
-              paddingHorizontal: 20,
-              alignItems: "center",
+              paddingVertical: 20,
+              gap: 15,
+              alignItems: 'center',
             }}
           />
         </View>

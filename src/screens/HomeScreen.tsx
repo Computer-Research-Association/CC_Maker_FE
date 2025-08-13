@@ -143,6 +143,32 @@ if (!subGroupId) {
   const myGroup = scoreboard.mySubGroup;
   const isMyGroupTop = topTeam.subGroupId === myGroup.subGroupId;
 
+  // 현재 사용자의 서브그룹 상대방 찾기
+  const getMyPartner = () => {
+    if (!myGroup.members || myGroup.members.length < 2) return null;
+    
+    // 현재 사용자 이름 (첫 번째 멤버)
+    const currentUser = myGroup.members[0];
+    
+    // 상대방들 (첫 번째 멤버 제외)
+    const partners = myGroup.members.slice(1);
+    
+    if (partners.length === 1) {
+      // 2명 그룹: 상대방 1명
+      return partners[0];
+    } else if (partners.length === 2) {
+      // 3명 그룹: 상대방 2명을 "&"로 연결
+      return `${partners[0]} & ${partners[1]}`;
+    } else if (partners.length === 3) {
+      // 4명 그룹: 상대방 3명을 "&"로 연결
+      return `${partners[0]} & ${partners[1]} & ${partners[2]}`;
+    }
+    
+    return null;
+  };
+
+  const myPartner = getMyPartner();
+
   return (
     <View style={{ flex: 1, backgroundColor: "#f7f8fa" }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -156,11 +182,13 @@ if (!subGroupId) {
              />
             <View style={{ flexDirection: "row", alignItems: "center", marginTop: 2 }}>
               <Text style={styles.myNameText}>{myGroup.members?.[0] ?? ""}</Text>
-                             <Image 
-                 source={require('../../assets/free-icon-hearts-18745836.png')} 
-                  style={{ width: 18, height: 18, marginHorizontal: 4 }}
-               />
-              <Text style={styles.myNameText}>{teamName || "테스트"}</Text>
+              <Image 
+                source={require('../../assets/free-icon-hearts-18745836.png')} 
+                style={{ width: 18, height: 18, marginHorizontal: 4 }}
+              />
+              <Text style={styles.myNameText}>
+                {myPartner || teamName || "테스트"}
+              </Text>
             </View>
           </View>
 
@@ -168,11 +196,16 @@ if (!subGroupId) {
           <View style={styles.topCardBox}>
             <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 6 }}>
               <Text style={styles.topNameText}>{topTeam.members?.[0] ?? ""}</Text>
-                             <Image 
-                 source={require('../../assets/free-icon-hearts-18745836.png')} 
-                  style={{ width: 18, height: 18, marginHorizontal: 2 }}
-               />
-              <Text style={styles.topNameText}>{teamName || "테스트"}</Text>
+              <Image 
+                source={require('../../assets/free-icon-hearts-18745836.png')} 
+                style={{ width: 18, height: 18, marginHorizontal: 2 }}
+              />
+              <Text style={styles.topNameText}>
+                {topTeam.members && topTeam.members.length > 1 
+                  ? topTeam.members.slice(1).join(" & ")
+                  : teamName || "테스트"
+                }
+              </Text>
             </View>
             <AnimatedProgressBar
               current={topTeam.score}
@@ -202,11 +235,16 @@ if (!subGroupId) {
               >
                 <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 6 }}>
                   <Text style={isMyTeam && !isMyGroupTop ? styles.blueNameText : styles.otherNameText}>{sg.members?.[0] ?? ""}</Text>
-                                     <Image 
-                     source={require('../../assets/free-icon-hearts-18745836.png')} 
-                     style={{ width: 16, height: 16, marginHorizontal: 2 }}
-                   />
-                  {sg.members[1] && <Text style={isMyTeam && !isMyGroupTop ? styles.blueNameText : styles.otherNameText}>{sg.members[1]}</Text>}
+                  <Image 
+                    source={require('../../assets/free-icon-hearts-18745836.png')} 
+                    style={{ width: 16, height: 16, marginHorizontal: 2 }}
+                  />
+                  <Text style={isMyTeam && !isMyGroupTop ? styles.blueNameText : styles.otherNameText}>
+                    {sg.members && sg.members.length > 1 
+                      ? sg.members.slice(1).join(" & ")
+                      : teamName || "테스트"
+                    }
+                  </Text>
                 </View>
                 <AnimatedProgressBar
                   current={sg.score}

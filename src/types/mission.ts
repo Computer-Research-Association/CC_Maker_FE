@@ -5,6 +5,7 @@ export interface MissionHistory {
   subGroupName?: string;
   userId: number;
   userName: string;
+  matchedNames?: string[]; // 매칭된 상대방들의 이름
   missionTemplateId: number;
   missionTitle: string;
   missionDescription: string;
