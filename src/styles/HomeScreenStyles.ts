@@ -98,7 +98,45 @@ const styles = StyleSheet.create({
     height: 1.5,
     backgroundColor: "#e0e0e0", // 회색으로 변경
     marginVertical: 16,
-    alignSelf: "center",
+  },
+  // 매칭 대기 상태 스타일
+  matchingWaitContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  matchingIconContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "#ffe3ed",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 24,
+    shadowColor: "#ffb6c1",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  matchingIcon: {
+    width: 60,
+    height: 60,
+    tintColor: "#ff6b6b",
+  },
+  matchingTitleText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#222",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  matchingSubText: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+    lineHeight: 20,
   },
 });
 
