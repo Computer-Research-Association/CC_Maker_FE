@@ -296,6 +296,7 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  Image,
 } from "react-native";
 import { TeamContext } from "../screens/TeamContext";
 import MissionBox from "../component/MissionBox";
@@ -442,16 +443,22 @@ export default function MissionScreen() {
 
   if (!teamId || !subGroupId) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-        <View
-          style={[
-            styles.container,
-            { justifyContent: "center", alignItems: "center" },
-          ]}
-        >
-          <Text>매칭을 먼저 진행해주세요.</Text>
+      <View style={styles.container}>
+        <View style={styles.matchingWaitContainer}>
+          <View style={styles.matchingIconContainer}>
+            <Image
+              source={require("../../assets/free-icon-hearts-18745836.png")}
+              style={styles.matchingIcon}
+            />
+          </View>
+          <Text style={styles.matchingTitleText}>
+            매칭을 먼저 진행해주세요.
+          </Text>
+          <Text style={styles.matchingSubText}>
+            미션을 시작하기 전에 매칭 과정을 완료해야 합니다.
+          </Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -465,7 +472,7 @@ export default function MissionScreen() {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#fff" }}
+      style={{ flex: 1, backgroundColor: "#f7f8fa" }}
       edges={["bottom"]}
     >
       <View style={styles.topheader} />
@@ -596,10 +603,11 @@ export default function MissionScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 15, // 여백 여기서 조절
-    paddingBottom: 60,
+    flexGrow: 1,
+    justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#f7f8fa",
+    paddingHorizontal: 0,
   },
   topheader: {
     paddingTop: 50,
@@ -607,7 +615,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: "flex-start", // 이미 잘 되어 있음
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#f7f8fa",
   },
 
   header: {
@@ -616,7 +624,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: "flex-start", // 이미 잘 되어 있음
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#f7f8fa",
   },
 
   logoText: {
@@ -630,7 +638,7 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 10,
     padding: 16, // 내부 여백
-    backgroundColor: "#fff", // 흰색 배경
+    backgroundColor: "#fff", // 카드 배경은 흰색 유지
     borderRadius: 20,
     width: GRID_WIDTH + 15,
     alignItems: "center",
@@ -780,5 +788,44 @@ const styles = StyleSheet.create({
   },
   disabledRefreshButton: {
     opacity: 0.3,
+  },
+  // 매칭 대기 상태 스타일
+  matchingWaitContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  matchingIconContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "#ffe3ed",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 24,
+    shadowColor: "#ffb6c1",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  matchingIcon: {
+    width: 60,
+    height: 60,
+    tintColor: "#ff6b6b",
+  },
+  matchingTitleText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#222",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  matchingSubText: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+    lineHeight: 20,
   },
 });
