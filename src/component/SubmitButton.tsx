@@ -41,13 +41,13 @@ export default function SubmitButton({
 }: Props) {
   const yAnim = useRef(new Animated.Value(0)).current;
 
-  console.log("SubmitButton props", {
-    title,
-    buttonColor,
-    shadowColor,
-    disabled,
-    textColor,
-  });
+  // console.log("SubmitButton props", {
+  //   title,
+  //   buttonColor,
+  //   shadowColor,
+  //   disabled,
+  //   textColor,
+  // });
 
   const handlePressIn = () => {
     Animated.timing(yAnim, {

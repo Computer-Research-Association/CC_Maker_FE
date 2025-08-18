@@ -72,7 +72,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       console.error("subGroupId 조회 실패:", error);
     }
   }, [teamId, userId, subGroupId, setSubGroupIdMap]);
-  //서브 그룹 ID불러오기(첫진입시)
+  //서브 그룹 점수판불러오기(첫진입시)
   const fetchScoreboard = useCallback(() => {
     if (!teamId || !userId) return;
 

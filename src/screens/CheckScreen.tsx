@@ -36,38 +36,38 @@ export default function CheckScreen({ navigation }: Props) {
   >("idle");
 
   // 0. 팀 아이디 변경 시 최신 subGroupId 받아오기
-  useEffect(() => {
-    if (!teamId) return;
-    if (!userId) {
-      console.warn("UserId가 없습니다. 로그인 상태를 확인하세요.");
-      return;
-    }
-    const fetchSubGroupId = async () => {
-      try {
-        const response = await api.get(`/api/matching/subgroup/${teamId}`, {
-          params: { userId },
-        });
+  // useEffect(() => {
+  //   if (!teamId) return;
+  //   if (!userId) {
+  //     console.warn("UserId가 없습니다. 로그인 상태를 확인하세요.");
+  //     return;
+  //   }
+  //   const fetchSubGroupId = async () => {
+  //     try {
+  //       const response = await api.get(`/api/matching/subgroup/${teamId}`, {
+  //         params: { userId },
+  //       });
 
-        //const response = await api.get(`/api/matching/subgroup/${teamId}`);
-        const subGroupId = response.data.subGroupId ?? null;
+  //       //const response = await api.get(`/api/matching/subgroup/${teamId}`);
+  //       const subGroupId = response.data.subGroupId ?? null;
 
-        setSubGroupIdMap((prev) => ({
-          ...prev,
-          [teamId]: subGroupId,
-        }));
+  //       setSubGroupIdMap((prev) => ({
+  //         ...prev,
+  //         [teamId]: subGroupId,
+  //       }));
 
-        console.log("최신 subGroupId 업데이트됨:", subGroupId);
-      } catch (error) {
-        console.error("subGroupId 조회 실패", error);
-        setSubGroupIdMap((prev) => ({
-          ...prev,
-          [teamId]: null,
-        }));
-      }
-    };
+  //       console.log("최신 subGroupId 업데이트됨:", subGroupId);
+  //     } catch (error) {
+  //       console.error("subGroupId 조회 실패", error);
+  //       setSubGroupIdMap((prev) => ({
+  //         ...prev,
+  //         [teamId]: null,
+  //       }));
+  //     }
+  //   };
 
-    fetchSubGroupId();
-  }, [teamId, userId, setSubGroupIdMap]);
+  //   fetchSubGroupId();
+  // }, [teamId, userId, setSubGroupIdMap]);
 
   // 1. subGroupId가 없을 때 => 매칭 전 팀 멤버 조회 및 매칭 시작 여부 조회
   useEffect(() => {
@@ -252,96 +252,3 @@ export default function CheckScreen({ navigation }: Props) {
     </View>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     paddingHorizontal: 16,
-//     paddingTop: 70,
-//   },
-//   role: {
-//     textAlign: "center",
-//     fontSize: 16,
-//     fontWeight: "bold",
-//     marginBottom: 4,
-//   },
-//   count: {
-//     textAlign: "right",
-//     paddingTop: 10,
-//     marginBottom: 15,
-//     fontSize: 16,
-//     marginRight: 12,
-//   },
-//   listContainer: {
-//     borderRadius: 10,
-//     paddingBottom: 100,
-//   },
-//   listItem: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     paddingVertical: 12,
-//     paddingHorizontal: 16,
-//   },
-//   name: {
-//     flex: 1,
-//     fontSize: 16,
-//   },
-//   checkbox: {
-//     fontSize: 26,
-//     color: "purple",
-//   },
-//   button: {
-//     position: "absolute",
-//     bottom: 20,
-//     alignSelf: "center",
-//     backgroundColor: "#ff9494",
-//     paddingHorizontal: 100,
-//     paddingVertical: 14,
-//     borderRadius: 12,
-//     elevation: 2,
-//     marginBottom: 30,
-//   },
-//   buttonText: {
-//     color: "#fff",
-//     fontWeight: "bold",
-//   },
-//   modalBackground: {
-//     flex: 1,
-//     backgroundColor: "rgba(0, 0, 0, 0.5)",
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   modalBox: {
-//     backgroundColor: "white",
-//     padding: 30,
-//     borderRadius: 12,
-//     shadowColor: "#000",
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 4,
-//     elevation: 5,
-//   },
-//   modalText: {
-//     fontSize: 18,
-//     fontWeight: "bold",
-//   },
-//   modalButton: {
-//     backgroundColor: "#8de969",
-//     paddingHorizontal: 20,
-//     paddingVertical: 10,
-//     borderRadius: 8,
-//     marginTop: 10,
-//   },
-//   modalButtonText: {
-//     color: "#fff",
-//     fontWeight: "bold",
-//     fontSize: 16,
-//     textAlign: "center",
-//   },
-//   divider: {
-//     height: 1,
-//     backgroundColor: "#eee",
-//     marginHorizontal: 12,
-//     marginVertical: 4,
-//   },
-// });
