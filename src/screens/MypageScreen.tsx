@@ -30,6 +30,25 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
 
   const subGroupId = teamId ? subGroupIdMap[teamId] : null;
 
+  // 사용자의 설문 완료 상태 확인
+  useEffect(() => {
+    if (!teamId || !userId || !isFocused) return;
+    
+    const checkSurveyStatus = async () => {
+      try {
+        const response = await api.get(`/api/team/${teamId}/survey-status/all`);
+        const userStatus = response.data.find((member: any) => member.userId === userId);
+        if (userStatus) {
+          setIsSurveyCompleted(userStatus.surveyCompleted);
+        }
+      } catch (error) {
+        console.error("설문 상태 조회 실패", error);
+      }
+    };
+
+    checkSurveyStatus();
+  }, [teamId, userId, isFocused]);
+
   //  subGroupId 확인 및 저장
   useEffect(() => {
     if (!teamId || !isFocused || !userId) return;
@@ -245,20 +264,12 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
           </View>
       </View>
 
-      {/* 매칭 상대 없으면 설문 버튼 */}
-      {matchedNames.length === 0 && (
+      {/* 매칭 상대 없고 설문이 완료되지 않은 경우에만 설문 버튼 표시 */}
+      {matchedNames.length === 0 && !isSurveyCompleted && (
           <View style={{ alignItems: 'center', paddingVertical: 10, marginTop: -30 }}>
             <SubmitButton
               title="설문시작하기"
-              onPress={() => {
-                if (isSurveyCompleted) {
-                  Alert.alert("알림", "이미 설문조사를 완료했습니다.", [
-                    { text: "확인" },
-                  ]);
-                } else {
-                  navigation.navigate("MbtiScreen");
-                }
-              }}
+              onPress={() => navigation.navigate("MbtiScreen")}
               buttonColor="#FF9898"
               shadowColor="#E08B8B"
               width={300}
@@ -266,6 +277,37 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
               // paddingHorizontal={30}
               // paddingVertical={15}
             />
+        </View>
+      )}
+
+      {/* 설문이 완료된 경우 안내 메시지 표시 */}
+      {matchedNames.length === 0 && isSurveyCompleted && (
+        <View style={{ alignItems: 'center', paddingVertical: 10, marginTop: -30 }}>
+          <View style={{ 
+            backgroundColor: '#f0f0f0', 
+            padding: 20, 
+            borderRadius: 10, 
+            alignItems: 'center',
+            width: 300
+          }}>
+            <Ionicons name="checkmark-circle" size={24} color="#50B889" />
+            <Text style={{ 
+              marginTop: 8, 
+              fontSize: 16, 
+              color: '#666', 
+              textAlign: 'center' 
+            }}>
+              설문조사가 완료되었습니다
+            </Text>
+            <Text style={{ 
+              marginTop: 4, 
+              fontSize: 14, 
+              color: '#999', 
+              textAlign: 'center' 
+            }}>
+              매칭 결과를 기다려주세요
+            </Text>
+          </View>
         </View>
       )}
       </ScrollView>

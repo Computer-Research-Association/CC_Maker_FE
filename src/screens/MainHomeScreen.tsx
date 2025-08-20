@@ -9,6 +9,7 @@ import {
   Alert,
   Modal,
   StatusBar,
+  Image,
 } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
@@ -124,6 +125,7 @@ export default function MainHomeScreen({
     setModalVisible(false);
     navigation.navigate("JoinScreen"); // 실제 네비게이션 이름 확인 후 수정하세요
   };
+  
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -132,6 +134,38 @@ export default function MainHomeScreen({
         barStyle="dark-content"
         translucent={true}
       />
+      
+      {/* 상단 나가기 버튼 */}
+      <View style={styles.headerContainer}>
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={() => {
+            Alert.alert(
+              "로그아웃",
+              "정말 로그아웃 하시겠습니까?",
+              [
+                {
+                  text: "취소",
+                  style: "cancel"
+                },
+                {
+                  text: "로그아웃",
+                  style: "destructive",
+                  onPress: () => navigation.reset({
+                    index: 0,
+                    routes: [{ name: "Login" }],
+                  })
+                }
+              ]
+            );
+          }}
+        >
+          <Image 
+            source={require('../../assets/enter (2).png')} 
+            style={styles.logoutIcon} 
+          />
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.container}>
         <View style={{ flex: 1, paddingHorizontal: 20 }}>
