@@ -13,6 +13,33 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 
+  // 나가기 버튼 관련 스타일
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  logoutButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'transparent',
+  },
+  logoutIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#666',
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+
   teamCard: {
     width: windowWidth - 60, // 좌우 패딩 30씩으로 늘림
     height: 120,

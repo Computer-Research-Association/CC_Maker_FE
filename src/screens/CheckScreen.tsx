@@ -251,14 +251,44 @@ export default function CheckScreen({ navigation }: Props) {
         </View>
       </Modal> */}
 
-      <SubmitButton
-        title="매칭시작하기"
-        onPress={handleStartMatching}
-        style={{ marginBottom: 40 }}
-        buttonColor="#FF9898"
-        shadowColor="#E08B8B"
-        width={360}
-      />
+      {/* 매칭시작하기 버튼 - 2명 이상일 때만 활성화 */}
+      {members.length >= 2 ? (
+        <SubmitButton
+          title="매칭시작하기"
+          onPress={handleStartMatching}
+          style={{ marginBottom: 40 }}
+          buttonColor="#FF9898"
+          shadowColor="#E08B8B"
+          width={360}
+        />
+      ) : (
+        <View style={{ 
+          alignItems: 'center', 
+          marginBottom: 40, 
+          padding: 20,
+          backgroundColor: '#f0f0f0',
+          borderRadius: 10,
+          marginHorizontal: 20
+        }}>
+          <Ionicons name="information-circle-outline" size={24} color="#666" />
+          <Text style={{ 
+            marginTop: 8, 
+            fontSize: 16, 
+            color: '#666', 
+            textAlign: 'center' 
+          }}>
+            매칭을 시작하려면 최소 2명이 필요합니다
+          </Text>
+          <Text style={{ 
+            marginTop: 4, 
+            fontSize: 14, 
+            color: '#999', 
+            textAlign: 'center' 
+          }}>
+            현재 {members.length}명이 있습니다
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
