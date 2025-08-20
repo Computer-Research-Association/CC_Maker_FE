@@ -18,6 +18,7 @@ import { UserContext } from "./UserContext";
 import { useFocusEffect } from "@react-navigation/native";
 import AnimatedProgressBar from "../component/AnimatedProgressBar";
 import styles from "../styles/HomeScreenStyles";
+import { Modal } from "react-native-paper";
 // @ts-ignore
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "HomeScreen">;
@@ -36,10 +37,12 @@ type ScoreboardResponse = {
   otherSubGroups: SubGroupScore[];
 };
 
+// min : 100 제한, round: 소수점이하를 반올림하기.s
 const calculatePercent = (score: number, minScore: number) => {
   if (minScore === 0) return 0;
   return Math.min(100, Math.round((score / minScore) * 100));
 };
+
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
   //내가 속한팀ID,ID별 소그룹 ID저장 객체, 소그룹 ID저장 함수,현재 로그인한 사용자ID
@@ -50,7 +53,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   const [scoreboard, setScoreboard] = useState<ScoreboardResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // 해당 팀에서 내가 속한 소그룹ID
+// 해당 팀에서 내가 속한 소그룹ID
   const subGroupId = teamId ? subGroupIdMap[teamId] : null;
 
   const fetchSubGroupIdIfNeeded = useCallback(async () => {
@@ -59,12 +62,16 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     setLoading(true);
     try {
       const response = await api.get(`/api/matching/subgroup/${teamId}`, {
+        //인자인 객체의 속성값으로 들어감.
         params: { userId },
       });
+      //유효한값 날아기지않게 null로 처리
       const newSubGroupId = response.data.subGroupId ?? null;
 
       setSubGroupIdMap((prev) => {
+        //prev = 이전 값 상태 
         if (prev[teamId] === newSubGroupId) return prev;
+        //같으면 걍 그대로 두고 다르면 새로운 값으로 업데이트
         return { ...prev, [teamId]: newSubGroupId };
       });
 
@@ -127,7 +134,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     );
   }
 
-  // 📌 매칭 여부 체크 (옵셔널 체이닝)
+  //  매칭 여부 체크 (옵셔널 체이닝)
   if (!subGroupId) {
     return (
       <View style={styles.container}>
@@ -159,12 +166,25 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   if (!scoreboard) {
     return (
       <View style={styles.container}>
-        <Text> 최소학점을 설정해주세요.</Text>
+        <View style={styles.matchingWaitContainer}>
+          <View style={styles.matchingIconContainer}>
+            <Image
+              source={require("../../assets/free-icon-hearts-18745836.png")}
+              style={styles.matchingIcon}
+            />
+          </View>
+          <Text style={styles.matchingTitleText}>
+            최소학점을 설정해주세요 
+          </Text>
+          <Text style={styles.matchingSubText}>
+            미션을 시작하기 전에 최소학점을 설정해야 합니다.
+          </Text>
+        </View>
       </View>
     );
   }
 
-  // ✅ 전체 그룹 정렬 및 1등/내 그룹 분리
+  // 전체 그룹 정렬 및 1등/내 그룹 분리
   const allGroups = [scoreboard.mySubGroup, ...scoreboard.otherSubGroups];
   const sortedGroups = [...allGroups].sort((a, b) => b.score - a.score);
   const topTeam = sortedGroups[0];
@@ -201,6 +221,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   };
 
   const myPartner = getMyPartner();
+  
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f7f8fa" }}>
@@ -354,70 +375,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
           })}
         </ScrollView>
       </SafeAreaView>
+
     </View>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flexGrow: 1,
-//     justifyContent: "flex-start",
-//     alignItems: "center",
-//     padding: 20,
-//     paddingBottom: 80,
-//     paddingTop: 20,
-//     backgroundColor: "#fff",
-//   },
-//   title: { fontSize: 20, fontWeight: "bold", marginBottom: 20 },
-//   section: { marginBottom: 30, width: "100%" },
-//   subtitle: { fontSize: 16, fontWeight: "600", marginBottom: 10 },
-//   teamNameText: {
-//     fontSize: 24,
-//     fontWeight: "bold",
-//     marginBottom: 10,
-//     color: "#333",
-//   },
-//   groupTitleContainer: {
-//     alignItems: "center",
-//     marginBottom: 20,
-//   },
-//   crown: {
-//     fontSize: 48,
-//     color: "#FFD700",
-//     marginBottom: 4,
-//   },
-//   progressCard: {
-//     width: "100%",
-//     backgroundColor: "#fff",
-//     padding: 16,
-//     borderRadius: 12,
-//     marginBottom: 10,
-//     shadowColor: "#000",
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.05,
-//     shadowRadius: 4,
-//     elevation: 2,
-//   },
-//   myCard: {
-//     backgroundColor: "#F0F8FF",
-//     borderColor: "#007AFF",
-//     borderWidth: 1,
-//   },
-//   topTeamCard: {
-//     backgroundColor: "#FFE3E1",
-//     borderColor: "#FF9494",
-//     borderWidth: 1.5,
-//   },
-//   cardTitle: {
-//     fontSize: 13,
-//     fontWeight: "600",
-//     marginBottom: 10,
-//     color: "#333",
-//   },
-//   divider: {
-//     width: "100%",
-//     height: 1,
-//     backgroundColor: "#ccc",
-//     marginVertical: 16, // 위아래 간격 조절
-//   },
-// });

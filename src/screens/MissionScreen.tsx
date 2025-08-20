@@ -1,292 +1,4 @@
-// import React, { useContext, useState, useEffect } from "react";
-// import {
-//   Alert,
-//   View,
-//   Text,
-//   ScrollView,
-//   StyleSheet,
-//   TouchableOpacity,
-//   Modal,
-//   Button,
-//   TextInput,
-// } from "react-native";
-// import { TeamContext } from "../screens/TeamContext";
-// import MissionBox from "../component/MissionBox";
-// import api from "../api/apiClient";
-// import { SafeAreaView } from "react-native-safe-area-context";
-// import { LinearGradient } from "expo-linear-gradient";
-// import SubmitButton from "../component/SubmitButton";
-
-// const BOX_SIZE = 108;
-// const BOX_MARGIN = 4;
-// const BOX_PER_ROW = 3;
-// const GRID_WIDTH = BOX_PER_ROW * (BOX_SIZE + BOX_MARGIN * 2);
-
-// export default function MissionScreen() {
-//   const { role, teamId, subGroupIdMap, teamName } = useContext(TeamContext);
-//   const [missions, setMissions] = useState<any[]>([]);
-//   const [selectedBoxIndex, setSelectedBoxIndex] = useState<number | null>(null);
-//   const [modalVisible, setModalVisible] = useState(false);
-//   const [minScore, setMinScore] = useState<string>("");
-//   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
-
-//   // teamId가 있을 때 subGroupId 뽑기
-//   const subGroupId = teamId ? subGroupIdMap[teamId] : undefined;
-
-//   useEffect(() => {
-//     console.log("✅ teamId:", teamId);
-//     console.log("✅ subGroupIdMap:", subGroupIdMap);
-//     console.log("✅ subGroupId:", subGroupId);
-
-//     if (!teamId || !subGroupId) return;
-
-//     const fetchMissions = async () => {
-//       try {
-//         // 1. 미션 목록 가져오기
-//         const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
-//         console.log("✅ 미션 API 응답:", res.data);
-
-//         // 2. 미션이 없으면 미션 부여 API 호출
-//         if (res.data.length === 0) {
-//           console.log("⚠️ 미션 없음 → 미션 부여 API 호출");
-//           try {
-//             await api.post(`/api/missions/assign/subgroup/${subGroupId}`);
-//             console.log("✅ 미션 부여 완료 → 다시 목록 요청");
-
-//             // 3. 다시 미션 목록 불러오기
-//             const newRes = await api.get(
-//               `/api/missions/subgroup/${subGroupId}`
-//             );
-//             setMissions(newRes.data);
-//           } catch (assignError) {
-//             console.error("❌ 미션 부여 실패:", assignError);
-//             alert("미션 부여 중 오류가 발생했습니다.");
-//           }
-//         } else {
-//           // 미션이 있으면 그대로 저장
-//           setMissions(res.data);
-//         }
-//       } catch (err) {
-//         console.error("❌ 미션 불러오기 실패:", err);
-//       }
-//     };
-
-//     fetchMissions();
-//   }, [teamId, subGroupId]);
-
-//   console.log("✅ missions:", missions);
-
-//   const handleBoxPress = (index: number) => {
-//     setSelectedBoxIndex(index);
-//     setModalVisible(true);
-//   };
-
-//   // 미션 완료 관리
-//   const handleComplete = async () => {
-//     if (selectedBoxIndex === null) return;
-//     const mission = missions[selectedBoxIndex];
-
-//     try {
-//       await api.post("/api/missions/complete", {
-//         teamId,
-//         subGroupId,
-//         missionId: mission.missionTemplateId,
-//       });
-//       alert(`${mission.title} 미션이 완료 처리되었습니다.`);
-
-//       // 1) 미션 리스트 다시 불러오기 대신,
-//       // 2) 상태를 직접 업데이트 (즉시 UI 반영)
-//       setMissions((prev) =>
-//         prev.map((m, i) =>
-//           i === selectedBoxIndex ? { ...m, completed: true } : m
-//         )
-//       );
-//     } catch (error) {
-//       console.error("미션 완료 처리 실패:", error);
-//       alert("미션 완료 처리에 실패했습니다.");
-//     } finally {
-//       setModalVisible(false);
-//     }
-//   };
-
-//   // 미션 새로고침
-//   const handleRefresh = async (index: number) => {
-//     const mission = missions[index];
-
-//     try {
-//       await api.post(
-//         `/api/missions/refresh/subgroup/${subGroupId}/${mission.subGroupMissionId}/${mission.score}`
-//       );
-//       alert(`${mission.title} 미션이 새로고침되었습니다.`);
-
-//       // 새로고침 후 미션 리스트 갱신
-//       const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
-//       setMissions(res.data);
-//     } catch (error) {
-//       console.error("미션 새로고침 실패:", error);
-//       alert("미션 새로고침에 실패했습니다.");
-//     }
-//   };
-
-//   const confirmRefresh = async () => {
-//     if (selectedBoxIndex === null) return;
-//     const mission = missions[selectedBoxIndex];
-
-//     try {
-//       await api.post(
-//         `/api/missions/refresh/subgroup/${subGroupId}/${mission.subGroupMissionId}/${mission.score}`
-//       );
-//       alert(`${mission.title} 미션이 새로고침되었습니다.`);
-
-//       const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
-//       setMissions(res.data);
-//     } catch (error) {
-//       console.error("미션 새로고침 실패:", error);
-//       alert("미션 새로고침에 실패했습니다.");
-//     } finally {
-//       setConfirmModalVisible(false);
-//     }
-//   };
-
-//   // 학점별 미션 분류
-//   const missionsByScore = (score: number) =>
-//     missions.filter((m) => m.score === score);
-
-//   return (
-//     <SafeAreaView
-//       style={{ flex: 1, backgroundColor: "#fff" }}
-//       edges={["bottom"]}
-//     >
-//       <View style={styles.topheader}></View>
-
-//       <ScrollView
-//         contentContainerStyle={styles.container}
-//         style={{ backgroundColor: "#fff" }}
-//       >
-//         <View style={styles.header}>
-//           <Text style={styles.logoText}>
-//             🌟 {teamName ?? "팀 이름이 없습니다"} 팀 CC 미션 🌟
-//           </Text>
-//         </View>
-//         {/* 기존 미션 UI */}
-//         {[1, 3, 5, 10].map((score) => (
-//           <View key={score} style={styles.section}>
-//             <Text style={styles.title}>{score}학점</Text>
-//             <View style={styles.grid}>
-//               {missionsByScore(score).map((mission, i) => (
-//                 <TouchableOpacity
-//                   key={`${score}-credit-${mission.subGroupMissionId}`}
-//                   style={[styles.box, mission.completed && styles.completedBox]}
-//                   onPress={() =>
-//                     !mission.completed &&
-//                     handleBoxPress(missions.indexOf(mission))
-//                   }
-//                   disabled={mission.completed}
-//                 >
-//                   <Text style={{ padding: 10, textAlign: "center" }}>
-//                     {mission.description}
-//                   </Text>
-//                 </TouchableOpacity>
-//               ))}
-//             </View>
-//           </View>
-//         ))}
-//       </ScrollView>
-
-//       <Modal
-//         transparent
-//         animationType="fade"
-//         visible={modalVisible}
-//         onRequestClose={() => {
-//           setModalVisible(false);
-//           setConfirmModalVisible(false);
-//         }}
-//       >
-//         <View style={styles.modalOverlay}>
-//           <View style={styles.modalContent}>
-//             {confirmModalVisible ? (
-//               // ✅ 새로고침 확인 화면
-//               <>
-//                 <Text style={styles.missionTitle}>
-//                   정말 이 미션을 새로고침할까요?
-//                 </Text>
-//                 <View style={styles.modalButtons}>
-//                   <TouchableOpacity
-//                     style={styles.confirmButton}
-//                     onPress={confirmRefresh}
-//                   >
-//                     <Text style={styles.buttonText}>새로고침</Text>
-//                   </TouchableOpacity>
-//                   <TouchableOpacity
-//                     style={styles.cancelButton}
-//                     onPress={() => setConfirmModalVisible(false)}
-//                   >
-//                     <Text style={styles.buttonText}>아니오</Text>
-//                   </TouchableOpacity>
-//                 </View>
-//               </>
-//             ) : (
-//               // ✅ 미션 상세 화면
-//               <>
-//                 <Text style={styles.missionTitle}>
-//                   {missions[selectedBoxIndex!]?.score}학점
-//                 </Text>
-
-//                 <View style={styles.missionBox}>
-//                   <View style={styles.missionContentWrapper}>
-//                     <Text style={styles.missionContent}>
-//                       {selectedBoxIndex !== null
-//                         ? missions[selectedBoxIndex].description
-//                         : ""}
-//                     </Text>
-//                   </View>
-
-//                   <TouchableOpacity
-//                     style={styles.refreshButton}
-//                     onPress={() => setConfirmModalVisible(true)}
-//                     disabled={
-//                       selectedBoxIndex === null ||
-//                       missions[selectedBoxIndex].completed
-//                     }
-//                   >
-//                     <Text style={styles.refreshText}>↻ 새로고침</Text>
-//                   </TouchableOpacity>
-//                 </View>
-
-//                 <View style={styles.modalButtons}>
-//                   <SubmitButton
-//                     title="미션완료"
-//                     // style={styles.confirmButton}
-//                     onPress={handleComplete}
-//                     width={100}
-//                     height={100}
-//                     buttonColor="#FF9898"
-//                     shadowColor="#E08B8B"
-//                   >
-//                     <Text style={styles.buttonText}>미션 완료</Text>
-//                   </SubmitButton>
-//                   <SubmitButton
-//                     // style={styles.cancelButton}
-//                     title="취소"
-//                     onPress={() => setModalVisible(false)}
-//                     buttonColor="#bbb"
-//                     width={100}
-//                     height={100}
-//                     shadowColor="#aaa"
-//                   >
-//                     <Text style={styles.buttonText}>취소</Text>
-//                   </SubmitButton>
-//                 </View>
-//               </>
-//             )}
-//           </View>
-//         </View>
-//       </Modal>
-//     </SafeAreaView>
-//   );
-// }
-
-import React, { useContext, useState, useEffect, useCallback } from "react";
+import React, { useContext, useState, useEffect, useCallback, useRef } from "react";
 import {
   Alert,
   View,
@@ -307,6 +19,7 @@ import SubmitButton from "../component/SubmitButton";
 import { UserContext } from "./UserContext";
 import { useFocusEffect } from "@react-navigation/native";
 
+
 const BOX_SIZE = 108;
 const BOX_MARGIN = 4;
 const BOX_PER_ROW = 3;
@@ -326,20 +39,28 @@ type ScoreboardResponse = {
 };
 export default function MissionScreen() {
   const { role, teamId, subGroupIdMap, teamName } = useContext(TeamContext);
+  // 미션 관련 상태
   const [missions, setMissions] = useState<any[]>([]);
   const [selectedBoxIndex, setSelectedBoxIndex] = useState<number | null>(null);
+  // 모달 관련 상태
   const [modalVisible, setModalVisible] = useState(false);
   const [minScore, setMinScore] = useState<string>("");
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  // 점수판 관련 상태
   const [scoreboard, setScoreboard] = useState<ScoreboardResponse | null>(null);
   const [sbLoading, setSbLoading] = useState(false);
   const [sbError, setSbError] = useState<string | null>(null);
+  // 축하 메시지 모달 상태
+  const [showCongratsModal, setShowCongratsModal] = useState(false);
+  // 이전 최소학점을 저장하는 ref
+  const prevMinScoreRef = useRef<number | null>(null);
 
   const subGroupId = teamId ? subGroupIdMap[teamId] : undefined;
   const { userId } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  //이거 왜필요하노(최소학점설정이 있는지 없는지 파악하기 위해서)
   const fetchScoreboard = useCallback(() => {
     if (!teamId || !userId) return;
     setSbLoading(true);
@@ -348,7 +69,6 @@ export default function MissionScreen() {
       .then((res) => {
         setScoreboard(res.data);
         setSbError(null);
-        // console.log("✅ MissionScreen scoreboard:", res.data);
       })
       .catch((err) => {
         setScoreboard(null);
@@ -357,47 +77,44 @@ export default function MissionScreen() {
       .finally(() => setSbLoading(false));
   }, [teamId, userId]);
 
-  useEffect(() => {
-    console.log("나는 언제 실행될까?");
-  }, []);
+  // 축하 메시지 표시 로직을 useCallback으로 분리
+  const checkCongratsCondition = useCallback(() => {
+    if (scoreboard && scoreboard.minScore > 0) {
+      const currentMinScore = scoreboard.minScore;
+      const prevMinScore = prevMinScoreRef.current;
+      
+      // 최소학점이 변경되었거나 처음 로드되었을 때만 체크
+      if (prevMinScore === null || prevMinScore !== currentMinScore) {
+        // 100% 이상 달성했는지 확인
+        if (scoreboard.minScore <= scoreboard.mySubGroup.score) {
+          setShowCongratsModal(true);
+        }
+        // 현재 최소학점을 저장
+        prevMinScoreRef.current = currentMinScore;
+      }
+    }
+  }, [scoreboard?.minScore]); // 최소학점만 의존성으로 설정
 
-  useEffect(() => {
-    fetchScoreboard();
-  }, [fetchScoreboard]);
-
-  // 화면 재진입 시 최신값 반영 (최소학점 설정 화면 다녀온 뒤 포함)
-  useFocusEffect(
-    useCallback(() => {
-      fetchScoreboard();
-    }, [fetchScoreboard])
-  );
-  useEffect(() => {
+  // 미션 불러오기 로직을 useCallback으로 분리
+  const fetchMissions = useCallback(async () => {
     if (!teamId || !subGroupId) return;
 
-    const fetchMissions = async () => {
-      try {
-        const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
-        if (res.data.length === 0) {
-          await api.post(`/api/missions/assign/subgroup/${subGroupId}`);
-          const newRes = await api.get(`/api/missions/subgroup/${subGroupId}`);
-          setMissions(newRes.data);
-        } else {
-          setMissions(res.data);
-        }
-      } catch (err) {
-        console.error("❌ 미션 불러오기 실패:", err);
+    try {
+      const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
+      if (res.data.length === 0) {
+        await api.post(`/api/missions/assign/subgroup/${subGroupId}`);
+        const newRes = await api.get(`/api/missions/subgroup/${subGroupId}`);
+        setMissions(newRes.data);
+      } else {
+        setMissions(res.data);
       }
-    };
-
-    fetchMissions();
+    } catch (err) {
+      console.error("❌ 미션 불러오기 실패:", err);
+    }
   }, [teamId, subGroupId]);
 
-  const handleBoxPress = (index: number) => {
-    setSelectedBoxIndex(index);
-    setModalVisible(true);
-  };
-
-  const handleComplete = async () => {
+  // 미션 완료 처리 로직을 useCallback으로 분리
+  const handleComplete = useCallback(async () => {
     if (selectedBoxIndex === null) return;
     const mission = missions[selectedBoxIndex];
 
@@ -407,20 +124,28 @@ export default function MissionScreen() {
         subGroupId,
         missionId: mission.missionTemplateId,
       });
-      alert(`${mission.title} 미션이 완료 처리되었습니다.`);
+      
+      // 미션 완료 후 scoreboard 다시 가져오기
+      await fetchScoreboard();
+      
+      
+      alert(`${mission.title},미션이 완료 처리되었습니다.`);
       setMissions((prev) =>
         prev.map((m, i) =>
           i === selectedBoxIndex ? { ...m, completed: true } : m
         )
       );
+            // scoreboard 업데이트 후 바로 축하 메시지 조건 체크
+            checkCongratsCondition();
     } catch (error) {
       alert("미션 완료 처리에 실패했습니다.");
     } finally {
       setModalVisible(false);
     }
-  };
+  }, [selectedBoxIndex, missions, teamId, subGroupId, fetchScoreboard]);
 
-  const confirmRefresh = async () => {
+  // 미션 새로고침 로직을 useCallback으로 분리
+  const confirmRefresh = useCallback(async () => {
     if (selectedBoxIndex === null) return;
     const mission = missions[selectedBoxIndex];
 
@@ -436,6 +161,21 @@ export default function MissionScreen() {
     } finally {
       setConfirmModalVisible(false);
     }
+  }, [selectedBoxIndex, missions, subGroupId]);
+
+  // 모든 로직을 하나의 useEffect로 통합
+  useEffect(() => {
+    // 점수판 데이터 로드 (마운트 시에만)
+    fetchScoreboard();
+    // 미션 데이터 로드
+    fetchMissions();
+    // 축하 메시지 조건 체크
+    checkCongratsCondition();
+  }, [fetchScoreboard, fetchMissions, checkCongratsCondition]);
+
+  const handleBoxPress = (index: number) => {
+    setSelectedBoxIndex(index);
+    setModalVisible(true);
   };
 
   const missionsByScore = (score: number) =>
@@ -465,7 +205,20 @@ export default function MissionScreen() {
   if (!scoreboard) {
     return (
       <View style={styles.container}>
-        <Text> 최소학점을 설정해주세요.</Text>
+        <View style={styles.matchingWaitContainer}>
+          <View style={styles.matchingIconContainer}>
+            <Image
+              source={require("../../assets/free-icon-hearts-18745836.png")}
+              style={styles.matchingIcon}
+            />
+          </View>
+          <Text style={styles.matchingTitleText}>
+            최소학점을 설정해주세요 
+          </Text>
+          <Text style={styles.matchingSubText}>
+            미션을 시작하기 전에 최소학점을 설정해야 합니다.
+          </Text>
+        </View>
       </View>
     );
   }
@@ -477,10 +230,13 @@ export default function MissionScreen() {
     >
       <View style={styles.topheader} />
 
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView 
+        contentContainerStyle={[styles.container, { paddingBottom: 50 }]}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <Text style={styles.logoText}>
-            🌟 {teamName ?? "팀 이름이 없습니다"} 팀 CC 미션 🌟
+             {teamName ?? "팀 이름이 없습니다"} 팀 CC 미션 
           </Text>
         </View>
 
@@ -525,18 +281,25 @@ export default function MissionScreen() {
                   정말 이 미션을 새로고침할까요?
                 </Text>
                 <View style={styles.modalButtons}>
-                  <TouchableOpacity
-                    style={styles.confirmButton}
-                    onPress={confirmRefresh}
-                  >
-                    <Text style={styles.buttonText}>새로고침</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.cancelButton}
+                  <SubmitButton
+                    title="아니오"
                     onPress={() => setConfirmModalVisible(false)}
-                  >
-                    <Text style={styles.buttonText}>아니오</Text>
-                  </TouchableOpacity>
+                    buttonColor="#bbb"
+                    shadowColor="#aaa"
+                    width={120}
+                    height={50}
+                    style= {{marginTop: 5,marginLeft: 10}}
+                  />
+                  <SubmitButton
+                    title="새로고침"
+                    onPress={confirmRefresh}
+                    buttonColor="#FF9898"
+                    shadowColor="#E08B8B"
+                    width={120}
+                    height={50}
+                    style= {{marginTop: 5}}
+
+                  />
                 </View>
               </>
             ) : (
@@ -571,29 +334,58 @@ export default function MissionScreen() {
                 </LinearGradient>
 
                 <View style={styles.modalButtons}>
-                  <SubmitButton
-                    title="미션완료"
-                    onPress={handleComplete}
-                    width={100}
-                    height={100}
-                    buttonColor="#FF9898"
-                    shadowColor="#E08B8B"
-                  >
-                    <Text style={styles.buttonText}>미션 완료</Text>
-                  </SubmitButton>
-                  <SubmitButton
+                <SubmitButton
                     title="취소"
                     onPress={() => setModalVisible(false)}
                     buttonColor="#bbb"
-                    width={100}
-                    height={100}
+                    width={120}
+                    height={50}
                     shadowColor="#aaa"
+                    style= {{marginLeft: 10}}
+                   >
+                  </SubmitButton>
+                  
+                  <SubmitButton
+                    title="미션완료"
+                    onPress={handleComplete}
+                    width={120}
+                    height={50}
+                    buttonColor="#FF9898"
+                    shadowColor="#E08B8B"
+                    
                   >
-                    <Text style={styles.buttonText}>취소</Text>
                   </SubmitButton>
                 </View>
               </>
             )}
+          </View>
+        </View>
+      </Modal>
+
+      {/* 축하 메시지 모달 */}
+      <Modal
+        visible={showCongratsModal}
+        onRequestClose={() => setShowCongratsModal(false)}
+        transparent={true}
+        animationType="fade"
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { alignItems: 'center' }]}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10, color: '#ff6b6b' }}>
+               축하합니다! 
+            </Text>
+            <Text style={{ fontSize: 16, textAlign: 'center', marginBottom: 20, lineHeight: 24 }}>
+              최소학점을 달성했습니다!
+            </Text>
+                         <SubmitButton
+               title="확인"
+               onPress={() => setShowCongratsModal(false)}
+                buttonColor="#FF9898"
+                shadowColor="#E08B8B"
+               width={120}
+               height={50}
+               style={{ marginTop: 5 }}
+             />
           </View>
         </View>
       </Modal>
@@ -608,6 +400,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f7f8fa",
     paddingHorizontal: 0,
+    
   },
   topheader: {
     paddingTop: 50,
@@ -697,7 +490,7 @@ const styles = StyleSheet.create({
   modalButtons: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 12,
+    gap: 10,
   },
   confirmButton: {
     backgroundColor: "#FF9494", // 코랄색

@@ -52,8 +52,8 @@ export default function LikertScale({ question, onSelect }: LikertScaleProps) {
                 <Ionicons name="checkmark" size={20} color="white" />
               )}
             </View>
-            {i === 0 && <Text style={styles.label}>그렇다</Text>}
-            {i === 4 && <Text style={styles.label}>그렇지 않다</Text>}
+            {i === 0 && <Text style={styles.label}>그렇지 않다</Text>}
+            {i === 4 && <Text style={styles.label}>그렇다</Text>}
           </TouchableOpacity>
         );
       })}

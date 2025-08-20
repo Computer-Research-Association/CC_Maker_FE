@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
   shadowWrapper: {
     alignItems: "center",
     marginTop: 40,
+    
   },
   shadowLayer: {
     position: "absolute",
