@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 20,
     padding: 20,
+    marginBottom: 30,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -139,6 +140,10 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginBottom: 20,
     position: "relative",
+  },
+  // 마지막 미션 아이템에 추가 여백
+  missionItemLast: {
+    marginBottom: 40,
   },
   missionIcon: {
     width: 40,

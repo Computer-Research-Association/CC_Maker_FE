@@ -102,7 +102,7 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
         external
       />
 
-      <SettingItem label="알림 설정" onPress={() => {}} />
+      {/* <SettingItem label="알림 설정" onPress={() => {}} /> */}
       <SettingItem
         label="로그아웃"
         onPress={() => setLogoutModalVisible(true)}
@@ -160,11 +160,11 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
             </View>
             <SubmitButton
               onPress={() => setModalVisible(false)}
-              title="취소"
+              title="확인"
               width={130}
               height={50}
-              buttonColor="#FF9898"
-              shadowColor="#E08B8B"
+              buttonColor="#bbb"
+              shadowColor="#aaa"
               style={{ marginTop: 2 }}
             >
               <Text style={inviteCodeModalStyles.closeText}>닫기</Text>

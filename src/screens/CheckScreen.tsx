@@ -36,38 +36,37 @@ export default function CheckScreen({ navigation }: Props) {
   >("idle");
 
   // 0. 팀 아이디 변경 시 최신 subGroupId 받아오기
-  // useEffect(() => {
-  //   if (!teamId) return;
-  //   if (!userId) {
-  //     console.warn("UserId가 없습니다. 로그인 상태를 확인하세요.");
-  //     return;
-  //   }
-  //   const fetchSubGroupId = async () => {
-  //     try {
-  //       const response = await api.get(`/api/matching/subgroup/${teamId}`, {
-  //         params: { userId },
-  //       });
+  useEffect(() => {
+    if (!teamId) return;
+    if (!userId) {
+      console.warn("UserId가 없습니다. 로그인 상태를 확인하세요.");
+      return;
+    }
+    const fetchSubGroupId = async () => {
+      try {
+        const response = await api.get(`/api/matching/subgroup/${teamId}`, {
+          params: { userId },
+        });
 
-  //       //const response = await api.get(`/api/matching/subgroup/${teamId}`);
-  //       const subGroupId = response.data.subGroupId ?? null;
+        //const response = await api.get(`/api/matching/subgroup/${teamId}`);
+        const subGroupId = response.data.subGroupId ?? null;
 
-  //       setSubGroupIdMap((prev) => ({
-  //         ...prev,
-  //         [teamId]: subGroupId,
-  //       }));
+        setSubGroupIdMap((prev) => ({
+          ...prev,
+          [teamId]: subGroupId,
+        }));
 
-  //       console.log("최신 subGroupId 업데이트됨:", subGroupId);
-  //     } catch (error) {
-  //       console.error("subGroupId 조회 실패", error);
-  //       setSubGroupIdMap((prev) => ({
-  //         ...prev,
-  //         [teamId]: null,
-  //       }));
-  //     }
-  //   };
-
-  //   fetchSubGroupId();
-  // }, [teamId, userId, setSubGroupIdMap]);
+        console.log("최신 subGroupId 업데이트됨:", subGroupId);
+      } catch (error) {
+        console.error("subGroupId 조회 실패", error);
+        setSubGroupIdMap((prev) => ({
+          ...prev,
+          [teamId]: null,
+        }));
+      }
+    };
+    fetchSubGroupId();
+  }, [teamId, userId, setSubGroupIdMap]);
 
   // 1. subGroupId가 없을 때 => 매칭 전 팀 멤버 조회 및 매칭 시작 여부 조회
   useEffect(() => {
@@ -149,6 +148,16 @@ export default function CheckScreen({ navigation }: Props) {
 
         setTimeout(() => {
           setMatchingStatus("done");
+          // 스택 초기화하고 HomeScreen으로 네비게이트
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: "HomeScreen",
+                params: { teamId: teamId! },
+              },
+            ],
+          });
         }, 2000);
       } else {
         alert("매칭이 시작되지 않았습니다.");
@@ -197,7 +206,7 @@ export default function CheckScreen({ navigation }: Props) {
         )}
       />
 
-      <Modal
+      {/* <Modal
         transparent
         visible={matchingStatus === "loading"}
         animationType="fade"
@@ -207,9 +216,9 @@ export default function CheckScreen({ navigation }: Props) {
             <Text style={styles.modalText}> 매칭 중입니다...</Text>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
 
-      <Modal
+      {/* <Modal
         transparent
         visible={matchingStatus === "done"}
         animationType="fade"
@@ -240,7 +249,7 @@ export default function CheckScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
 
       <SubmitButton
         title="매칭시작하기"
@@ -248,6 +257,7 @@ export default function CheckScreen({ navigation }: Props) {
         style={{ marginBottom: 40 }}
         buttonColor="#FF9898"
         shadowColor="#E08B8B"
+        width={360}
       />
     </View>
   );

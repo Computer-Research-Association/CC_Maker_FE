@@ -15,6 +15,7 @@ import styles from "../styles/LoginScreen.styles";
 import { TeamContext } from "../screens/TeamContext";
 import { UserContext } from "./UserContext"; // 경로 맞게 수정
 import { Ionicons } from "@expo/vector-icons"; // 비밀번호 토글
+import SubmitButton from "../component/SubmitButton";
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -33,7 +34,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       const response = await login({ email, password });
       Alert.alert("로그인 성공", "환영합니다!");
 
-      console.log("🧾 로그인 응답:", response);
+      console.log(" 로그인 응답:", response);
 
       setUserId(response.userId);
       setName(response.name);
@@ -45,9 +46,9 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         routes: [{ name: "MainHomeScreen" }],
       });
     } catch (error: unknown) {
-      console.log("🚨 로그인 에러 발생:", error);
-      console.log("🚨 에러 타입:", typeof error);
-      console.log("🚨 에러 객체:", JSON.stringify(error, null, 2));
+      console.log(" 로그인 에러 발생:", error);
+      console.log("에러 타입:", typeof error);
+      console.log("에러 객체:", JSON.stringify(error, null, 2));
       
       let errorMessage = "로그인에 실패했어요.";
       
@@ -153,9 +154,16 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         {/* <Text style={styles.separator}>|</Text> */}
       </View>
 
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>로그인하기</Text>
-      </TouchableOpacity>
+      <SubmitButton
+        title="로그인하기"
+        onPress={handleLogin}
+        buttonColor="#FF9898"
+        shadowColor="#E08B8B"
+        textColor="#fff"
+        width={350}
+        height={56}
+        style={{ marginTop: 5 }}
+      />
     </View>
   );
 }

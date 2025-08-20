@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Image, Alert } from "react-native";
+import SubmitButton from "../component/SubmitButton";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 //@ts-ignore
@@ -29,7 +30,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
 
   const subGroupId = teamId ? subGroupIdMap[teamId] : null;
 
-  // ✅ subGroupId 확인 및 저장
+  //  subGroupId 확인 및 저장
   useEffect(() => {
     if (!teamId || !isFocused || !userId) return;
     const fetchSubGroupIdIfNeeded = async () => {
@@ -51,7 +52,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
     fetchSubGroupIdIfNeeded();
   }, [teamId, isFocused, subGroupId, userId, setSubGroupIdMap]);
 
-  // ✅ 매칭된 멤버 이름 불러오기
+  //  매칭된 멤버 이름 불러오기
   useEffect(() => {
     if (!teamId || !subGroupId || !isFocused || !userId) return;
     const fetchMatchedNames = async () => {
@@ -70,7 +71,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
     fetchMatchedNames();
   }, [teamId, subGroupId, isFocused, userId]);
 
-  // ✅ 완료된 미션 히스토리 불러오기 (팀 전체)
+  //  완료된 미션 히스토리 불러오기 (팀 전체)
   useEffect(() => {
     if (!teamId || !isFocused) return;
     const fetchMissionHistory = async () => {
@@ -124,19 +125,23 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
 
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        contentInsetAdjustmentBehavior="automatic"
+      >
         {/* 상단 설정 버튼 */}
         <TouchableOpacity 
           style={styles.settingButton}
           onPress={() => navigation.navigate("SettingScreen")}
         >
           <Ionicons name="settings-outline" size={24} color="#666" />
-        </TouchableOpacity>
+      </TouchableOpacity>
 
         {/* 프로필 영역 */}
         <View style={styles.profileSection}>
-          <View style={styles.profileContainer}>
-            {/* 본인 프로필 */}
+      <View style={styles.profileContainer}>
+        {/* 본인 프로필 */}
             <View style={styles.profileBlock}>
               <View style={styles.avatar} />
               <Text style={styles.profileName}>{name || "사용자"}</Text>
@@ -153,8 +158,8 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
                         source={require('../../assets/free-icon-hearts-18745836.png')} 
                         style={styles.heartIcon} 
                       />
-                    </View>
-                    
+        </View>
+
                     {/* 매칭된 멤버 프로필 */}
                     <View style={styles.matchedProfileBlock}>
                       <View style={styles.matchedAvatar} />
@@ -172,9 +177,9 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
                   매칭 대기중
                 </Text>
               </View>
-            )}
-          </View>
+          )}
         </View>
+      </View>
 
         {/* 미션 히스토리 */}
         <View style={styles.missionHistorySection}>
@@ -203,12 +208,12 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
                     />
                   </View>
 
-                                     {/* 미션 카드 */}
+                  {/* 미션 카드 */}
                    <View style={[
                      styles.missionCard,
                      styles.completedCard
                    ]}>
-                                                                 <View style={{ flexDirection: "row", alignItems: "center" }}>
+                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                         <Text style={styles.missionTitle}>{mission.userName}</Text>
                         <Image 
                           source={require('../../assets/free-icon-hearts-18745836.png')} 
@@ -219,7 +224,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
                             ? mission.matchedNames.join(" ♥ ")
                             : "매칭 대기중"
                           }
-                        </Text>
+        </Text>
                       </View>
                      <Text style={styles.missionDate}>{formatDate(mission.completedAt)}</Text>
                      <View style={styles.missionDescription}>
@@ -238,23 +243,13 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
               </View>
             )}
           </View>
-        </View>
+      </View>
 
-        {/* 매칭 상대 없으면 설문 버튼 */}
-        {matchedNames.length === 0 && (
-          <View style={{ alignItems: 'center', paddingVertical: 20 }}>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#FF9898',
-                paddingHorizontal: 30,
-                paddingVertical: 15,
-                borderRadius: 25,
-                shadowColor: '#E08B8B',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 8,
-              }}
+      {/* 매칭 상대 없으면 설문 버튼 */}
+      {matchedNames.length === 0 && (
+          <View style={{ alignItems: 'center', paddingVertical: 10, marginTop: -30 }}>
+            <SubmitButton
+              title="설문시작하기"
               onPress={() => {
                 if (isSurveyCompleted) {
                   Alert.alert("알림", "이미 설문조사를 완료했습니다.", [
@@ -264,11 +259,15 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
                   navigation.navigate("MbtiScreen");
                 }
               }}
-            >
-              <Text style={styles.writeButtonMainText}>설문시작하기</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+              buttonColor="#FF9898"
+              shadowColor="#E08B8B"
+              width={300}
+              height={50}
+              // paddingHorizontal={30}
+              // paddingVertical={15}
+            />
+        </View>
+      )}
       </ScrollView>
     </View>
   );

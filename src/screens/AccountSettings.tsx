@@ -64,16 +64,16 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
   // 검증
   const validate = () => {
     const next: typeof errors = {};
-    if (!name.trim()) next.name = "이름을 입력해줘.";
-    if (!email.trim()) next.email = "이메일을 입력해줘.";
+    if (!name.trim()) next.name = "이름을 입력해주세요.";
+    if (!email.trim()) next.email = "이메일을 입력해주세요.";
     else if (!/^\S+@\S+\.\S+$/.test(email))
-      next.email = "이메일 형식이 이상해.";
+      next.email = "이메일 형식이 이상합니다.";
 
     if (enablePwChange) {
-      if (!currentPw) next.pw = "현재 비밀번호 입력해줘.";
-      else if (newPw.length < 8) next.pw = "새 비밀번호는 8자 이상이 좋다.";
+        if (!currentPw) next.pw = "현재 비밀번호 입력해주세요.";
+      else if (newPw.length < 8) next.pw = "새 비밀번호는 8자 이상이 좋습니다.";
       else if (newPw !== confirmPw)
-        next.pw = "새 비밀번호 확인이 일치하지 않아.";
+        next.pw = "새 비밀번호 확인이 일치하지 않습니다.";
     }
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -121,17 +121,17 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
         setEnablePwChange(false);
       }
 
-      Alert.alert("완료", "정보가 저장됐어.");
+      Alert.alert("완료", "정보가 저장됐습니다.");
     } catch (e: any) {
-      let msg = "저장 중 문제가 생겼어.";
+      let msg = "저장 중 문제가 생겼습니다.";
       
       // 서버에서 오는 구체적인 에러 메시지 처리
       if (e?.response?.data?.message) {
         const serverMsg = e.response.data.message;
         if (serverMsg.includes("비밀번호") || serverMsg.includes("password")) {
-          msg = "현재 비밀번호가 올바르지 않아요.";
+          msg = "현재 비밀번호가 올바르지 않습니다.";
         } else if (serverMsg.includes("이메일") || serverMsg.includes("email")) {
-          msg = "이미 사용 중인 이메일이에요.";
+          msg = "이미 사용 중인 이메일입니다.";
         } else {
           msg = serverMsg;
         }
@@ -168,7 +168,7 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
           keyboardDismissMode="on-drag"
         >
           <View style={styles.container}>
-            {/* 기본 정보 */}
+            {/* 기본 정보 */} 
             <Text style={styles.sectionTitle}>기본 정보</Text>
 
             <View style={styles.field}>
@@ -177,7 +177,7 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
                 style={[styles.input, errors.name && styles.inputError]}
                 value={name}
                 onChangeText={setName}
-                placeholder="이름을 입력"
+                placeholder="이름을 입력해주세요."
                 placeholderTextColor="#999"
                 autoCapitalize="none"
                 maxLength={30}
@@ -225,7 +225,7 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
                     value={currentPw}
                     onChangeText={setCurrentPw}
                     secureTextEntry
-                    placeholder="현재 비밀번호"
+                    placeholder="현재 비밀번호를 입력해주세요."
                     placeholderTextColor="#999"
                   />
                 </View>
@@ -237,7 +237,7 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
                     value={newPw}
                     onChangeText={setNewPw}
                     secureTextEntry
-                    placeholder="새 비밀번호 (8자 이상)"
+                    placeholder="새 비밀번호를 입력해주세요. (8자 이상)"
                     placeholderTextColor="#999"
                   />
                 </View>
@@ -249,7 +249,7 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
                     value={confirmPw}
                     onChangeText={setConfirmPw}
                     secureTextEntry
-                    placeholder="새 비밀번호 다시 입력"
+                    placeholder="새 비밀번호를 다시 입력해주세요."
                     placeholderTextColor="#999"
                   />
                 </View>
@@ -291,7 +291,7 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
             <TouchableOpacity
               style={styles.dangerBtn}
               onPress={() =>
-                Alert.alert("계정 탈퇴", "정말로 탈퇴할래?", [
+                Alert.alert("계정 탈퇴", "정말로 탈퇴하시겠습니까?", [
                   { text: "취소", style: "cancel" },
                   {
                     text: "탈퇴",
@@ -299,7 +299,7 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
                     onPress: async () => {
                       try {
                         await api.delete("/api/user/me");
-                        Alert.alert("완료", "계정이 삭제되었어.");
+                        Alert.alert("완료", "계정이 삭제되었습니다.");
                       } catch (e: any) {
                         Alert.alert(
                           "오류",
@@ -313,7 +313,7 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
                 ])
               }
             >
-              <Text style={styles.dangerBtnText}>계정 탈퇴</Text>
+              {/* <Text style={styles.dangerBtnText}>계정 탈퇴</Text> */}
                          </TouchableOpacity>
            </View>
          </ScrollView>
