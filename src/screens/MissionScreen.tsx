@@ -124,19 +124,16 @@ export default function MissionScreen() {
         subGroupId,
         missionId: mission.missionTemplateId,
       });
-      
-      // 미션 완료 후 scoreboard 다시 가져오기
-      await fetchScoreboard();
-      
-      
-      alert(`${mission.title},미션이 완료 처리되었습니다.`);
+      Alert.alert(mission.title, "미션이 완료처리되었습니다.");
       setMissions((prev) =>
         prev.map((m, i) =>
           i === selectedBoxIndex ? { ...m, completed: true } : m
         )
       );
-            // scoreboard 업데이트 후 바로 축하 메시지 조건 체크
-            checkCongratsCondition();
+       // 미션 완료 후 scoreboard 다시 가져오기
+       await fetchScoreboard();
+      // scoreboard 업데이트 후 바로 축하 메시지 조건 체크
+      checkCongratsCondition();
     } catch (error) {
       alert("미션 완료 처리에 실패했습니다.");
     } finally {
@@ -170,6 +167,7 @@ export default function MissionScreen() {
     // 미션 데이터 로드
     fetchMissions();
     // 축하 메시지 조건 체크
+    console.log("🚀 useEffect 실행됨");
     checkCongratsCondition();
   }, [fetchScoreboard, fetchMissions, checkCongratsCondition]);
 
