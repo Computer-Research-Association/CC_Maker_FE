@@ -386,12 +386,12 @@ const styles = StyleSheet.create({
   container: { flexGrow: 1, backgroundColor: "#fff", padding: 24 },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "Ongeulip",
     marginTop: 16,
     marginBottom: 8,
   },
   field: { marginBottom: 12 },
-  label: { fontSize: 13, color: "#555", marginBottom: 6 },
+  label: { fontSize: 13, color: "#555", marginBottom: 6, fontFamily: "Ongeulip"},
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -400,9 +400,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 15,
     backgroundColor: "#fafafa",
+    fontFamily: "Ongeulip",
   },
-  inputError: { borderColor: "#ff5a5a" },
-  errorText: { marginTop: 6, color: "#ff3b30", fontSize: 12 },
+  inputError: { borderColor: "#ff5a5a", fontFamily: "Ongeulip" },
+  errorText: { marginTop: 6, color: "#ff3b30", fontSize: 12, fontFamily: "Ongeulip"},
   toggleRow: {
     marginTop: 8,
     paddingVertical: 8,
@@ -410,7 +411,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  toggleText: { fontSize: 13, color: "#666" },
+  toggleText: { fontSize: 13, color: "#666", fontFamily: "Ongeulip" },
   card: {
     borderWidth: 1,
     borderColor: "#eee",
@@ -429,7 +430,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  primaryBtnText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  primaryBtnText: { color: "#fff", fontSize: 16, fontFamily: "Ongeulip" },
   btnDisabled: { opacity: 0.5 },
   secondaryBtn: {
     paddingVertical: 12,
@@ -440,7 +441,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  secondaryBtnText: { color: "#111827", fontSize: 15, fontWeight: "600" },
+  secondaryBtnText: { color: "#111827", fontSize: 15, fontFamily: "Ongeulip" },
   dangerBtn: { marginTop: 18, alignItems: "center", padding: 10 },
   dangerBtnText: {
     color: "#d11",
@@ -470,7 +471,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: "Ongeulip",
     marginBottom: 20,
     textAlign: "center",
   },
@@ -491,7 +492,7 @@ const styles = StyleSheet.create({
   modalCancelButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "Ongeulip",
   },
   modalConfirmButton: {
     backgroundColor: "#FF9898",
@@ -499,6 +500,6 @@ const styles = StyleSheet.create({
   modalConfirmButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "Ongeulip",
   },
 });

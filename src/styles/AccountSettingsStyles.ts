@@ -1,16 +1,17 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from './GlobalStyles';
 
 export default StyleSheet.create({
   scroll: { flexGrow: 1, backgroundColor: "#fff" },
   container: { flexGrow: 1, backgroundColor: "#fff", padding: 24 },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: FontFamily.bold,
     marginTop: 16,
     marginBottom: 8,
   },
   field: { marginBottom: 12 },
-  label: { fontSize: 13, color: "#555", marginBottom: 6 },
+  label: { fontSize: 13, color: "#555", marginBottom: 6, fontFamily: FontFamily.regular },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -19,9 +20,10 @@ export default StyleSheet.create({
     paddingVertical: 12,
     fontSize: 15,
     backgroundColor: "#fafafa",
+    fontFamily: FontFamily.regular,
   },
   inputError: { borderColor: "#ff5a5a" },
-  errorText: { marginTop: 6, color: "#ff3b30", fontSize: 12 },
+  errorText: { marginTop: 6, color: "#ff3b30", fontSize: 12, fontFamily: FontFamily.regular },
   toggleRow: {
     marginTop: 8,
     paddingVertical: 8,
@@ -29,7 +31,7 @@ export default StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  toggleText: { fontSize: 13, color: "#666" },
+  toggleText: { fontSize: 13, color: "#666", fontFamily: FontFamily.regular },
   card: {
     borderWidth: 1,
     borderColor: "#eee",
@@ -48,7 +50,7 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  primaryBtnText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  primaryBtnText: { color: "#fff", fontSize: 16, fontFamily: FontFamily.bold },
   btnDisabled: { opacity: 0.5 },
   secondaryBtn: {
     paddingVertical: 12,
@@ -59,5 +61,54 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  secondaryBtnText: { color: "#111827", fontSize: 15, fontWeight: "600" },
+  secondaryBtnText: { color: "#111827", fontSize: 15, fontFamily: FontFamily.semiBold },
+  
+  // 모달 스타일
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 24,
+    marginHorizontal: 20,
+    minWidth: 280,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontFamily: FontFamily.bold,
+    color: "#333",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  modalButtonRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalCancelButton: {
+    backgroundColor: "#f3f4f6",
+  },
+  modalCancelButtonText: {
+    color: "#6b7280",
+    fontSize: 16,
+    fontFamily: FontFamily.regular,
+  },
+  modalConfirmButton: {
+    backgroundColor: "#ef4444",
+  },
+  modalConfirmButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontFamily: FontFamily.regular,
+  },
 });

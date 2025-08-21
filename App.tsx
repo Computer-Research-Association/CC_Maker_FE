@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./src/navigation/types";
+import * as Font from 'expo-font';
+import { View, Text } from 'react-native';
 
 import HomeScreen from "./src/screens/HomeScreen";
 import BottomTabNavigator from "./src/function/BottomTabNavigator";
@@ -25,6 +27,27 @@ import { UserProvider } from "./src/screens/UserContext";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    async function loadFonts() {
+      await Font.loadAsync({
+        'Ongeulip': require('./assets/fonts/온글잎 박다현체.ttf'),
+      });
+      setFontsLoaded(true);
+    }
+
+    loadFonts();
+  }, []);
+
+  if (!fontsLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>폰트 로딩 중...</Text>
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer>
       <UserProvider>

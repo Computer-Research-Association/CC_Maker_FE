@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { GlobalStyles, FontFamily } from './GlobalStyles';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,12 +17,13 @@ const styles = StyleSheet.create({
   welcomeText: {
     textAlign: 'center',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: FontFamily.bold,
     marginBottom: 6,
   },
   subText: {
     textAlign: 'center',
     fontSize: 14,
+    fontFamily: FontFamily.regular,
     color: '#555',
     marginBottom: 20,
   },
@@ -32,15 +34,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 8,
     fontSize: 16,
+    fontFamily: FontFamily.regular,
   },
   linkRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     marginBottom: 40,
+    fontFamily: "Ongeulip",
   },
   link: {
     color: '#FF9898',
     marginHorizontal: 5,
+    fontFamily: "Ongeulip",
   },
   separator: {
     color: '#aaa',
@@ -54,7 +59,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: FontFamily.bold,
   },
 });
 

@@ -460,7 +460,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
           >
             {privacyAgreed && (
               <Text
-                style={{ color: "white", fontSize: 14, fontWeight: "bold" }}
+                style={{ color: "white", fontSize: 14, fontFamily: "Ongeulip" }}
               >
                 ✓
               </Text>
