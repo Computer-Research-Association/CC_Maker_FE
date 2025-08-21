@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     fontSize: 15,
-    fontWeight: "bold",
+    fontFamily: "Ongeulip",
   },
   slashText: {
     fontSize: 15,
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   percentText: {
     fontSize: 15,
-    fontWeight: "bold",
+    fontFamily: "Ongeulip",
     marginLeft: 2,
   },
 });

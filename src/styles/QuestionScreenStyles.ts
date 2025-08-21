@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from './GlobalStyles';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -13,7 +14,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     textAlign: "center",
     marginBottom: 12,
   },

@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from '../GlobalStyles';
 
 export default StyleSheet.create({
   modalOverlay: {
@@ -16,7 +17,7 @@ export default StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: "700",
+    fontFamily: FontFamily.bold,
     marginBottom: 16,
   },
   codeBox: {
@@ -30,7 +31,7 @@ export default StyleSheet.create({
   },
   codeText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     marginRight: 10,
   },
   iconButton: {
@@ -43,7 +44,7 @@ export default StyleSheet.create({
     paddingHorizontal: 32,
   },
   closeText: {
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     fontSize: 16,
   },
 });

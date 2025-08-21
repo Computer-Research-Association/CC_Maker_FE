@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from './GlobalStyles';
 
 const styles = StyleSheet.create({
   container: {
@@ -10,10 +11,15 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
   },
-  title: { fontSize: 24, marginBottom: 20, textAlign: "center" },
+  title: { 
+    fontSize: 24, 
+    marginBottom: 20, 
+    textAlign: "center",
+    fontFamily: FontFamily.bold,
+  },
   label: {
     marginBottom: 6,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
   },
   input: {
     height: 48,
@@ -22,6 +28,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 8,
     fontSize: 16,
+    fontFamily: FontFamily.regular,
   },
   radioGroup: {
     flexDirection: "column",
@@ -50,7 +57,7 @@ const styles = StyleSheet.create({
   roundButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   emailRow: {
     flexDirection: "row",
@@ -109,7 +116,7 @@ const styles = StyleSheet.create({
   },
   privacyTitle: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#333",
     flex: 1,
   },

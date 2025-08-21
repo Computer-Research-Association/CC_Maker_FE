@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "Ongeulip",
     color: "#111",
   },
   arrow: {

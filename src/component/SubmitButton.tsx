@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   submitText: {
     // color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "Ongeulip",
   },
   disabledButton: {
     backgroundColor: "#ccc",

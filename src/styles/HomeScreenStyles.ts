@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from './GlobalStyles';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,7 +16,7 @@ const styles = StyleSheet.create({
   crown: {
     fontSize: 44,
     marginBottom: 2,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#ff6b6b",
     textShadowColor: "rgba(255, 107, 107, 0.3)",
     textShadowOffset: { width: 0, height: 2 },
@@ -23,12 +24,12 @@ const styles = StyleSheet.create({
   },
   myNameText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#222",
   },
   testNameText: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     color: "#222",
   },
   myCardBox: {
@@ -66,12 +67,12 @@ const styles = StyleSheet.create({
   },
   otherNameText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     color: "#444",
   },
   blueNameText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     color: "#2196f3",
   },
   topCardBox: {
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
   },
   topNameText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#ff5a5a",
   },
   divider: {
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
   },
   matchingTitleText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#222",
     textAlign: "center",
     marginBottom: 8,
@@ -137,11 +138,12 @@ const styles = StyleSheet.create({
     color: "#666",
     textAlign: "center",
     lineHeight: 20,
+    fontFamily: "Ongeulip",
   },
   // Add missing styles
   teamNameText: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     color: "#333",
     textAlign: "center",
     maxWidth: 280,
@@ -174,7 +176,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     color: "#333",
     marginBottom: 12,
     textAlign: "center",

@@ -1,4 +1,10 @@
-import React, { useContext, useState, useEffect, useCallback, useRef } from "react";
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import {
   Alert,
   View,
@@ -18,7 +24,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import SubmitButton from "../component/SubmitButton";
 import { UserContext } from "./UserContext";
 import { useFocusEffect } from "@react-navigation/native";
-
 
 const BOX_SIZE = 108;
 const BOX_MARGIN = 4;
@@ -82,7 +87,7 @@ export default function MissionScreen() {
     if (scoreboard && scoreboard.minScore > 0) {
       const currentMinScore = scoreboard.minScore;
       const prevMinScore = prevMinScoreRef.current;
-      
+
       // 최소학점이 변경되었거나 처음 로드되었을 때만 체크
       if (prevMinScore === null || prevMinScore !== currentMinScore) {
         // 100% 이상 달성했는지 확인
@@ -130,8 +135,8 @@ export default function MissionScreen() {
           i === selectedBoxIndex ? { ...m, completed: true } : m
         )
       );
-       // 미션 완료 후 scoreboard 다시 가져오기
-       await fetchScoreboard();
+      // 미션 완료 후 scoreboard 다시 가져오기
+      await fetchScoreboard();
       // scoreboard 업데이트 후 바로 축하 메시지 조건 체크
       checkCongratsCondition();
     } catch (error) {
@@ -167,7 +172,6 @@ export default function MissionScreen() {
     // 미션 데이터 로드
     fetchMissions();
     // 축하 메시지 조건 체크
-    console.log("🚀 useEffect 실행됨");
     checkCongratsCondition();
   }, [fetchScoreboard, fetchMissions, checkCongratsCondition]);
 
@@ -210,9 +214,7 @@ export default function MissionScreen() {
               style={styles.matchingIcon}
             />
           </View>
-          <Text style={styles.matchingTitleText}>
-            최소학점을 설정해주세요 
-          </Text>
+          <Text style={styles.matchingTitleText}>최소학점을 설정해주세요</Text>
           <Text style={styles.matchingSubText}>
             미션을 시작하기 전에 최소학점을 설정해야 합니다.
           </Text>
@@ -228,13 +230,13 @@ export default function MissionScreen() {
     >
       <View style={styles.topheader} />
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={[styles.container, { paddingBottom: 50 }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
           <Text style={styles.logoText}>
-             {teamName ?? "팀 이름이 없습니다"} 팀 CC 미션 
+            {teamName ?? "팀 이름이 없습니다"} 팀 CC 미션
           </Text>
         </View>
 
@@ -252,7 +254,7 @@ export default function MissionScreen() {
                   }
                   disabled={mission.completed}
                 >
-                  <Text style={{ padding: 10, textAlign: "center" }}>
+                  <Text style={styles.missionBoxText}>
                     {mission.description}
                   </Text>
                 </TouchableOpacity>
@@ -286,7 +288,7 @@ export default function MissionScreen() {
                     shadowColor="#aaa"
                     width={120}
                     height={50}
-                    style= {{marginTop: 5,marginLeft: 10}}
+                    style={{ marginTop: 5, marginLeft: 10 }}
                   />
                   <SubmitButton
                     title="새로고침"
@@ -295,8 +297,7 @@ export default function MissionScreen() {
                     shadowColor="#E08B8B"
                     width={120}
                     height={50}
-                    style= {{marginTop: 5}}
-
+                    style={{ marginTop: 5 }}
                   />
                 </View>
               </>
@@ -332,17 +333,16 @@ export default function MissionScreen() {
                 </LinearGradient>
 
                 <View style={styles.modalButtons}>
-                <SubmitButton
+                  <SubmitButton
                     title="취소"
                     onPress={() => setModalVisible(false)}
                     buttonColor="#bbb"
                     width={120}
                     height={50}
                     shadowColor="#aaa"
-                    style= {{marginLeft: 10}}
-                   >
-                  </SubmitButton>
-                  
+                    style={{ marginLeft: 10 }}
+                  ></SubmitButton>
+
                   <SubmitButton
                     title="미션완료"
                     onPress={handleComplete}
@@ -350,9 +350,7 @@ export default function MissionScreen() {
                     height={50}
                     buttonColor="#FF9898"
                     shadowColor="#E08B8B"
-                    
-                  >
-                  </SubmitButton>
+                  ></SubmitButton>
                 </View>
               </>
             )}
@@ -368,22 +366,37 @@ export default function MissionScreen() {
         animationType="fade"
       >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { alignItems: 'center' }]}>
-            <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10, color: '#ff6b6b' }}>
-               축하합니다! 
+          <View style={[styles.modalContent, { alignItems: "center" }]}>
+            <Text
+              style={{
+                fontSize: 24,
+                fontFamily: "Ongeulip",
+                marginBottom: 10,
+                color: "#ff6b6b",
+              }}
+            >
+              축하합니다!
             </Text>
-            <Text style={{ fontSize: 16, textAlign: 'center', marginBottom: 20, lineHeight: 24 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                textAlign: "center",
+                marginBottom: 20,
+                lineHeight: 24,
+                fontFamily: "Ongeulip",
+              }}
+            >
               최소학점을 달성했습니다!
             </Text>
-                         <SubmitButton
-               title="확인"
-               onPress={() => setShowCongratsModal(false)}
-                buttonColor="#FF9898"
-                shadowColor="#E08B8B"
-               width={120}
-               height={50}
-               style={{ marginTop: 5 }}
-             />
+            <SubmitButton
+              title="확인"
+              onPress={() => setShowCongratsModal(false)}
+              buttonColor="#FF9898"
+              shadowColor="#E08B8B"
+              width={120}
+              height={50}
+              style={{ marginTop: 5 }}
+            />
           </View>
         </View>
       </Modal>
@@ -398,7 +411,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f7f8fa",
     paddingHorizontal: 0,
-    
   },
   topheader: {
     paddingTop: 50,
@@ -420,7 +432,7 @@ const styles = StyleSheet.create({
 
   logoText: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontFamily: "Ongeulip",
     color: "#333",
     textAlign: "left",
     width: "100%", // ✅ 또는 alignSelf: "stretch"
@@ -433,7 +445,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: GRID_WIDTH + 15,
     alignItems: "center",
-
+    
     shadowColor: "#000", // 그림자 색 (iOS)
     shadowOpacity: 0.05, // 투명도 (0~1)
     shadowOffset: { width: 0, height: 4 }, // 그림자 위치
@@ -447,7 +459,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 12,
     marginBottom: 16,
-    fontWeight: "bold",
+    fontFamily: "Ongeulip",
     fontSize: 14,
     color: "#fff",
   },
@@ -484,6 +496,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginBottom: 20,
+    fontFamily: "Ongeulip",
   },
   modalButtons: {
     flexDirection: "row",
@@ -506,7 +519,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontWeight: "bold",
+    fontFamily: "Ongeulip",
     fontSize: 16,
     textAlign: "center",
   },
@@ -541,7 +554,7 @@ const styles = StyleSheet.create({
 
   missionTitle: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "Ongeulip",
     marginBottom: 20,
     color: "#333",
     textAlign: "center",
@@ -552,6 +565,7 @@ const styles = StyleSheet.create({
     // color: "#555",
     color: "#333", // 배경과 대비되게
     textAlign: "center",
+    fontFamily: "Ongeulip",
     lineHeight: 22,
   },
 
@@ -572,7 +586,15 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   refreshText: {
+    fontFamily: "Ongeulip",
     fontSize: 12,
+  },
+  missionBoxText: {
+    padding: 10,
+    textAlign: "center",
+    fontFamily: "Ongeulip",
+    fontSize: 14,
+    color: "#333",
   },
   completedBox: {
     backgroundColor: "#d3d3d3",
@@ -608,7 +630,7 @@ const styles = StyleSheet.create({
   },
   matchingTitleText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: "Ongeulip",
     color: "#222",
     textAlign: "center",
     marginBottom: 8,
@@ -618,5 +640,6 @@ const styles = StyleSheet.create({
     color: "#666",
     textAlign: "center",
     lineHeight: 20,
+    fontFamily: "Ongeulip",
   },
 });

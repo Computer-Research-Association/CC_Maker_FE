@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from './GlobalStyles';
 
 const styles = StyleSheet.create({
   container: {
@@ -9,7 +10,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     textAlign: "center",
     marginBottom: 12,
     color: "#111",
@@ -19,6 +20,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#999",
     marginBottom: 40,
+    fontFamily: "Ongeulip",
   },
   input: {
     backgroundColor: "#f7f8fa",
@@ -27,6 +29,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
     color: "#333",
+    fontFamily: "Ongeulip",
   },
   Button: {
     marginTop: 24,
@@ -40,13 +43,13 @@ const styles = StyleSheet.create({
   laterButtonText: {
     color: "#111",
     fontSize: 16,
-    fontWeight: "500",
+    fontFamily: FontFamily.medium,
   },
   codeText: {
     marginTop: 20,
     textAlign: "center",
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#333",
   },
   copyButton: {
@@ -59,7 +62,7 @@ const styles = StyleSheet.create({
   copyButtonText: {
     color: "#fff",
     fontSize: 14,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   startButton: {
     backgroundColor: "#FF9898",
@@ -73,7 +76,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
 });
 

@@ -134,7 +134,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         ]}
       >
         <TextInput
-          style={{ flex: 1 }}
+          style={{ flex: 1 ,fontFamily:'Ongeulip'}}
           placeholder="비밀번호"
           secureTextEntry={secure} // 위의 secure 상태값 사용
           value={password}

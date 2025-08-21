@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { FontFamily } from './GlobalStyles';
 
 
 const styles = StyleSheet.create({
@@ -10,7 +11,7 @@ const styles = StyleSheet.create({
   },
   title: {
    fontSize: 22,
-    fontWeight: 'bold',
+    fontFamily: FontFamily.bold,
     textAlign: 'center',
     marginBottom: 12,
     color: '#111',
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: FontFamily.bold,
   },
 });
 

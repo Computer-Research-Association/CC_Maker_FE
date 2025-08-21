@@ -257,8 +257,8 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
             ) : (
               <View style={{ alignItems: 'center', paddingVertical: 40 }}>
                 <Ionicons name="calendar-outline" size={40} color="#ccc" />
-                <Text style={{ marginTop: 10, fontSize: 16, color: '#666' }}>아직 완료된 미션이 없어요</Text>
-                <Text style={{ marginTop: 5, fontSize: 14, color: '#999' }}>미션을 완료하면 여기에 기록됩니다!</Text>
+                <Text style={{ marginTop: 10, fontSize: 16, color: '#666', fontFamily: 'Ongeulip' }}>아직 완료된 미션이 없어요</Text>
+                <Text style={{ marginTop: 5, fontSize: 14, color: '#999', fontFamily: 'Ongeulip' }}>미션을 완료하면 여기에 기록됩니다!</Text>
               </View>
             )}
           </View>
@@ -295,7 +295,8 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
               marginTop: 8, 
               fontSize: 16, 
               color: '#666', 
-              textAlign: 'center' 
+              textAlign: 'center',
+              fontFamily: 'Ongeulip'
             }}>
               설문조사가 완료되었습니다
             </Text>
@@ -303,7 +304,8 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
               marginTop: 4, 
               fontSize: 14, 
               color: '#999', 
-              textAlign: 'center' 
+              textAlign: 'center',
+              fontFamily: 'Ongeulip'
             }}>
               매칭 결과를 기다려주세요
             </Text>
