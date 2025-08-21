@@ -162,7 +162,10 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
       <View style={styles.profileContainer}>
         {/* 본인 프로필 */}
             <View style={styles.profileBlock}>
-              <View style={styles.avatar} />
+                                                                                                                       <Image 
+                   source={require('../../assets/user (2).png')} 
+                   style={[styles.avatar, { opacity: 0.3, width: 60, height: 60 }]} 
+                 />
               <Text style={styles.profileName}>{name || "사용자"}</Text>
             </View>
 
@@ -179,23 +182,29 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
                       />
         </View>
 
-                    {/* 매칭된 멤버 프로필 */}
-                    <View style={styles.matchedProfileBlock}>
-                      <View style={styles.matchedAvatar} />
-                      <Text style={styles.matchedProfileName}>
-                        {memberName}
-                      </Text>
-                    </View>
+                                                                                                                                                                       {/* 매칭된 멤버 프로필 */}
+                       <View style={styles.matchedProfileBlock}>
+                                                 <Image 
+                          source={require('../../assets/user (2).png')} 
+                          style={[styles.matchedAvatar, { opacity: 0.3, width: 60, height: 60 }]} 
+                        />
+                         <Text style={styles.matchedProfileName}>
+                           {memberName}
+                         </Text>
+                       </View>
                   </View>
                 ))}
               </View>
             ) : (
-              <View style={styles.matchedProfileBlock}>
-                <View style={styles.matchedAvatar} />
-                <Text style={styles.matchedProfileName}>
-                  매칭 대기중
-                </Text>
-              </View>
+                                                                                                                       <View style={styles.matchedProfileBlock}>
+                                       <Image 
+                      source={require('../../assets/user (2).png')} 
+                      style={[styles.matchedAvatar, { opacity: 0.3, width: 60, height: 60 }]} 
+                    />
+                   <Text style={styles.matchedProfileName}>
+                     매칭 대기중
+                   </Text>
+                 </View>
           )}
         </View>
       </View>
