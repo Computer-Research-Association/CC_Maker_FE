@@ -131,6 +131,7 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
             />
           )}
 
+          
           <SettingItem
             label="최소학점 설정"
             onPress={() => setMinCreditModalVisible(true)}
