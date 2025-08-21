@@ -16,6 +16,7 @@ import { TeamContext } from "../screens/TeamContext";
 import { UserContext } from "./UserContext"; // 경로 맞게 수정
 import { Ionicons } from "@expo/vector-icons"; // 비밀번호 토글
 import SubmitButton from "../component/SubmitButton";
+import CherryBlossomContainer from "../component/CherryBlossomContainer";
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -105,6 +106,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
   return (
     <View style={styles.container}>
+      <CherryBlossomContainer />
       {/* <Image
         source={{
           uri: 'https://upload.wikimedia.org/wikipedia/sco/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/768px-Starbucks_Corporation_Logo_2011.svg.png',

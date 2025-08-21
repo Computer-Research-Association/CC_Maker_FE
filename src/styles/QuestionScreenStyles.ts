@@ -11,15 +11,17 @@ const styles = StyleSheet.create({
   contentArea: {
     flex: 1,
     justifyContent: "flex-start",
+    marginBottom: 0,
   },
   title: {
     fontSize: 20,
     fontFamily: FontFamily.bold,
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: 24,
   },
   questionText: {
-    fontSize: 18,
+    fontSize: 22,
+    fontFamily: FontFamily.regular,
     textAlign: "center",
     marginBottom: 24,
   },
@@ -27,9 +29,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: "auto",
+    marginTop: 4,
     paddingHorizontal: 2, // 좌우 여백
-    marginBottom: 40,
+    marginBottom: 250,
   },
 });
 

@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: GRID_WIDTH + 15,
     alignItems: "center",
-    
+
     shadowColor: "#000", // 그림자 색 (iOS)
     shadowOpacity: 0.05, // 투명도 (0~1)
     shadowOffset: { width: 0, height: 4 }, // 그림자 위치

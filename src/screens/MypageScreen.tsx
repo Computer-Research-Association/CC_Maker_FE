@@ -284,7 +284,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
       {matchedNames.length === 0 && isSurveyCompleted && (
         <View style={{ alignItems: 'center', paddingVertical: 10, marginTop: -30 }}>
           <View style={{ 
-            backgroundColor: '#f0f0f0', 
+            backgroundColor: '#f7f8fa', 
             padding: 20, 
             borderRadius: 10, 
             alignItems: 'center',

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { FontFamily } from '../styles/GlobalStyles';
 
 type LikertScaleProps = {
   question: string;
@@ -63,7 +64,7 @@ export default function LikertScale({ question, onSelect }: LikertScaleProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 24,
+    marginTop: 4,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
@@ -86,6 +87,8 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
+    fontFamily: FontFamily.regular,
     color: "#555",
+    marginBottom: 0,
   },
 });
