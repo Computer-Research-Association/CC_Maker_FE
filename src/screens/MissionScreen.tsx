@@ -24,6 +24,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import SubmitButton from "../component/SubmitButton";
 import { UserContext } from "./UserContext";
 import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const celebrateKey = (
+  teamId?: number | null,
+  subGroupId?: number | null,
+  min?: number | null
+) => `celebrated:${teamId ?? "na"}:${subGroupId ?? "na"}:${min ?? 0}`;
 
 const BOX_SIZE = 108;
 const BOX_MARGIN = 4;
@@ -64,6 +71,7 @@ export default function MissionScreen() {
   const { userId } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const celebratedMinScoreRef = useRef<number | null>(null);
 
   //이거 왜필요하노(최소학점설정이 있는지 없는지 파악하기 위해서)
   const fetchScoreboard = useCallback(() => {
@@ -81,24 +89,6 @@ export default function MissionScreen() {
       })
       .finally(() => setSbLoading(false));
   }, [teamId, userId]);
-
-  // 축하 메시지 표시 로직을 useCallback으로 분리
-  const checkCongratsCondition = useCallback(() => {
-    if (scoreboard && scoreboard.minScore > 0) {
-      const currentMinScore = scoreboard.minScore;
-      const prevMinScore = prevMinScoreRef.current;
-
-      // 최소학점이 변경되었거나 처음 로드되었을 때만 체크
-      if (prevMinScore === null || prevMinScore !== currentMinScore) {
-        // 100% 이상 달성했는지 확인
-        if (scoreboard.minScore <= scoreboard.mySubGroup.score) {
-          setShowCongratsModal(true);
-        }
-        // 현재 최소학점을 저장
-        prevMinScoreRef.current = currentMinScore;
-      }
-    }
-  }, [scoreboard?.minScore]); // 최소학점만 의존성으로 설정
 
   // 미션 불러오기 로직을 useCallback으로 분리
   const fetchMissions = useCallback(async () => {
@@ -118,33 +108,65 @@ export default function MissionScreen() {
     }
   }, [teamId, subGroupId]);
 
-  // 미션 완료 처리 로직을 useCallback으로 분리
+  // 1) 달성 판정 헬퍼
+  const isAchieved = (data: ScoreboardResponse | null) => {
+    if (!data) return false;
+    const { minScore, mySubGroup } = data;
+    return minScore > 0 && (mySubGroup?.score ?? 0) >= minScore;
+  };
+
+  //저장소에 최소학점 저장
+  const loadCelebration = useCallback(async () => {
+    if (!scoreboard || !teamId || !subGroupId) return;
+    const key = celebrateKey(teamId, subGroupId, scoreboard.minScore);
+    const v = await AsyncStorage.getItem(key);
+    celebratedMinScoreRef.current = v ? scoreboard.minScore : null;
+  }, [scoreboard?.minScore, teamId, subGroupId]);
+
+  // 2) 미션 완료 핸들러
   const handleComplete = useCallback(async () => {
     if (selectedBoxIndex === null) return;
     const mission = missions[selectedBoxIndex];
 
     try {
+      // 완료 처리
       await api.post("/api/missions/complete", {
         teamId,
         subGroupId,
         missionId: mission.missionTemplateId,
       });
-      Alert.alert(mission.title, "미션이 완료처리되었습니다.");
-      setMissions((prev) =>
-        prev.map((m, i) =>
-          i === selectedBoxIndex ? { ...m, completed: true } : m
-        )
+
+      // 낙관적 업데이트(선택)
+      setMissions(prev =>
+        prev.map((m, i) => (i === selectedBoxIndex ? { ...m, completed: true } : m))
       );
-      // 미션 완료 후 scoreboard 다시 가져오기
-      await fetchScoreboard();
-      // scoreboard 업데이트 후 바로 축하 메시지 조건 체크
-      checkCongratsCondition();
+
+      // ⚠️ 캐시 무력화해서 최신 점수판 확보
+      const { data: freshSb } = await api.get(`/api/teams/${teamId}/scoreboard`, {
+        params: { userId, _ts: Date.now() },
+      });
+      setScoreboard(freshSb);
+
+      Alert.alert(mission.title, "미션이 완료처리되었습니다.");
+
+      const currentMin = freshSb?.minScore ?? 0;
+      const alreadyCelebratedForThisMin =
+        celebratedMinScoreRef.current === currentMin;
+
+      if (isAchieved(freshSb) && !alreadyCelebratedForThisMin) {
+        setModalVisible(false);               // 상세 모달 먼저 닫고
+        celebratedMinScoreRef.current = currentMin;  // 이 최소학점에 대해서는 축하 완료로 기록
+        // 저장
+        const key = celebrateKey(teamId, subGroupId, currentMin);
+        AsyncStorage.setItem(key, "1").catch(() => {});
+        setTimeout(() => setShowCongratsModal(true), 0);
+      } else {
+        setModalVisible(false);
+      }
     } catch (error) {
-      alert("미션 완료 처리에 실패했습니다.");
-    } finally {
-      setModalVisible(false);
+      Alert.alert("오류", "미션 완료 처리에 실패했습니다.");
     }
-  }, [selectedBoxIndex, missions, teamId, subGroupId, fetchScoreboard]);
+  }, [selectedBoxIndex, missions, teamId, subGroupId, userId]);
 
   // 미션 새로고침 로직을 useCallback으로 분리
   const confirmRefresh = useCallback(async () => {
@@ -165,15 +187,23 @@ export default function MissionScreen() {
     }
   }, [selectedBoxIndex, missions, subGroupId]);
 
-  // 모든 로직을 하나의 useEffect로 통합
-  useEffect(() => {
-    // 점수판 데이터 로드 (마운트 시에만)
-    fetchScoreboard();
-    // 미션 데이터 로드
-    fetchMissions();
-    // 축하 메시지 조건 체크
-    checkCongratsCondition();
-  }, [fetchScoreboard, fetchMissions, checkCongratsCondition]);
+  // 화면이 포커스될 때마다 데이터 최신화
+  useFocusEffect(
+    useCallback(() => {
+      // 점수판은 항상 최신화 (점수 변경 가능성)
+      fetchScoreboard();
+      
+      // 미션은 변경되지 않았을 가능성이 높으므로 조건부 실행
+      if (missions.length === 0) {
+        fetchMissions();
+      }
+      
+      // 축하 상태는 최소학점이 변경되었을 때만
+      if (scoreboard?.minScore !== prevMinScoreRef.current) {
+        loadCelebration();
+      }
+    }, [fetchScoreboard, fetchMissions, loadCelebration, missions.length, scoreboard?.minScore])
+  );
 
   const handleBoxPress = (index: number) => {
     setSelectedBoxIndex(index);
@@ -367,25 +397,10 @@ export default function MissionScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { alignItems: "center" }]}>
-            <Text
-              style={{
-                fontSize: 24,
-                fontFamily: "Ongeulip",
-                marginBottom: 10,
-                color: "#ff6b6b",
-              }}
-            >
-              축하합니다!
+            <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10, color: '#ff6b6b' }}>
+              축하합니다! 
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                textAlign: "center",
-                marginBottom: 20,
-                lineHeight: 24,
-                fontFamily: "Ongeulip",
-              }}
-            >
+            <Text style={{ fontSize: 16, textAlign: 'center', marginBottom: 20, lineHeight: 24 }}>
               최소학점을 달성했습니다!
             </Text>
             <SubmitButton

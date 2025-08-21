@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 12,
-    backgroundColor: "#e5e7eb",
     marginBottom: 8,
   },
   profileName: {
@@ -74,7 +73,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 12,
-    backgroundColor: "#e5e7eb",
     marginBottom: 8,
   },
   matchedProfileName: {
