@@ -21,6 +21,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <UserContext.Provider value={{ userId, setUserId, name, setName }}>
+      {/* 이안에 있는 컴포넌트가 value값을 쓸 수 있게 하기 위함임임*/}
       {children}
     </UserContext.Provider>
   );

@@ -2,13 +2,8 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./src/navigation/types";
-<<<<<<< HEAD
-import * as Font from 'expo-font';
-import { View, Text } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-=======
->>>>>>> 24940c6300cf034c565cfc16273d5d41b2ef1657
-
+import * as Font from "expo-font";
+import { View, Text } from "react-native";
 import HomeScreen from "./src/screens/HomeScreen";
 import BottomTabNavigator from "./src/function/BottomTabNavigator";
 import SettingsScreen from "./src/screens/SettingScreen";
@@ -32,7 +27,6 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         <UserProvider>
           <TeamProvider>
@@ -107,6 +101,5 @@ export default function App() {
           </TeamProvider>
         </UserProvider>
       </NavigationContainer>
-    </GestureHandlerRootView>
   );
 }
