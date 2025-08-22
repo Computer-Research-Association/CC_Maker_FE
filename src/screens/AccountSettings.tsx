@@ -410,8 +410,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    // ↓ 작은 화면에서도 텍스트가 안 겹치게 여유
+    minHeight: 36,
   },
-  toggleText: { fontSize: 13, color: "#666", fontFamily: "Ongeulip" },
+  // ⬇️ 왼쪽 제목을 줄일 수 있게 (중요: minWidth:0)
+  toggleLeft: {
+    flexShrink: 1,
+    minWidth: 0,
+    marginRight: 8,
+  },
+  toggleText: {
+    fontSize: 13,
+    color: "#666",
+    fontFamily: "Ongeulip",
+    // ↓ 화살표(▼)가 잘리지 않도록 lineHeight 확보
+    lineHeight: 18,
+    // ↓ 안드로이드 폰트 패딩 이슈 완화
+    ...Platform.select({ android: { includeFontPadding: false } }),
+  },
   card: {
     borderWidth: 1,
     borderColor: "#eee",

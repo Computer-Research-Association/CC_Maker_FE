@@ -15,7 +15,11 @@ import {
   Modal,
   TextInput,
   Image,
+  Animated,
+  StyleProp,
+  ViewStyle,
 } from "react-native";
+import { GestureHandlerRootView, PanGestureHandler, State } from "react-native-gesture-handler";
 import { TeamContext } from "../screens/TeamContext";
 import MissionBox from "../component/MissionBox";
 import api from "../api/apiClient";
@@ -36,6 +40,94 @@ const BOX_SIZE = 108;
 const BOX_MARGIN = 4;
 const BOX_PER_ROW = 3;
 const GRID_WIDTH = BOX_PER_ROW * (BOX_SIZE + BOX_MARGIN * 2);
+
+
+//// TiltCard.tsx (혹은 같은 파일 상단)
+const TiltCard = ({
+  children,
+  style,
+  onPress,
+  disabled = false,
+}: {
+  children: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
+  onPress?: () => void;   // ← 선택
+  disabled?: boolean;
+}) => {
+  const rotateX = useRef(new Animated.Value(0)).current;
+  const rotateY = useRef(new Animated.Value(0)).current;
+
+  const onGestureEvent = Animated.event(
+    [{ nativeEvent: { translationX: rotateY, translationY: rotateX } }],
+    {
+      useNativeDriver: false,
+      listener: (e: any) => {
+        const { translationX, translationY } = e.nativeEvent;
+        rotateY.setValue(translationX / 4);
+        rotateX.setValue(-translationY / 4);
+      },
+    }
+  );
+
+  const onHandlerStateChange = (e: any) => {
+    if (e.nativeEvent.state === State.END) {
+      Animated.parallel([
+        Animated.spring(rotateX, { 
+          toValue: 0, 
+          useNativeDriver: false, 
+          tension: 40, 
+          friction: 8,
+          restDisplacementThreshold: 0.01,
+          restSpeedThreshold: 0.01,
+        }),
+        Animated.spring(rotateY, { 
+          toValue: 0, 
+          useNativeDriver: false, 
+          tension: 40, 
+          friction: 8,
+          restDisplacementThreshold: 0.01,
+          restSpeedThreshold: 0.01,
+        }),
+      ]).start();
+    }
+  };
+
+  const animatedStyle = {
+    transform: [
+      { perspective: 800 },
+      { rotateX: rotateX.interpolate({ 
+        inputRange: [-40, 40], 
+        outputRange: ["-15deg", "15deg"], 
+        extrapolate: "clamp" 
+      }) },
+      { rotateY: rotateY.interpolate({ 
+        inputRange: [-40, 40], 
+        outputRange: ["-15deg", "15deg"], 
+        extrapolate: "clamp" 
+      }) },
+    ],
+  };
+
+  return (
+    <PanGestureHandler
+      onGestureEvent={onGestureEvent}
+      onHandlerStateChange={onHandlerStateChange}
+      enabled={!disabled}
+    >
+      <Animated.View style={[style, animatedStyle]}>
+        {/* onPress가 있을 때만 오버레이 터치 영역 생성 → 모달 버튼 클릭 안 막힘 */}
+
+          <TouchableOpacity
+            onPress={onPress}
+            disabled={disabled}
+            style={StyleSheet.absoluteFillObject}
+            activeOpacity={0.95}
+          />
+        {children}
+      </Animated.View>
+    </PanGestureHandler>
+  );
+};
 
 type SubGroupScore = {
   subGroupId: number;
@@ -303,6 +395,8 @@ export default function MissionScreen() {
           setConfirmModalVisible(false);
         }}
       >
+          <GestureHandlerRootView style={{ flex: 1 }}>
+
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             {confirmModalVisible ? (
@@ -334,33 +428,37 @@ export default function MissionScreen() {
             ) : (
               <>
                 <Text style={styles.missionTitle}>
-                  {missions[selectedBoxIndex!]?.score}학점
-                </Text>
-                <LinearGradient
-                  colors={["#ffe5ec", "#ffd6e0", "#fff0f5"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.missionBox}
-                >
-                  <View style={styles.glassOverlay} />
-                  <View style={styles.missionContentWrapper}>
-                    <Text style={styles.missionContent}>
-                      {selectedBoxIndex !== null
-                        ? missions[selectedBoxIndex].description
-                        : ""}
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    style={styles.refreshButton}
-                    onPress={() => setConfirmModalVisible(true)}
-                    disabled={
-                      selectedBoxIndex === null ||
-                      missions[selectedBoxIndex].completed
-                    }
-                  >
-                    <Text style={styles.refreshText}>↻ 새로고침</Text>
-                  </TouchableOpacity>
-                </LinearGradient>
+  {missions[selectedBoxIndex!]?.score}학점
+</Text>
+
+<TiltCard /* onPress 안 넘김: 틸트만, 터치 동작 없음 */
+  disabled={false}
+  style={undefined}  // 크기/패딩은 안쪽 카드가 갖고 있으니 보통 생략
+>
+  <LinearGradient
+    colors={["#ffe5ec", "#ffd6e0", "#fff0f5"]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 1 }}
+    style={styles.missionBox}   // ← 크기/패딩은 여기만!
+  >
+    <View style={styles.glassOverlay} />
+    <View style={styles.missionContentWrapper}>
+      <Text style={styles.missionContent}>
+        {selectedBoxIndex !== null ? missions[selectedBoxIndex].description : ""}
+      </Text>
+    </View>
+
+    <TouchableOpacity
+      style={styles.refreshButton}
+      onPress={() => setConfirmModalVisible(true)}
+      disabled={
+        selectedBoxIndex === null || missions[selectedBoxIndex].completed
+      }
+    >
+      <Text style={styles.refreshText}>↻ 새로고침</Text>
+    </TouchableOpacity>
+  </LinearGradient>
+</TiltCard>
 
                 <View style={styles.modalButtons}>
                   <SubmitButton
@@ -384,8 +482,9 @@ export default function MissionScreen() {
                 </View>
               </>
             )}
+            </View>
           </View>
-        </View>
+        </GestureHandlerRootView>
       </Modal>
 
       {/* 축하 메시지 모달 */}
@@ -538,22 +637,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
   },
-  missionBox: {
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    shadowColor: "#FF8CC6",
-    shadowOpacity: 0.6,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 20,
-    elevation: 12,
-    width: "100%",
-    minHeight: 360,
-    overflow: "hidden",
-    position: "relative",
-  },
+ // 1) 미션 카드
+missionBox: {
+  padding: 20,
+  borderRadius: 16,
+  marginBottom: 20,
+  // borderWidth: 1,
+  // borderColor: "#FFFFFF",
+  shadowColor: "#FF8CC6",
+  shadowOpacity: 0.6,
+  shadowOffset: { width: 0, height: 4 },
+  shadowRadius: 20,
+  elevation: 12,
+  width: "90%",
+  minHeight: 280,
+  minWidth: 200,
+  // overflow: "hidden",    // ❌ 이거 때문에 가장자리 요소가 시각적으로 잘릴 수 있음
+  overflow: "visible",      // ✅ 그림자/자식요소 여유 유지
+  position: "relative",
+},
   glassOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(255, 255, 255, 0.08)",
@@ -593,17 +695,22 @@ const styles = StyleSheet.create({
 
   refreshButton: {
     position: "absolute",
-    bottom: 6,
-    right: 8,
+    bottom: 10,              // 6 -> 10 (여유)
+    right: 12,               // 8 -> 12 (여유)
     backgroundColor: "#eee",
-    padding: 4,
+    paddingVertical: 6,      // 4 -> 6 (세로 여유)
+    paddingHorizontal: 10,   // 4 -> 10 (가로 여유)
+    minHeight: 28,           // 최소 높이로 글자 잘림 방지
     borderRadius: 10,
     zIndex: 1,
   },
-  refreshText: {
-    fontFamily: "Ongeulip",
-    fontSize: 12,
-  },
+// 3) 텍스트
+refreshText: {
+  fontFamily: "Ongeulip",
+  fontSize: 12,
+  lineHeight: 16,          // ✅ 폰트 상하단 잘림 방지
+  color: "#666",
+},
   missionBoxText: {
     padding: 10,
     textAlign: "center",

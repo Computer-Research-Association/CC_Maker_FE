@@ -251,6 +251,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
+      nestedScrollEnabled={true}
     >
       <Text style={styles.title}>회원가입</Text>
 
@@ -339,8 +340,23 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
           style={styles.dropdown}
           dropDownContainerStyle={styles.dropdownContainer}
           containerStyle={styles.dropdownWrapper}
-          zIndex={1000}
-          zIndexInverse={3000}
+          zIndex={99999}
+          zIndexInverse={99999}
+          listMode="SCROLLVIEW"
+          scrollViewProps={{
+            nestedScrollEnabled: true,
+            showsVerticalScrollIndicator: false,
+          }}
+          flatListProps={{
+            nestedScrollEnabled: true,
+          }}
+          closeAfterSelecting={true}
+          closeOnBackPressed={true}
+          textStyle={{
+            fontFamily: "Ongeulip",
+            fontSize: 16,
+            color: "#333",
+          }}
         />
       </View>
       {emailError ? (
@@ -414,7 +430,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
               status={gender === "male" ? "checked" : "unchecked"}
               onPress={() => setGender("male")}
             />
-            <Text>남성</Text>
+            <Text style={{ fontFamily: "Ongeulip" }}>남성</Text>
           </View>
           <View style={styles.radioOption}>
             <RadioButton
@@ -422,7 +438,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
               status={gender === "female" ? "checked" : "unchecked"}
               onPress={() => setGender("female")}
             />
-            <Text>여성</Text>
+            <Text style={{ fontFamily: "Ongeulip" }}>여성</Text>
           </View>
         </View>
       </View>
