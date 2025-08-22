@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./src/navigation/types";
 import * as Font from 'expo-font';
 import { View, Text } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import HomeScreen from "./src/screens/HomeScreen";
 import BottomTabNavigator from "./src/function/BottomTabNavigator";
@@ -49,79 +50,81 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <UserProvider>
-        <TeamProvider>
-          <Stack.Navigator initialRouteName="Login">
-            <Stack.Screen
-              name="Login"
-              component={login}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Signup"
-              component={signup}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MainHomeScreen"
-              component={MainHomeScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomeScreen"
-              component={BottomTabNavigator}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="InviteScreen"
-              component={InviteScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="JoinScreen"
-              component={JoinScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MbtiScreen"
-              component={MBTISelector}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MypageScreen"
-              component={MyPageScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MissionScreen"
-              component={MissionScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="QuestionScreen"
-              component={QuestionScreen}
-              initialParams={{ index: 0 }}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SettingScreen"
-              component={SettingsScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="CheckScreen"
-              component={CheckScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AccountSettings"
-              component={AccountSettings}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </TeamProvider>
-      </UserProvider>
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <UserProvider>
+          <TeamProvider>
+            <Stack.Navigator initialRouteName="Login">
+              <Stack.Screen
+                name="Login"
+                component={login}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Signup"
+                component={signup}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="MainHomeScreen"
+                component={MainHomeScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="HomeScreen"
+                component={BottomTabNavigator}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="InviteScreen"
+                component={InviteScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="JoinScreen"
+                component={JoinScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="MbtiScreen"
+                component={MBTISelector}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="MypageScreen"
+                component={MyPageScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="MissionScreen"
+                component={MissionScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="QuestionScreen"
+                component={QuestionScreen}
+                initialParams={{ index: 0 }}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="SettingScreen"
+                component={SettingsScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="CheckScreen"
+                component={CheckScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="AccountSettings"
+                component={AccountSettings}
+                options={{ headerShown: false }}
+              />
+            </Stack.Navigator>
+          </TeamProvider>
+        </UserProvider>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }

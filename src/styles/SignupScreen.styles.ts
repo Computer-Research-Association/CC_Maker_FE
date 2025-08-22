@@ -75,6 +75,9 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 15,
     borderRightWidth: 0,
     backgroundColor: "rgba(255, 255, 255, 0.7)",
+    fontFamily: "Ongeulip",
+
+    
   },
   dropdownWrapper: {
     flex: 5,
@@ -93,11 +96,14 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 0,
     borderLeftWidth: 0,
     backgroundColor: "rgba(255, 255, 255, 0.7)",
+    
   },
   dropdownContainer: {
     borderWidth: 1,
     borderColor: "#ccc",
     zIndex: 1000,
+    fontFamily: "Ongeulip",
+
   },
   // 개인정보 활용 동의서 관련 스타일
   privacySection: {
