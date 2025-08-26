@@ -50,6 +50,31 @@ const styles = StyleSheet.create({
   separator: {
     color: '#aaa',
   },
+  eyeButton: {
+    padding: 16,
+  },
+  formContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
+    paddingHorizontal: 0,
+  },
+  passwordContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    width: '100%',
+    marginBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 16,
+    fontSize: 16,
+    fontFamily: FontFamily.regular,
+  },
   loginButton: {
     backgroundColor: '#FF9898',
     paddingVertical: 14,
