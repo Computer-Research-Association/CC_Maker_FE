@@ -1,61 +1,29 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  StyleSheet,
-} from "react-native";
+import React from "react";
+import { View } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
-import { joinTeamByCode } from "../api/teamApi";
 import styles from "../styles/TeamMemberScreen.styles";
-import SubmitButton from "../component/SubmitButton";
+import { useJoinScreen } from "../hooks/useJoinScreen";
+import { TeamJoinForm } from "../component/TeamJoinForm";
 type JoinTeamScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "JoinScreen">;
 };
 
 export default function JoinTeamScreen({ navigation }: JoinTeamScreenProps) {
-  const [code, setCode] = useState("");
+  const {
+    state: { code, loading },
+    set: { setCode },
+    actions: { handleJoinTeam },
+  } = useJoinScreen({ navigation });
 
-  const handleJoinTeam = async () => {
-    if (!code.trim()) {
-      Alert.alert("입력 오류", "초대코드를 입력해주세요.");
-      return;
-    }
-
-    try {
-      await joinTeamByCode(code);
-      Alert.alert("팀 가입 완료", "성공적으로 팀에 가입했습니다!");
-      navigation.navigate("MainHomeScreen"); // 필요 시 다른 화면으로 이동
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        Alert.alert("가입 실패", error.message);
-      } else {
-        Alert.alert("가입 실패", "팀 가입 중 오류가 발생했습니다.");
-      }
-    }
-  };
-  
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>초대 코드로 팀 가입</Text>
-      <TextInput
-        placeholder="초대코드를 입력하세요"
-        value={code}
-        onChangeText={setCode}
-        style={styles.input}
+      <TeamJoinForm
+        code={code}
+        onCodeChange={setCode}
+        onJoinTeam={handleJoinTeam}
+        loading={loading}
       />
-      <SubmitButton
-        // style={styles.button}
-        onPress={handleJoinTeam}
-        title="팀 가입하기"
-        buttonColor="#FF9898"
-        shadowColor="#E08B8B"
-      >
-        <Text style={styles.buttonText}>팀 가입하기</Text>
-      </SubmitButton>
     </View>
   );
 }

@@ -1,30 +1,17 @@
-import React, { useEffect, useState, useContext } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Alert,
-  Modal,
-  StatusBar,
-  Image,
-} from "react-native";
+import React from "react";
+import { View, StatusBar } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
-import { TeamResponseDto } from "../types/team";
-import api from "../api/apiClient";
-import { TeamContext } from "../screens/TeamContext";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SubmitButton from "../component/SubmitButton";
 import styles from "../styles/MainHomeScreenStyles";
+import { useMainHomeScreen } from "../hooks/useMainHomeScreen";
+import { Header } from "../component/Header";
+import { TeamList } from "../component/TeamList";
+import { TeamActionModal } from "../component/TeamActionModal";
 
 type MainHomeScreenNavigationProp = {
   navigation: NativeStackNavigationProp<RootStackParamList, "MainHomeScreen">;
 };
-
-const windowWidth = Dimensions.get("window").width;
 
 type Role = "MEMBER" | "LEADER";
 
@@ -37,95 +24,11 @@ interface Team {
 // + 버튼 포함된 전체 렌더링 타입
 type TeamCardItem = Team | { id: "add-button" };
 
-export default function MainHomeScreen({
-  navigation,
-}: MainHomeScreenNavigationProp) {
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const { setTeamId, setRole, setTeamName } = useContext(TeamContext);
-
-  useEffect(() => {
-    console.log("✅ useEffect 실행됨");
-    fetchUserTeams();
-  }, []);
-
-  const fetchUserTeams = async () => {
-    try {
-      console.log("passhere");
-      const response = await api.get<TeamResponseDto[]>("/api/team/mine");
-      console.log("passhere1");
-      // teamId(Long)를 string id로 변환하여 맞춰줌
-      console.log("여기에요 여기:", response.data);
-
-      const mappedTeams = response.data.map((team) => ({
-        id: team.teamId, // number
-        teamName: team.teamName,
-        role: team.role,
-      }));
-      console.log("passhere2");
-
-      setTeams(mappedTeams);
-    } catch (error) {
-      console.log("passhere in catch");
-
-      console.error("팀 목록 불러오기 실패", error);
-      Alert.alert("오류", "팀 목록을 불러오는데 실패했습니다.");
-    }
-  };
-
-  const renderTeamCard = ({ item }: { item: Team }) => (
-    <TouchableOpacity
-      style={styles.teamCard}
-      onPress={() => {
-        console.log(
-          `선택한 팀 ID: ${item.id}, 팀 이름: ${item.teamName}, role: ${item.role}`
-        );
-        setTeamId(item.id);
-        setRole(item.role);
-        setTeamName(item.teamName);
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: "HomeScreen",
-              params: { teamId: item.id },
-            },
-          ],
-        });
-      }}
-    >
-      <Text style={styles.teamName}>{item.teamName}</Text>
-    </TouchableOpacity>
-  );
-
-  const renderAddCard = () => (
-    <TouchableOpacity
-      style={styles.addCard}
-      onPress={() => setModalVisible(true)}
-    >
-      <Text style={styles.addText}>+</Text>
-    </TouchableOpacity>
-  );
-
-  const renderItem = ({ item }: { item: TeamCardItem }) => {
-    if (item.id === "add-button") {
-      return renderAddCard();
-    }
-    return renderTeamCard({ item: item as Team });
-  };
-
-  // 모달에서 팀 생성하기 누르면 이동
-  const handleCreateTeam = () => {
-    setModalVisible(false);
-    navigation.navigate("InviteScreen"); // 실제 네비게이션 이름 확인 후 수정하세요
-  };
-
-  // 모달에서 팀 참여하기 누르면 이동
-  const handleJoinTeam = () => {
-    setModalVisible(false);
-    navigation.navigate("JoinScreen"); // 실제 네비게이션 이름 확인 후 수정하세요
-  };
-  
+export default function MainHomeScreen({ navigation }: MainHomeScreenNavigationProp) {
+  const {
+    state: { teams, modalVisible },
+    actions: { handleTeamSelect, openCreateTeamModal, closeModal, handleCreateTeam, handleJoinTeam, handleLogout },
+  } = useMainHomeScreen({ navigation });
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -135,94 +38,22 @@ export default function MainHomeScreen({
         translucent={true}
       />
       
-      {/* 상단 나가기 버튼 */}
-      <View style={styles.headerContainer}>
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={() => {
-            Alert.alert(
-              "로그아웃",
-              "정말 로그아웃 하시겠습니까?",
-              [
-                {
-                  text: "취소",
-                  style: "cancel"
-                },
-                {
-                  text: "로그아웃",
-                  style: "destructive",
-                  onPress: () => navigation.reset({
-                    index: 0,
-                    routes: [{ name: "Login" }],
-                  })
-                }
-              ]
-            );
-          }}
-        >
-          <Image 
-            source={require('../../assets/enter (2).png')} 
-            style={styles.logoutIcon} 
-          />
-        </TouchableOpacity>
-      </View>
+      <Header onLogout={handleLogout} />
 
       <View style={styles.container}>
-        <View style={{ flex: 1, paddingHorizontal: 20 }}>
-          <FlatList
-            data={[...teams, { id: "add-button" }]}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={renderItem}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingVertical: 20,
-              gap: 15,
-              alignItems: 'center',
-            }}
-          />
-        </View>
+        <TeamList
+          teams={teams}
+          onTeamSelect={handleTeamSelect}
+          onAddTeam={openCreateTeamModal}
+        />
 
         {/* 팀 추가 모달 */}
-        <Modal
+        <TeamActionModal
           visible={modalVisible}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              {/* <Text style={styles.title}>팀을 선택해주세요</Text> */}
-
-              <SubmitButton
-                // style={[styles.modalButton, styles.createButton]}
-                title="팀생성하기"
-                buttonColor="#FF9898"
-                shadowColor="#E08B8B"
-                onPress={handleCreateTeam}
-              >
-                <Text style={styles.modalButtonText}>팀 생성하기</Text>
-              </SubmitButton>
-
-              <SubmitButton
-                // style={[styles.modalButton, styles.joinButton]}
-                title="참여하기"
-                buttonColor="#ffd1d1"
-                shadowColor="#ffe3e1"
-                onPress={handleJoinTeam}
-                style={{ marginTop: 7 }}
-              >
-                {" "}
-              </SubmitButton>
-
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.cancelButtonText}>취소</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
+          onClose={closeModal}
+          onCreateTeam={handleCreateTeam}
+          onJoinTeam={handleJoinTeam}
+        />
       </View>
     </SafeAreaView>
   );

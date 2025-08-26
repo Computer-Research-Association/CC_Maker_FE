@@ -1,24 +1,15 @@
-import React, { useContext, useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  ScrollView,
-  SafeAreaView,
-  StatusBar,
-  Platform,
-  Image,
-} from "react-native";
+import React, { useContext } from "react";
+import { View, Text, ScrollView, SafeAreaView, StatusBar } from "react-native";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { TeamContext } from "./TeamContext";
-import api from "../api/apiClient";
 import { UserContext } from "./UserContext";
-import { useFocusEffect } from "@react-navigation/native";
-import AnimatedProgressBar from "../component/AnimatedProgressBar";
 import styles from "../styles/HomeScreenStyles";
-import { Modal } from "react-native-paper";
+import { useHomeScreen } from "../hooks/useHomeScreen";
+import { GroupTitle } from "../component/GroupTitle";
+import { ScoreCard } from "../component/ScoreCard";
+import { LoadingView } from "../component/LoadingView";
+import { MatchingWaitView } from "../component/MatchingWaitView";
 // @ts-ignore
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "HomeScreen">;
@@ -45,114 +36,26 @@ const calculatePercent = (score: number, minScore: number) => {
 
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
-  //내가 속한팀ID,ID별 소그룹 ID저장 객체, 소그룹 ID저장 함수,현재 로그인한 사용자ID
-  const { teamId, subGroupIdMap, teamName, setSubGroupIdMap } =
-    useContext(TeamContext);
+  const { teamId, subGroupIdMap, teamName, setSubGroupIdMap } = useContext(TeamContext);
   const { userId } = useContext(UserContext);
-  //서버에서 받아온 팀 점수데이터, 데이터를 불러오는 중인지 여부, 에러 발생시 에러메시지 저장
-  const [scoreboard, setScoreboard] = useState<ScoreboardResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-// 해당 팀에서 내가 속한 소그룹ID
   const subGroupId = teamId ? subGroupIdMap[teamId] : null;
 
-  const fetchSubGroupIdIfNeeded = useCallback(async () => {
-    if (!teamId || !userId || subGroupId) return;
-
-    setLoading(true);
-    try {
-      const response = await api.get(`/api/matching/subgroup/${teamId}`, {
-        //인자인 객체의 속성값으로 들어감.
-        params: { userId },
-      });
-      //유효한값 날아기지않게 null로 처리
-      const newSubGroupId = response.data.subGroupId ?? null;
-
-      setSubGroupIdMap((prev) => {
-        //prev = 이전 값 상태 
-        if (prev[teamId] === newSubGroupId) return prev;
-        //같으면 걍 그대로 두고 다르면 새로운 값으로 업데이트
-        return { ...prev, [teamId]: newSubGroupId };
-      });
-
-      console.log("✅ HomeScreen: subGroupId 업데이트 완료:", newSubGroupId);
-    } catch (error) {
-      console.error("subGroupId 조회 실패:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [teamId, userId, subGroupId, setSubGroupIdMap]);
-  //서브 그룹 점수판불러오기(첫진입시)
-  const fetchScoreboard = useCallback(() => {
-    if (!teamId || !userId) return;
-
-    api
-      .get(`/api/teams/${teamId}/scoreboard`, { params: { userId } })
-      .then((res) => {
-        setScoreboard(res.data);
-        console.log("✅ Scoreboard API 응답:", res.data);
-        setError(null);
-      })
-      .catch((err) => {
-        setError(err.message || "데이터를 불러오는 중 오류가 발생했습니다.");
-        setScoreboard(null);
-      });
-  }, [teamId, userId]);
-  //화면 진입시 자동적인 실행, API호출
-  useFocusEffect(
-    useCallback(() => {
-      const loadData = async () => {
-        if (!teamId || !userId) return;
-
-        // subGroupId가 없으면 먼저 가져오기
-        if (!subGroupId) {
-          await fetchSubGroupIdIfNeeded();
-        }
-
-        // scoreboard 가져오기
-        fetchScoreboard();
-      };
-      loadData();
-    }, [teamId, userId, subGroupId, fetchSubGroupIdIfNeeded, fetchScoreboard])
-  );
+  const {
+    state: { scoreboard, loading, error },
+    computed: { isLoading: isLoadingComputed },
+  } = useHomeScreen({ teamId, userId, subGroupId, setSubGroupIdMap });
   ///로딩,에러, 데이터없음 처리
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "#f7f8fa",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <ActivityIndicator size="large" color="#ff6b6b" />
-        <Text style={{ marginTop: 16, fontSize: 16, color: "#666" }}>
-          로딩 중...
-        </Text>
-      </View>
-    );
+  if (loading || isLoadingComputed) {
+    return <LoadingView />;
   }
 
   //  매칭 여부 체크 (옵셔널 체이닝)
   if (!subGroupId) {
     return (
-      <View style={styles.container}>
-        <View style={styles.matchingWaitContainer}>
-          <View style={styles.matchingIconContainer}>
-            <Image
-              source={require("../../assets/free-icon-hearts-18745836.png")}
-              style={styles.matchingIcon}
-            />
-          </View>
-          <Text style={styles.matchingTitleText}>
-            매칭을 먼저 진행해주세요.
-          </Text>
-          <Text style={styles.matchingSubText}>
-            미션을 시작하기 전에 매칭 과정을 완료해야 합니다.
-          </Text>
-        </View>
-      </View>
+      <MatchingWaitView
+        title="매칭을 먼저 진행해주세요."
+        subtitle="미션을 시작하기 전에 매칭 과정을 완료해야 합니다."
+      />
     );
   }
   // if (error) {
@@ -165,22 +68,10 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
 
   if (!scoreboard) {
     return (
-      <View style={styles.container}>
-        <View style={styles.matchingWaitContainer}>
-          <View style={styles.matchingIconContainer}>
-            <Image
-              source={require("../../assets/free-icon-hearts-18745836.png")}
-              style={styles.matchingIcon}
-            />
-          </View>
-          <Text style={styles.matchingTitleText}>
-            최소학점을 설정해주세요 
-          </Text>
-          <Text style={styles.matchingSubText}>
-            미션을 시작하기 전에 최소학점을 설정해야 합니다.
-          </Text>
-        </View>
-      </View>
+      <MatchingWaitView
+        title="최소학점을 설정해주세요"
+        subtitle="미션을 시작하기 전에 최소학점을 설정해야 합니다."
+      />
     );
   }
 
@@ -233,146 +124,23 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
             { paddingTop: 32, paddingBottom: 32 },
           ]}
         >
-          {/* 상단 왕관 + 내 그룹명 + 하트 + 테스트명 */}
-          <View style={styles.groupTitleContainer}>
-            <Image
-              source={require("../../assets/free-icon-crown-6941697.png")}
-              style={{ width: 44, height: 44, marginBottom: 2, marginLeft: 4 }}
-            />
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 2,
-              }}
-            >
-              <Text style={styles.myNameText}>
-                {myGroup.members?.[0] ?? ""}
-              </Text>
-              <Image
-                source={require("../../assets/free-icon-hearts-18745836.png")}
-                style={{ width: 18, height: 18, marginHorizontal: 4 }}
-              />
-              <Text style={styles.myNameText}>
-                {myPartner || teamName || "테스트"}
-              </Text>
-            </View>
-          </View>
+          <GroupTitle myName={myGroup.members?.[0] ?? ""} myPartner={myPartner} teamName={teamName} />
 
-          {/* 1등 그룹 카드 (항상 맨 위, 빨간색 강조) */}
-          <View style={styles.topCardBox}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 6,
-              }}
-            >
-              <Text style={styles.topNameText}>
-                {topTeam.members?.[0] ?? ""}
-              </Text>
-              <Image
-                source={require("../../assets/free-icon-hearts-18745836.png")}
-                style={{ width: 18, height: 18, marginHorizontal: 2 }}
-              />
-              <Text style={styles.topNameText}>
-                {topTeam.members && topTeam.members.length > 1
-                  ? topTeam.members.slice(1).join(" & ")
-                  : teamName || "테스트"}
-              </Text>
-            </View>
-            <AnimatedProgressBar
-              current={topTeam.score}
-              max={scoreboard.minScore}
-              barHeight={28}
-              gradient={["#ffb6d1", "#ffd1e1"]}
-              textColor="#888"
-              percentColor="#ff5a5a"
-              isTopTeam={true}
-            />
-          </View>
+          <ScoreCard group={topTeam} minScore={scoreboard.minScore} isTopTeam />
 
           {/* 1등과 나머지 그룹 구분선 */}
           <View style={styles.divider} />
 
           {/* 나머지 그룹 카드들 (내 그룹은 파랑 강조) */}
-          {restGroups.map((sg) => {
-            const isMyTeam = sg.subGroupId === myGroup.subGroupId;
-            const isOtherGroup =
-              !isMyTeam && sg.subGroupId !== topTeam.subGroupId;
-            return (
-              <View
-                key={sg.subGroupId}
-                style={[
-                  styles.otherCardBox,
-                  isMyTeam && !isMyGroupTop && styles.blueCardBox,
-                ]}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginBottom: 6,
-                  }}
-                >
-                  <Text
-                    style={
-                      isMyTeam && !isMyGroupTop
-                        ? styles.blueNameText
-                        : styles.otherNameText
-                    }
-                  >
-                    {sg.members?.[0] ?? ""}
-                  </Text>
-                  <Image
-                    source={require("../../assets/free-icon-hearts-18745836.png")}
-                    style={{ width: 16, height: 16, marginHorizontal: 2 }}
-                  />
-                  <Text
-                    style={
-                      isMyTeam && !isMyGroupTop
-                        ? styles.blueNameText
-                        : styles.otherNameText
-                    }
-                  >
-                    {sg.members && sg.members.length > 1
-                      ? sg.members.slice(1).join(" & ")
-                      : teamName || "테스트"}
-                  </Text>
-                </View>
-                <AnimatedProgressBar
-                  current={sg.score}
-                  max={scoreboard.minScore}
-                  barHeight={24}
-                  gradient={
-                    isMyTeam && !isMyGroupTop
-                      ? ["#b6d1ff", "#d1e1ff"]
-                      : isOtherGroup
-                        ? ["#D2D9E1", "#DDDFE3"] // 다른 그룹: 짙은 회색 그라데이션
-                        : undefined
-                  }
-                  textColor={
-                    isMyTeam && !isMyGroupTop
-                      ? "#2196f3"
-                      : isOtherGroup
-                        ? "#888"
-                        : undefined
-                  }
-                  percentColor={
-                    isMyTeam && !isMyGroupTop
-                      ? "#2196f3"
-                      : isOtherGroup
-                        ? "#888"
-                        : undefined
-                  }
-                  hideBorder={isOtherGroup || (isMyTeam && !isMyGroupTop)}
-                  containerBackgroundColor={
-                    isMyTeam && !isMyGroupTop ? "#DBEAFE" : undefined
-                  }
-                />
-              </View>
-            );
-          })}
+          {restGroups.map((sg) => (
+            <ScoreCard
+              key={sg.subGroupId}
+              group={sg}
+              minScore={scoreboard.minScore}
+              isMyTeam={sg.subGroupId === myGroup.subGroupId && !isMyGroupTop}
+              teamName={teamName}
+            />
+          ))}
         </ScrollView>
       </SafeAreaView>
 
