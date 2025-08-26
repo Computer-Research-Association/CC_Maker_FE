@@ -31,22 +31,20 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     <View style={styles.formContainer}>
       <Text style={styles.subText}>팀cc맞춤형 플랫폼</Text>
 
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={styles.passwordInput}
-          placeholder="아이디"
-          value={email}
-          onChangeText={onEmailChange}
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType="email-address"
-          placeholderTextColor="#ccc"
-        />
-      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="아이디"
+        value={email}
+        onChangeText={onEmailChange}
+        autoCapitalize="none"
+        autoCorrect={false}
+        keyboardType="email-address"
+        placeholderTextColor="#ccc"
+      />
 
-      <View style={styles.passwordContainer}>
+      <View style={styles.inputRow}>
         <TextInput
-          style={styles.passwordInput}
+          style={[styles.input, { borderBottomWidth: 0, flex: 1, marginBottom: 0, paddingHorizontal: 0 }]}
           placeholder="비밀번호"
           secureTextEntry={secure}
           value={password}

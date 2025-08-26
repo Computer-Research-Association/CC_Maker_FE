@@ -1,5 +1,6 @@
 import React from "react";
-import { View, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, TouchableOpacity, Image } from "react-native";
+import styles from "../styles/MainHomeScreenStyles";
 
 type HeaderProps = {
   onLogout: () => void;
@@ -17,21 +18,3 @@ export const Header: React.FC<HeaderProps> = ({ onLogout }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  logoutButton: {
-    padding: 8,
-  },
-  logoutIcon: {
-    width: 24,
-    height: 24,
-    tintColor: "#666",
-  },
-});

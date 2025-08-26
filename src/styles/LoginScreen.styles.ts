@@ -53,6 +53,13 @@ const styles = StyleSheet.create({
   eyeButton: {
     padding: 16,
   },
+  inputRow: {
+    borderBottomWidth: 1,
+    borderColor: '#aaa',
+    marginBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   formContainer: {
     justifyContent: 'flex-start',
     alignItems: 'stretch',

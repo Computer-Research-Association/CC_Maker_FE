@@ -14,6 +14,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 
+  // 팀 리스트
+  teamListOuter: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  teamListContent: {
+    paddingVertical: 20,
+    gap: 15,
+    alignItems: 'center',
+  },
+
   // 나가기 버튼 관련 스타일
   headerContainer: {
     flexDirection: 'row',

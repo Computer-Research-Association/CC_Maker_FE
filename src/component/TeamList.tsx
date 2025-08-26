@@ -1,7 +1,8 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList } from "react-native";
 import { TeamCard } from "./TeamCard";
 import { AddTeamCard } from "./AddTeamCard";
+import styles from "../styles/MainHomeScreenStyles";
 
 type Role = "MEMBER" | "LEADER";
 
@@ -42,26 +43,14 @@ export const TeamList: React.FC<TeamListProps> = ({
   const data: TeamCardItem[] = [...teams, { id: "add-button" }];
 
   return (
-    <View style={styles.container}>
+    <View style={styles.teamListOuter}>
       <FlatList
         data={data}
         keyExtractor={(item) => String(item.id)}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContainer}
+        contentContainerStyle={styles.teamListContent}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  listContainer: {
-    paddingVertical: 20,
-    gap: 15,
-    alignItems: 'center',
-  },
-});

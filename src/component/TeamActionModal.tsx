@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Modal } from "react-native";
 import SubmitButton from "./SubmitButton";
+import styles from "../styles/MainHomeScreenStyles";
 
 type TeamActionModalProps = {
   visible: boolean;
@@ -8,8 +9,6 @@ type TeamActionModalProps = {
   onCreateTeam: () => void;
   onJoinTeam: () => void;
 };
-
-const windowWidth = Dimensions.get("window").width;
 
 export const TeamActionModal: React.FC<TeamActionModalProps> = ({
   visible,
@@ -55,45 +54,3 @@ export const TeamActionModal: React.FC<TeamActionModalProps> = ({
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    width: windowWidth * 0.8,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  title: {
-    color: "#111",
-    fontSize: 20,
-    textAlign: "center",
-    fontWeight: "600",
-    marginBottom: 16,
-  },
-  modalButtonText: {
-    fontSize: 17,
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  cancelButton: {
-    marginTop: 12,
-    alignItems: "center",
-  },
-  cancelButtonText: {
-    color: "#FF3B30",
-    fontSize: 15,
-    textAlign: "center",
-    fontWeight: "500",
-  },
-});
