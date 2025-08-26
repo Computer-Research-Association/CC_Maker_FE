@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image } from "react-native";
+import styles from "../styles/HomeScreenStyles";
 
 type MatchingWaitViewProps = {
   title: string;
@@ -25,37 +26,3 @@ export const MatchingWaitView: React.FC<MatchingWaitViewProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f7f8fa",
-  },
-  matchingWaitContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  matchingIconContainer: {
-    marginBottom: 20,
-  },
-  matchingIcon: {
-    width: 80,
-    height: 80,
-    resizeMode: "contain",
-  },
-  matchingTitleText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 12,
-    color: "#333",
-  },
-  matchingSubText: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#666",
-    lineHeight: 24,
-  },
-});

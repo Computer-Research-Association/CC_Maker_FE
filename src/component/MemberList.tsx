@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import styles from "../styles/CheckScreenStyles";
 
 type Member = {
   userId: number;
@@ -20,7 +21,7 @@ export const MemberList: React.FC<MemberListProps> = ({ members }) => {
         <Text style={styles.name}>{item.userName}</Text>
         <Ionicons
           name={item.surveyCompleted ? "checkmark-circle" : "ellipse-outline"}
-          size={90}
+          size={30}
           color={item.surveyCompleted ? "#50B889" : "#ccc"}
           style={styles.checkbox}
         />
@@ -42,42 +43,3 @@ export const MemberList: React.FC<MemberListProps> = ({ members }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  role: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  count: {
-    fontSize: 18,
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#666",
-  },
-  listContainer: {
-    paddingHorizontal: 20,
-  },
-  listItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 15,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: "500",
-  },
-  checkbox: {
-    marginLeft: 20,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#eee",
-    marginVertical: 10,
-  },
-});

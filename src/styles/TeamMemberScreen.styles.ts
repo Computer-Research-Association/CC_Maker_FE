@@ -5,7 +5,7 @@ import { FontFamily } from './GlobalStyles';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 160,
+    paddingTop: 80, // 뒤로가기 버튼 공간 확보
     paddingHorizontal: 24,
     backgroundColor: '#fff',
   },

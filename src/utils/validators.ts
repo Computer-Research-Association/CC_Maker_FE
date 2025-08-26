@@ -1,5 +1,6 @@
 export type FieldErrors = { name?: string; email?: string; pw?: string };
 // 입력검증만 검사
+//ui, 상태랑 분리된 순수함수라서 테스트가 쉽고 재사용이 편함. 
 export const validateAccount = (params: {
   name: string;
   email: string;
@@ -11,8 +12,12 @@ export const validateAccount = (params: {
   const { name, email, enablePwChange, currentPw, newPw, confirmPw } = params;
   const errors: FieldErrors = {};
 
-  if (!name.trim()) errors.name = "이름을 입력해주세요.";
-  if (!email.trim()) errors.email = "이메일을 입력해주세요.";
+  // null/undefined 체크 추가
+  if (!name || typeof name !== 'string') errors.name = "이름을 입력해주세요.";
+  else if (!name.trim()) errors.name = "이름을 입력해주세요.";
+  
+  if (!email || typeof email !== 'string') errors.email = "이메일을 입력해주세요.";
+  else if (!email.trim()) errors.email = "이메일을 입력해주세요.";
   else if (!/^\S+@\S+\.\S+$/.test(email))
     errors.email = "이메일 형식이 이상합니다.";
 

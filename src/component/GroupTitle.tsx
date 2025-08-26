@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image } from "react-native";
+import styles from "../styles/HomeScreenStyles";
 
 type GroupTitleProps = {
   myName: string;
-  myPartner: string | null;
+  myPartner: string | { type: 'heart'; partners: string[] } | null;
   teamName: string | null;
 };
 
@@ -24,38 +25,30 @@ export const GroupTitle: React.FC<GroupTitleProps> = ({
           source={require("../../assets/free-icon-hearts-18745836.png")}
           style={styles.heartIcon}
         />
-        <Text style={styles.myNameText}>
-          {myPartner || teamName || "테스트"}
-        </Text>
+        {typeof myPartner === 'string' ? (
+          <Text style={styles.myNameText}>
+            {myPartner || teamName || "테스트"}
+          </Text>
+        ) : myPartner?.type === 'heart' ? (
+          <View style={styles.heartPartnersContainer}>
+            {myPartner.partners.map((partner, index) => (
+              <React.Fragment key={index}>
+                <Text style={styles.myNameText}>{partner}</Text>
+                {index < myPartner.partners.length - 1 && (
+                  <Image
+                    source={require("../../assets/free-icon-hearts-18745836.png")}
+                    style={styles.heartIcon}
+                  />
+                )}
+              </React.Fragment>
+            ))}
+          </View>
+        ) : (
+          <Text style={styles.myNameText}>
+            {teamName || "테스트"}
+          </Text>
+        )}
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  groupTitleContainer: {
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  crownIcon: {
-    width: 44,
-    height: 44,
-    marginBottom: 2,
-    marginLeft: 4,
-  },
-  nameContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 2,
-  },
-  myNameText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  heartIcon: {
-    width: 18,
-    height: 18,
-    marginHorizontal: 4,
-  },
-});

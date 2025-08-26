@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image } from "react-native";
 import AnimatedProgressBar from "./AnimatedProgressBar";
 import { SubGroupScore } from "../utils/scoreUtils";
+import styles from "../styles/HomeScreenStyles";
 
 type ScoreCardProps = {
   group: SubGroupScore;
@@ -73,16 +74,27 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({
         </Text>
         <Image
           source={require("../../assets/free-icon-hearts-18745836.png")}
-          style={[
-            styles.heartIcon,
-            isTopTeam ? styles.topHeartIcon : styles.otherHeartIcon
-          ]}
+          style={styles.heartIcon}
         />
-        <Text style={getTextStyle()}>
-          {group.members && group.members.length > 1
-            ? group.members.slice(1).join(" & ")
-            : teamName || "테스트"}
-        </Text>
+        {group.members && group.members.length > 1 ? (
+          <View style={styles.heartPartnersContainer}>
+            {group.members.slice(1).map((member, index) => (
+              <React.Fragment key={index}>
+                <Text style={getTextStyle()}>{member}</Text>
+                {index < group.members.slice(1).length - 1 && (
+                  <Image
+                    source={require("../../assets/free-icon-hearts-18745836.png")}
+                    style={styles.heartIcon}
+                  />
+                )}
+              </React.Fragment>
+            ))}
+          </View>
+        ) : (
+          <Text style={getTextStyle()}>
+            {teamName || "테스트"}
+          </Text>
+        )}
       </View>
       <AnimatedProgressBar
         current={group.score}
@@ -93,63 +105,3 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  topCardBox: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  otherCardBox: {
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  blueCardBox: {
-    borderWidth: 2,
-    borderColor: "#2196f3",
-  },
-  nameContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 6,
-  },
-  topNameText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#ff5a5a",
-  },
-  blueNameText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#2196f3",
-  },
-  otherNameText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#666",
-  },
-  heartIcon: {
-    marginHorizontal: 2,
-  },
-  topHeartIcon: {
-    width: 18,
-    height: 18,
-  },
-  otherHeartIcon: {
-    width: 16,
-    height: 16,
-  },
-});

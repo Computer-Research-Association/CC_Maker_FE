@@ -77,19 +77,38 @@ export const useMissionScreen = () => {
 
   // 미션 가져오기
   const fetchMissions = useCallback(async () => {
-    if (!teamId || !subGroupId) return;
+    console.log("🔍 fetchMissions 호출:", { teamId, subGroupId, subGroupIdMap });
+    
+    if (!teamId || !subGroupId) {
+      console.log("❌ fetchMissions 조건 불충족:", { teamId, subGroupId });
+      return;
+    }
 
     try {
+      console.log("📡 미션 API 호출 중:", `/api/missions/subgroup/${subGroupId}`);
       const res = await api.get(`/api/missions/subgroup/${subGroupId}`);
+      console.log("✅ 미션 응답:", res.data);
+      
       if (res.data.length === 0) {
+        console.log("📝 미션 할당 API 호출 중");
         await api.post(`/api/missions/assign/subgroup/${subGroupId}`);
         const newRes = await api.get(`/api/missions/subgroup/${subGroupId}`);
         setMissions(newRes.data);
+        console.log("✅ 새로 할당된 미션:", newRes.data);
       } else {
         setMissions(res.data);
+        console.log("✅ 기존 미션 설정:", res.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("❌ 미션 불러오기 실패:", err);
+      console.error("❌ 에러 상세:", {
+        message: err?.message,
+        response: err?.response?.data,
+        status: err?.response?.status,
+        teamId,
+        subGroupId
+      });
+      setError("미션 불러오기 실패");
     }
   }, [teamId, subGroupId]);
 
@@ -133,6 +152,10 @@ export const useMissionScreen = () => {
         params: { userId, _ts: Date.now() },
       });
       setScoreboard(freshSb);
+      
+      // 점수판 업데이트 후 콘솔 로그
+      console.log("🎯 미션 완료 후 새로운 점수판:", freshSb);
+      console.log("🎯 내 서브그룹 정보:", freshSb?.mySubGroup);
 
       Alert.alert(mission.title, "미션이 완료처리되었습니다.");
 
@@ -203,13 +226,25 @@ export const useMissionScreen = () => {
   // 화면 포커스 시 데이터 최신화
   useFocusEffect(
     useCallback(() => {
+      console.log("🔄 useFocusEffect 실행:", { 
+        teamId, 
+        subGroupId, 
+        missionsLength: missions.length,
+        scoreboardMinScore: scoreboard?.minScore,
+        prevMinScore: prevMinScoreRef.current
+      });
+      
       fetchScoreboard();
       
       if (missions.length === 0) {
+        console.log("📋 미션이 없어서 fetchMissions 호출");
         fetchMissions();
+      } else {
+        console.log("📋 기존 미션 있음:", missions.length);
       }
       
       if (scoreboard?.minScore !== prevMinScoreRef.current) {
+        console.log("🎯 최소학점 변경됨, 축하 상태 로드");
         loadCelebration();
       }
     }, [fetchScoreboard, fetchMissions, loadCelebration, missions.length, scoreboard?.minScore])

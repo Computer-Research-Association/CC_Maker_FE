@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image } from "react-native";
+import styles from "../styles/MissionScreenStyles";
 
 type WaitingStateProps = {
   type: "matching" | "minScore";
@@ -23,66 +24,17 @@ export const WaitingState: React.FC<WaitingStateProps> = ({ type }) => {
   const { title, subtitle } = getContent();
 
   return (
-    <View style={styles.container}>
+    <View style={styles.waitingContainer}>
       <View style={styles.matchingWaitContainer}>
-        <View style={styles.matchingIconContainer}>
+        <View style={styles.waitingIconContainer}>
           <Image
             source={require("../../assets/free-icon-hearts-18745836.png")}
-            style={styles.matchingIcon}
+            style={styles.waitingIcon}
           />
         </View>
-        <Text style={styles.matchingTitleText}>{title}</Text>
-        <Text style={styles.matchingSubText}>{subtitle}</Text>
+        <Text style={styles.waitingTitleText}>{title}</Text>
+        <Text style={styles.waitingSubText}>{subtitle}</Text>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f7f8fa",
-    paddingHorizontal: 0,
-  },
-  matchingWaitContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  matchingIconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: "#ffe3ed",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 24,
-    shadowColor: "#ffb6c1",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  matchingIcon: {
-    width: 60,
-    height: 60,
-    tintColor: "#ff6b6b",
-  },
-  matchingTitleText: {
-    fontSize: 20,
-    fontFamily: "Ongeulip",
-    color: "#222",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  matchingSubText: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
-    lineHeight: 20,
-    fontFamily: "Ongeulip",
-  },
-});

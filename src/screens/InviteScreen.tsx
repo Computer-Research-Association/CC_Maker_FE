@@ -6,6 +6,8 @@ import styles from "../styles/TeamLeaderScreen.styles";
 import { TeamContext } from "./TeamContext";
 import SubmitButton from "../component/SubmitButton";
 import { useInviteScreen } from "../hooks/useInviteScreen";
+import BackButton from "../component/BackButton";
+import SuccessModal from "../component/SuccessModal";
 type InviteScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "InviteScreen">;
 };
@@ -13,18 +15,24 @@ type InviteScreenProps = {
 export default function InviteScreen({ navigation }: InviteScreenProps) {
   const { teamId, setTeamId } = useContext(TeamContext);
   const {
-    state: { teamName, teamCode, loading, step },
+    state: { teamName, teamCode, loading, step, successModalVisible, successMessage },
     set: { setTeamName, setStep },
     computed: { canCreateTeam, hasTeamCode, isStepOne, isStepTwo },
-    actions: { fetchInviteCode, copyToClipboard, onCreateTeam },
+    actions: { fetchInviteCode, copyToClipboard, onCreateTeam, onStartTeam, closeSuccessModal },
   } = useInviteScreen({ teamId, setTeamId });
 
   const onStartPress = async () => {
-    navigation.reset({ index: 0, routes: [{ name: "MainHomeScreen" }] });
+    const success = await onStartTeam();
+    if (success) {
+      navigation.reset({ index: 0, routes: [{ name: "MainHomeScreen" }] });
+    }
   };
 
   return (
     <View style={styles.container}>
+      {/* 뒤로가기 버튼 */}
+      <BackButton />
+      
       {isStepOne && (
         <>
           <Text style={styles.title}>팀이름을 입력해주세요</Text>
@@ -79,9 +87,16 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
                 <Text style={styles.startButtonText}>시작하기</Text>
               </SubmitButton>
             </View>
-          )}
-        </>
-      )}
-    </View>
-  );
-}
+                     )}
+         </>
+       )}
+
+       {/* 성공 모달 */}
+       <SuccessModal
+         visible={successModalVisible}
+         message={successMessage}
+         onClose={closeSuccessModal}
+       />
+     </View>
+   );
+ }

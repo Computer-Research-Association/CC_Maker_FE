@@ -91,6 +91,12 @@ export const useAccountSettings = (initial: {
 
   // 저장 핸들러
   const handleSave = useCallback(async () => {
+    // null 체크 추가
+    if (!name || !email) {
+      Alert.alert("오류", "이름과 이메일을 모두 입력해주세요.");
+      return;
+    }
+
     const { ok, errors } = validateAccount({
       name,
       email,
@@ -104,10 +110,20 @@ export const useAccountSettings = (initial: {
 
     try {
       setSaving(true);
-      await userService.updateMe({ name: name.trim(), email: email.trim() });
-      setCtxName(name.trim());
-      setInitialName(name.trim());
-      setInitialEmail(email.trim());
+      
+      // 빈 문자열 체크 및 trim 처리
+      const trimmedName = name.trim();
+      const trimmedEmail = email.trim();
+      
+      if (!trimmedName || !trimmedEmail) {
+        Alert.alert("오류", "이름과 이메일을 모두 입력해주세요.");
+        return;
+      }
+      
+      await userService.updateMe({ name: trimmedName, email: trimmedEmail });
+      setCtxName(trimmedName);
+      setInitialName(trimmedName);
+      setInitialEmail(trimmedEmail);
 
       if (enablePwChange) {
         await handlePasswordChange();

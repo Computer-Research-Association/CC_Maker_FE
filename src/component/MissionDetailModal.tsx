@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Modal } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { TiltCard } from "./TiltCard";
 import SubmitButton from "./SubmitButton";
+import styles from "../styles/MissionScreenStyles";
 
 type Mission = {
   subGroupMissionId: number;
@@ -79,7 +80,6 @@ export const MissionDetailModal: React.FC<MissionDetailModalProps> = ({
                 width={120}
                 height={50}
                 shadowColor="#aaa"
-                style={{ marginLeft: 10 }}
               />
 
               <SubmitButton
@@ -97,92 +97,3 @@ export const MissionDetailModal: React.FC<MissionDetailModalProps> = ({
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    padding: 24,
-    borderRadius: 12,
-    width: 280,
-    alignItems: "center",
-  },
-  missionTitle: {
-    fontSize: 16,
-    fontFamily: "Ongeulip",
-    marginBottom: 20,
-    color: "#333",
-    textAlign: "center",
-  },
-  missionBox: {
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 20,
-    shadowColor: "#FF8CC6",
-    shadowOpacity: 0.6,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 20,
-    elevation: 12,
-    width: "90%",
-    minHeight: 280,
-    minWidth: 200,
-    overflow: "visible",
-    position: "relative",
-  },
-  glassOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#fff6",
-    shadowColor: "#ff9ce5",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 20,
-    zIndex: -1,
-  },
-  missionContentWrapper: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 10,
-  },
-  missionContent: {
-    fontSize: 15,
-    color: "#333",
-    textAlign: "center",
-    fontFamily: "Ongeulip",
-    lineHeight: 22,
-  },
-  refreshButton: {
-    position: "absolute",
-    bottom: 10,
-    right: 12,
-    backgroundColor: "#eee",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    minHeight: 28,
-    borderRadius: 10,
-    zIndex: 1,
-  },
-  refreshText: {
-    fontFamily: "Ongeulip",
-    fontSize: 12,
-    lineHeight: 16,
-    color: "#666",
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 10,
-  },
-});

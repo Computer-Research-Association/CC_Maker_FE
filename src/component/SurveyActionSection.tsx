@@ -17,6 +17,8 @@ export const SurveyActionSection = ({
   isSurveyCompleted, 
   navigation 
 }: SurveyActionSectionProps) => {
+  console.log("SurveyActionSection 렌더링:", { matchedNames: matchedNames.length, isSurveyCompleted });
+  
   // 매칭 상대 없고 설문이 완료되지 않은 경우에만 설문 버튼 표시
   if (matchedNames.length === 0 && !isSurveyCompleted) {
     return (

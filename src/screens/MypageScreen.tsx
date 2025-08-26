@@ -25,14 +25,26 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
   const { userId, name } = useContext(UserContext);
   const isFocused = useIsFocused();
 
-  const { isSurveyCompleted, checkSurveyStatus } = useSurveyStatus(String(teamId ?? ""), String(userId ?? ""), isFocused);
+  const { isSurveyCompleted, checkSurveyStatus, setSurveyCompleted } = useSurveyStatus(String(teamId ?? ""), userId ? String(userId) : "", isFocused);
+  
+  // userId가 null인 경우 로깅
+  useEffect(() => {
+    console.log("MypageScreen userId 상태:", { userId, userIdType: typeof userId });
+  }, [userId]);
   const { matchedNames, subGroupId, fetchSubGroupIdIfNeeded, fetchMatchedNames } = useMatchingInfo(String(teamId ?? ""), String(userId ?? ""), isFocused, setSubGroupIdMap);
   const { missionHistory, fetchMissionHistory } = useMissionHistory(String(teamId ?? ""), isFocused);
 
-  useEffect(() => { checkSurveyStatus(); }, [checkSurveyStatus]);
-  useEffect(() => { fetchSubGroupIdIfNeeded(); }, [fetchSubGroupIdIfNeeded]);
-  useEffect(() => { fetchMatchedNames(); }, [fetchMatchedNames]);
-  useEffect(() => { fetchMissionHistory(); }, [fetchMissionHistory]);
+  useEffect(() => { 
+    // 모든 초기 데이터 로드
+    checkSurveyStatus();
+    fetchSubGroupIdIfNeeded();
+    fetchMatchedNames();
+    fetchMissionHistory();
+    
+    // 설문 상태를 더 자주 확인
+    // const interval = setInterval(checkSurveyStatus, 5000);
+    // return () => clearInterval(interval);
+  }, [checkSurveyStatus, fetchSubGroupIdIfNeeded, fetchMatchedNames, fetchMissionHistory]);
 
   const getIconName = (score: number) => {
     switch (score) {

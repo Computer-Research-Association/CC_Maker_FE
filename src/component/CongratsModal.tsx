@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, Modal, StyleSheet } from "react-native";
+import { View, Text, Modal } from "react-native";
 import SubmitButton from "./SubmitButton";
+import styles from "../styles/MissionScreenStyles";
 
 type CongratsModalProps = {
   visible: boolean;
@@ -40,31 +41,3 @@ export const CongratsModal: React.FC<CongratsModalProps> = ({
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    padding: 24,
-    borderRadius: 12,
-    width: 280,
-    alignItems: "center",
-  },
-  congratsTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#ff6b6b',
-  },
-  congratsMessage: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 20,
-    lineHeight: 24,
-  },
-});

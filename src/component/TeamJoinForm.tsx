@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import SubmitButton from "./SubmitButton";
+import styles from "../styles/TeamLeaderScreen.styles";
 
 type TeamJoinFormProps = {
   code: string;
@@ -43,35 +44,3 @@ export const TeamJoinForm: React.FC<TeamJoinFormProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 32,
-    color: "#333",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 16,
-    fontSize: 16,
-    marginBottom: 24,
-    backgroundColor: "#fff",
-    width: "100%",
-    textAlign: "center",
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
-  },
-});

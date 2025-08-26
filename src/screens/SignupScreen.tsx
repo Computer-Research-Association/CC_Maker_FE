@@ -24,6 +24,7 @@ import { EmailInput } from "../component/signup/EmailInput";
 import { PasswordInputs } from "../component/signup/PasswordInputs";
 import { GenderSelector } from "../component/signup/GenderSelector";
 import { PrivacyAgreementSection } from "../component/signup/PrivacyAgreementSection";
+import BackButton from "../component/BackButton";
 
 type SignupScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Signup">;
@@ -80,13 +81,17 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   // form.onlyNumber 사용
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}
-      nestedScrollEnabled={true}
-    >
-      <Text style={styles.title}>회원가입</Text>
+    <View style={styles.container}>
+      {/* 뒤로가기 버튼 */}
+      <BackButton />
+      
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+        nestedScrollEnabled={true}
+      >
+        <Text style={styles.title}>회원가입</Text>
 
       <NameInput value={name} onChangeText={setName} />
 
@@ -156,6 +161,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
       <TouchableOpacity style={styles.roundButton} onPress={onSubmit}>
         <Text style={styles.roundButtonText}>회원가입</Text>
       </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }

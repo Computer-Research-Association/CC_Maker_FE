@@ -2,6 +2,10 @@ import { StyleSheet } from "react-native";
 import { FontFamily } from './GlobalStyles';
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f7f8fa",
+  },
   container: {
     flexGrow: 1,
     justifyContent: "flex-start",
@@ -21,6 +25,26 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(255, 107, 107, 0.3)",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
+  },
+  crownIcon: {
+    width: 44,
+    height: 44,
+    marginBottom: 2,
+    marginLeft: 4,
+  },
+  nameContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  heartPartnersContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  heartIcon: {
+    width: 18,
+    height: 18,
+    marginHorizontal: 4,
   },
   myNameText: {
     fontSize: 20,
@@ -184,6 +208,39 @@ const styles = StyleSheet.create({
   section: {
     width: "100%",
     alignItems: "center",
+  },
+  message: {
+    marginTop: 16,
+    fontSize: 16,
+    color: "#666",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  errorTitle: {
+    fontSize: 20,
+    color: "#ff6b6b",
+    marginBottom: 15,
+    fontFamily: FontFamily.bold,
+    textAlign: "center",
+  },
+  errorMessage: {
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 20,
+    fontFamily: FontFamily.regular,
+    textAlign: "center",
+    lineHeight: 22,
+  },
+  errorHint: {
+    fontSize: 14,
+    color: "#999",
+    fontFamily: FontFamily.regular,
+    textAlign: "center",
+    lineHeight: 20,
   },
 });
 

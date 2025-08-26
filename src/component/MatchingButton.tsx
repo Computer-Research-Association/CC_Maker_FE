@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SubmitButton from "./SubmitButton";
+import styles from "../styles/CheckScreenStyles";
 
 type MatchingButtonProps = {
   canStartMatching: boolean;
@@ -39,26 +40,3 @@ export const MatchingButton: React.FC<MatchingButtonProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  infoContainer: {
-    alignItems: "center",
-    marginBottom: 40,
-    padding: 20,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 10,
-    marginHorizontal: 20,
-  },
-  infoTitle: {
-    marginTop: 8,
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-  },
-  infoSubtitle: {
-    marginTop: 4,
-    fontSize: 14,
-    color: "#999",
-    textAlign: "center",
-  },
-});

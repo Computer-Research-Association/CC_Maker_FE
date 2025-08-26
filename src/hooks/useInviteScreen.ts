@@ -16,6 +16,8 @@ export const useInviteScreen = ({ teamId, setTeamId }: UseInviteScreenProps) => 
   const [teamCode, setTeamCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   // 초대코드 생성
   const fetchInviteCode = useCallback(async () => {
@@ -41,7 +43,8 @@ export const useInviteScreen = ({ teamId, setTeamId }: UseInviteScreenProps) => 
 
       if (response.data?.code) {
         setTeamCode(response.data.code);
-        Alert.alert("성공", "초대코드가 생성되었습니다.");
+        setSuccessMessage("초대코드가 생성되었습니다.");
+        setSuccessModalVisible(true);
       } else {
         Alert.alert("오류", "초대코드 생성에 실패했습니다.");
       }
@@ -53,22 +56,40 @@ export const useInviteScreen = ({ teamId, setTeamId }: UseInviteScreenProps) => 
     }
   }, [teamId]);
 
+  // 성공 모달 닫기
+  const closeSuccessModal = useCallback(() => {
+    setSuccessModalVisible(false);
+  }, []);
+
   // 초대코드 복사
   const copyToClipboard = useCallback(async () => {
     if (teamCode) {
       await Clipboard.setStringAsync(teamCode);
-      Alert.alert("복사 완료", "팀 코드가 복사되었습니다!");
+      setSuccessMessage("팀 코드가 복사되었습니다!");
+      setSuccessModalVisible(true);
     }
   }, [teamCode]);
 
-  // 팀 생성
+  // 팀 이름 저장 (실제 팀 생성은 아님)
   const onCreateTeam = useCallback(async () => {
     if (!teamName.trim()) {
       Alert.alert("입력 오류", "팀 이름을 입력해주세요.");
       return;
     }
 
+    // 팀 이름만 저장하고 2단계로 이동
+    setStep(2);
+  }, [teamName]);
+
+  // 실제 팀 생성 (시작하기 버튼 클릭 시)
+  const onStartTeam = useCallback(async () => {
+    if (!teamName.trim()) {
+      Alert.alert("입력 오류", "팀 이름을 입력해주세요.");
+      return;
+    }
+
     try {
+      setLoading(true);
       const response = await api.post("/api/invitecode/teamname", {
         teamName: teamName,
       });
@@ -85,13 +106,18 @@ export const useInviteScreen = ({ teamId, setTeamId }: UseInviteScreenProps) => 
       if (newTeamId) {
         setTeamId(newTeamId);
         console.log("✅ teamId 저장됨:", newTeamId);
-        setStep(2);
+        // 팀 생성 성공 후 MainHomeScreen으로 이동
+        return true;
       } else {
         Alert.alert("오류", "팀 생성 후 teamId를 가져오지 못했습니다.");
+        return false;
       }
     } catch (error) {
       console.error("팀 생성 실패:", error);
       Alert.alert("오류", "팀 생성에 실패했습니다.");
+      return false;
+    } finally {
+      setLoading(false);
     }
   }, [teamName, setTeamId]);
 
@@ -108,6 +134,7 @@ export const useInviteScreen = ({ teamId, setTeamId }: UseInviteScreenProps) => 
     fetchInviteCode,
     copyToClipboard,
     onCreateTeam,
+    onStartTeam,
   };
 
   return {
@@ -116,12 +143,17 @@ export const useInviteScreen = ({ teamId, setTeamId }: UseInviteScreenProps) => 
       teamCode,
       loading,
       step,
+      successModalVisible,
+      successMessage,
     },
     set: {
       setTeamName,
       setStep,
     },
     computed,
-    actions,
+    actions: {
+      ...actions,
+      closeSuccessModal,
+    },
   };
 };

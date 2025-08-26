@@ -13,6 +13,7 @@ import { PasswordSection } from "../component/PasswordSection";
 import SubmitButton from "../component/SubmitButton";
 import { LogoutModal } from "../component/LogoutModal";
 import styles from "../styles/AccountSettingsStyles";
+import BackButton from "../component/BackButton";
 
 type AccountSettingsProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "AccountSettings">;
@@ -22,10 +23,7 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
   const insets = useSafeAreaInsets();
   const { name: ctxName, setName: setCtxName } = useContext(UserContext);
 
-  // 헤더 타이틀
-  useLayoutEffect(() => {
-    navigation.setOptions({ title: "계정 설정" });
-  }, [navigation]);
+
 
   const {
     state: {
@@ -55,13 +53,16 @@ const AccountSettings = ({ navigation }: AccountSettingsProps) => {
       confirmLogout,
       confirmDelete,
     },
-  } = useAccountSettings({ name: ctxName || "", email: "" });
+  } = useAccountSettings({ name: ctxName || "", email: "user@example.com" }); // 임시 이메일 값으로 초기화
 
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "#fff" }}
       edges={["top", "bottom"]}
     >
+      {/* 뒤로가기 버튼 */}
+      <BackButton />
+      
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.select({ ios: "padding", android: undefined })}

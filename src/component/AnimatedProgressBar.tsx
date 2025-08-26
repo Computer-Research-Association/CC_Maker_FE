@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
   },
   maxText: {
     fontSize: 15,
+    fontFamily: "Ongeulip",
   },
   percentText: {
     fontSize: 15,

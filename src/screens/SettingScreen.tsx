@@ -23,6 +23,7 @@ import { InviteCodeModal } from "../component/InviteCodeModal";
 import { InquiryModal } from "../component/InquiryModal";
 import { MinCreditModal } from "../component/MinCreditModal";
 import { LogoutModal } from "../component/LogoutModal";
+import BackButton from "../component/BackButton";
 
 type SettingScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "SettingScreen">;
@@ -38,38 +39,45 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
   const [inquiryModalVisible, setInquiryModalVisible] = React.useState(false);
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.sectionTitle}>내 계정</Text>
-      <SettingItem
-        label="계정 관리"
-        onPress={() => navigation.navigate("AccountSettings")}
-        external
-      />
+    <View style={styles.screenContainer}>
+             {/* 뒤로가기 버튼 */}
+       <BackButton />
+      
+      <ScrollView style={styles.container}>
+        <Text style={styles.sectionTitle}>내 계정</Text>
+        <SettingItem
+          label="계정 관리"
+          onPress={() => navigation.navigate("AccountSettings")}
+          external
+        />
 
-      <SettingItem label="로그아웃" onPress={openLogout} />
+        <SettingItem label="로그아웃" onPress={openLogout} />
 
-      <Text style={styles.sectionTitle}>서비스</Text>
-      <SettingItem
-        label="문의하기"
-        onPress={() => setInquiryModalVisible(true)}
-        external
-      />
-      {role === "LEADER" && (
-        <>
-          <SettingItem label="초대 코드 생성" onPress={createInviteCode} external />
-          {!isMatchingStarted && (
-            <SettingItem label="매칭 시작하기" onPress={() => navigation.navigate("CheckScreen")} external />
-          )}
-          <SettingItem label="최소학점 설정" onPress={openModal} external />
-        </>
-      )}
+        <Text style={styles.sectionTitle}>서비스</Text>
+        <SettingItem
+          label="문의하기"
+          onPress={() => setInquiryModalVisible(true)}
+          external
+        />
+        {role === "LEADER" && (
+          <>
+            <SettingItem label="초대 코드 생성" onPress={createInviteCode} external />
+            {!isMatchingStarted && (
+              <SettingItem label="매칭 시작하기" onPress={() => navigation.navigate("CheckScreen")} external />
+            )}
+            {isMatchingStarted && (
+              <SettingItem label="최소학점 설정" onPress={openModal} external />
+            )}
+          </>
+        )}
 
-      {/* 모달 컴포넌트 적용 */}
-      <InviteCodeModal visible={modalVisible} inviteCode={inviteCode} onCopy={copyToClipboard} onClose={closeModal} />
-      <InquiryModal visible={inquiryModalVisible} onClose={() => setInquiryModalVisible(false)} />
-      <MinCreditModal visible={minCreditModalVisible} minScore={minScore} onMinScoreChange={setMinScore} onSave={saveMinScore} onCancel={closeMinModal} />
-      <LogoutModal visible={logoutModalVisible} onCancel={closeLogout} onConfirm={handleLogout} />
-    </ScrollView>
+        {/* 모달 컴포넌트 적용 */}
+        <InviteCodeModal visible={modalVisible} inviteCode={inviteCode} onCopy={copyToClipboard} onClose={closeModal} />
+        <InquiryModal visible={inquiryModalVisible} onClose={() => setInquiryModalVisible(false)} />
+        <MinCreditModal visible={minCreditModalVisible} minScore={minScore} onMinScoreChange={setMinScore} onSave={saveMinScore} onCancel={closeMinModal} />
+        <LogoutModal visible={logoutModalVisible} onCancel={closeLogout} onConfirm={handleLogout} />
+      </ScrollView>
+    </View>
   );
 }
 
@@ -89,10 +97,15 @@ type SettingItemProps = {
 };
 
 const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 20,
+    paddingTop: 60, // 뒤로가기 버튼 공간 확보
     paddingHorizontal: 20,
   },
   sectionTitle: {

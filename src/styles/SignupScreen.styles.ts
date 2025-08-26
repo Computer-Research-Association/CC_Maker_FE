@@ -6,8 +6,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  scrollView: {
+    flex: 1,
+  },
   contentContainer: {
     padding: 50,
+    paddingTop: 80, // 뒤로가기 버튼 공간 확보
     flexGrow: 1,
     justifyContent: "center",
   },

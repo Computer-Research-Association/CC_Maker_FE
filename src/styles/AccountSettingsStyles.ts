@@ -1,7 +1,7 @@
 import { Platform, StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  scroll: { flexGrow: 1, backgroundColor: "#fff" },
+  scroll: { flexGrow: 1, backgroundColor: "#fff", paddingTop: 80 },
   container: { flexGrow: 1, backgroundColor: "#fff", padding: 24 },
   sectionTitle: {
     fontSize: 16,

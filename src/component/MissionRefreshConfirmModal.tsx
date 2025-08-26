@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, Modal, StyleSheet } from "react-native";
+import { View, Text, Modal } from "react-native";
 import SubmitButton from "./SubmitButton";
+import styles from "../styles/MissionScreenStyles";
 
 type MissionRefreshConfirmModalProps = {
   visible: boolean;
@@ -50,31 +51,3 @@ export const MissionRefreshConfirmModal: React.FC<MissionRefreshConfirmModalProp
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    padding: 24,
-    borderRadius: 12,
-    width: 280,
-    alignItems: "center",
-  },
-  missionTitle: {
-    fontSize: 16,
-    fontFamily: "Ongeulip",
-    marginBottom: 20,
-    color: "#333",
-    textAlign: "center",
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 10,
-  },
-});

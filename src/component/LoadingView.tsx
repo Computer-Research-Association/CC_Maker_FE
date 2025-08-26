@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
+import styles from "../styles/HomeScreenStyles";
 
 type LoadingViewProps = {
   message?: string;
@@ -15,17 +16,3 @@ export const LoadingView: React.FC<LoadingViewProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f7f8fa",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  message: {
-    marginTop: 16,
-    fontSize: 16,
-    color: "#666",
-  },
-});

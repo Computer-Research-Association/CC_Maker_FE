@@ -44,6 +44,17 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     state: { scoreboard, loading, error },
     computed: { isLoading: isLoadingComputed },
   } = useHomeScreen({ teamId, userId, subGroupId, setSubGroupIdMap });
+  
+  // scoreboard 변경 시 로깅
+  React.useEffect(() => {
+    if (scoreboard) {
+      console.log("🏠 HomeScreen scoreboard 업데이트됨:", {
+        mySubGroup: scoreboard.mySubGroup,
+        myScore: scoreboard.mySubGroup?.score,
+        minScore: scoreboard.minScore
+      });
+    }
+  }, [scoreboard]);
   ///로딩,에러, 데이터없음 처리
   if (loading || isLoadingComputed) {
     return <LoadingView />;
@@ -58,13 +69,21 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       />
     );
   }
-  // if (error) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <Text>에러 발생: {error}</Text>
-  //     </View>
-  //   );
-  // }
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorTitle}>오류가 발생했습니다</Text>
+            <Text style={styles.errorMessage}>{error}</Text>
+            <Text style={styles.errorHint}>
+              앱을 다시 시작하거나 잠시 후 다시 시도해주세요.
+            </Text>
+          </View>
+        </SafeAreaView>
+      </View>
+    );
+  }
 
   if (!scoreboard) {
     return (
@@ -88,7 +107,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   const isMyGroupTop = topTeam.subGroupId === myGroup.subGroupId;
 
   // 현재 사용자의 서브그룹 상대방 찾기
-  const getMyPartner = () => {
+  const getMyPartner = (): string | { type: 'heart'; partners: string[] } | null => {
     if (!myGroup.members || myGroup.members.length < 2) return null;
 
     // 현재 사용자 이름 (첫 번째 멤버)
@@ -101,22 +120,22 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
       // 2명 그룹: 상대방 1명
       return partners[0];
     } else if (partners.length === 2) {
-      // 3명 그룹: 상대방 2명을 "&"로 연결
-      return `${partners[0]} & ${partners[1]}`;
+      // 3명 그룹: 상대방 2명을 하트 아이콘으로 연결
+      return { type: 'heart', partners: partners };
     } else if (partners.length === 3) {
-      // 4명 그룹: 상대방 3명을 "&"로 연결
-      return `${partners[0]} & ${partners[1]} & ${partners[2]}`;
+      // 4명 그룹: 상대방 3명을 하트 아이콘으로 연결
+      return { type: 'heart', partners: partners };
     }
 
     return null;
   };
 
-  const myPartner = getMyPartner();
+  const myPartner: string | { type: 'heart'; partners: string[] } | null = getMyPartner();
   
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#f7f8fa" }}>
-      <SafeAreaView style={{ flex: 1 }}>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#f7f8fa" />
         <ScrollView
           contentContainerStyle={[
@@ -143,7 +162,6 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
           ))}
         </ScrollView>
       </SafeAreaView>
-
     </View>
   );
 }

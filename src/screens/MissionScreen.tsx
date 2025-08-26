@@ -8,6 +8,7 @@ import { MissionDetailModal } from "../component/MissionDetailModal";
 import { MissionRefreshConfirmModal } from "../component/MissionRefreshConfirmModal";
 import { CongratsModal } from "../component/CongratsModal";
 import { WaitingState } from "../component/WaitingState";
+import styles from "../styles/MissionScreenStyles";
 
 export default function MissionScreen() {
   const {
@@ -34,33 +35,26 @@ export default function MissionScreen() {
   if (needsMinScore) return <WaitingState type="minScore" />;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f7f8fa" }}>
-      <View style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={{ padding: 12, alignItems: "center" }}>
-          <View style={{ width: "100%", paddingHorizontal: 8, marginBottom: 12 }}>
-            <AnimatedProgressBar
-              current={scoreboard?.mySubGroup?.score ?? 0}
-              max={scoreboard?.minScore ?? 1}
-              barHeight={16}
-              gradient={["#ffb6d1", "#ffd1e1"]}
-              textColor="#444"
-              percentColor="#ff5a5a"
-            />
-          </View>
-
-          <View style={{ width: "100%", paddingHorizontal: 8 }}>
-            {[1, 3, 5].map((credit) => (
-              <MissionGrid
-                key={credit}
-                score={credit}
-                missions={missions}
-                onBoxPress={handleBoxPress}
-                getMissionIndex={(m) =>
-                  missions.findIndex((mm) => mm.subGroupMissionId === m.subGroupMissionId)
-                }
-              />
-            ))}
-          </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={true}
+          bounces={true}
+        >
+                     <View style={styles.gridContainer}>
+             {Array.from(new Set(missions.map(m => m.score))).sort((a, b) => a - b).map((credit) => (
+               <MissionGrid
+                 key={credit}
+                 score={credit}
+                 missions={missions}
+                 onBoxPress={handleBoxPress}
+                 getMissionIndex={(m) =>
+                   missions.findIndex((mm) => mm.subGroupMissionId === m.subGroupMissionId)
+                 }
+               />
+             ))}
+           </View>
         </ScrollView>
 
         <MissionDetailModal
