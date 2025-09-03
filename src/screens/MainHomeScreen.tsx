@@ -56,7 +56,7 @@ export default function MainHomeScreen({
       console.log("passhere1");
       // teamId(Long)를 string id로 변환하여 맞춰줌
       console.log("여기에요 여기:", response.data);
-
+      // 브랜치 파기용 추가
       const mappedTeams = response.data.map((team) => ({
         id: team.teamId, // number
         teamName: team.teamName,
@@ -125,7 +125,6 @@ export default function MainHomeScreen({
     setModalVisible(false);
     navigation.navigate("JoinScreen"); // 실제 네비게이션 이름 확인 후 수정하세요
   };
-  
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -134,35 +133,32 @@ export default function MainHomeScreen({
         barStyle="dark-content"
         translucent={true}
       />
-      
+
       {/* 상단 나가기 버튼 */}
       <View style={styles.headerContainer}>
         <TouchableOpacity
           style={styles.logoutButton}
           onPress={() => {
-            Alert.alert(
-              "로그아웃",
-              "정말 로그아웃 하시겠습니까?",
-              [
-                {
-                  text: "취소",
-                  style: "cancel"
-                },
-                {
-                  text: "로그아웃",
-                  style: "destructive",
-                  onPress: () => navigation.reset({
+            Alert.alert("로그아웃", "정말 로그아웃 하시겠습니까?", [
+              {
+                text: "취소",
+                style: "cancel",
+              },
+              {
+                text: "로그아웃",
+                style: "destructive",
+                onPress: () =>
+                  navigation.reset({
                     index: 0,
                     routes: [{ name: "Login" }],
-                  })
-                }
-              ]
-            );
+                  }),
+              },
+            ]);
           }}
         >
-          <Image 
-            source={require('../../assets/enter (2).png')} 
-            style={styles.logoutIcon} 
+          <Image
+            source={require("../../assets/enter (2).png")}
+            style={styles.logoutIcon}
           />
         </TouchableOpacity>
       </View>
@@ -177,7 +173,7 @@ export default function MainHomeScreen({
             contentContainerStyle={{
               paddingVertical: 20,
               gap: 15,
-              alignItems: 'center',
+              alignItems: "center",
             }}
           />
         </View>
