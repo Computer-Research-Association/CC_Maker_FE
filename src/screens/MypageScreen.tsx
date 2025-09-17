@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Image, Alert } from "react-native";
+import SubmitButton from "../component/SubmitButton";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 //@ts-ignore
@@ -29,7 +30,26 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
 
   const subGroupId = teamId ? subGroupIdMap[teamId] : null;
 
-  // ✅ subGroupId 확인 및 저장
+  // 사용자의 설문 완료 상태 확인
+  useEffect(() => {
+    if (!teamId || !userId || !isFocused) return;
+    
+    const checkSurveyStatus = async () => {
+      try {
+        const response = await api.get(`/api/team/${teamId}/survey-status/all`);
+        const userStatus = response.data.find((member: any) => member.userId === userId);
+        if (userStatus) {
+          setIsSurveyCompleted(userStatus.surveyCompleted);
+        }
+      } catch (error) {
+        console.error("설문 상태 조회 실패", error);
+      }
+    };
+
+    checkSurveyStatus();
+  }, [teamId, userId, isFocused]);
+
+  //  subGroupId 확인 및 저장
   useEffect(() => {
     if (!teamId || !isFocused || !userId) return;
     const fetchSubGroupIdIfNeeded = async () => {
@@ -51,7 +71,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
     fetchSubGroupIdIfNeeded();
   }, [teamId, isFocused, subGroupId, userId, setSubGroupIdMap]);
 
-  // ✅ 매칭된 멤버 이름 불러오기
+  //  매칭된 멤버 이름 불러오기
   useEffect(() => {
     if (!teamId || !subGroupId || !isFocused || !userId) return;
     const fetchMatchedNames = async () => {
@@ -70,7 +90,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
     fetchMatchedNames();
   }, [teamId, subGroupId, isFocused, userId]);
 
-  // ✅ 완료된 미션 히스토리 불러오기 (팀 전체)
+  //  완료된 미션 히스토리 불러오기 (팀 전체)
   useEffect(() => {
     if (!teamId || !isFocused) return;
     const fetchMissionHistory = async () => {
@@ -124,21 +144,28 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
 
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        contentInsetAdjustmentBehavior="automatic"
+      >
         {/* 상단 설정 버튼 */}
         <TouchableOpacity 
           style={styles.settingButton}
           onPress={() => navigation.navigate("SettingScreen")}
         >
           <Ionicons name="settings-outline" size={24} color="#666" />
-        </TouchableOpacity>
+      </TouchableOpacity>
 
         {/* 프로필 영역 */}
         <View style={styles.profileSection}>
-          <View style={styles.profileContainer}>
-            {/* 본인 프로필 */}
+      <View style={styles.profileContainer}>
+        {/* 본인 프로필 */}
             <View style={styles.profileBlock}>
-              <View style={styles.avatar} />
+                                                                                                                       <Image 
+                   source={require('../../assets/user (2).png')} 
+                   style={[styles.avatar, { opacity: 0.3, width: 60, height: 60 }]} 
+                 />
               <Text style={styles.profileName}>{name || "사용자"}</Text>
             </View>
 
@@ -153,28 +180,34 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
                         source={require('../../assets/free-icon-hearts-18745836.png')} 
                         style={styles.heartIcon} 
                       />
-                    </View>
-                    
-                    {/* 매칭된 멤버 프로필 */}
-                    <View style={styles.matchedProfileBlock}>
-                      <View style={styles.matchedAvatar} />
-                      <Text style={styles.matchedProfileName}>
-                        {memberName}
-                      </Text>
-                    </View>
+        </View>
+
+                                                                                                                                                                       {/* 매칭된 멤버 프로필 */}
+                       <View style={styles.matchedProfileBlock}>
+                                                 <Image 
+                          source={require('../../assets/user (2).png')} 
+                          style={[styles.matchedAvatar, { opacity: 0.3, width: 60, height: 60 }]} 
+                        />
+                         <Text style={styles.matchedProfileName}>
+                           {memberName}
+                         </Text>
+                       </View>
                   </View>
                 ))}
               </View>
             ) : (
-              <View style={styles.matchedProfileBlock}>
-                <View style={styles.matchedAvatar} />
-                <Text style={styles.matchedProfileName}>
-                  매칭 대기중
-                </Text>
-              </View>
-            )}
-          </View>
+                                                                                                                       <View style={styles.matchedProfileBlock}>
+                                       <Image 
+                      source={require('../../assets/user (2).png')} 
+                      style={[styles.matchedAvatar, { opacity: 0.3, width: 60, height: 60 }]} 
+                    />
+                   <Text style={styles.matchedProfileName}>
+                     매칭 대기중
+                   </Text>
+                 </View>
+          )}
         </View>
+      </View>
 
         {/* 미션 히스토리 */}
         <View style={styles.missionHistorySection}>
@@ -203,12 +236,12 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
                     />
                   </View>
 
-                                     {/* 미션 카드 */}
+                  {/* 미션 카드 */}
                    <View style={[
                      styles.missionCard,
                      styles.completedCard
                    ]}>
-                                                                 <View style={{ flexDirection: "row", alignItems: "center" }}>
+                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                         <Text style={styles.missionTitle}>{mission.userName}</Text>
                         <Image 
                           source={require('../../assets/free-icon-hearts-18745836.png')} 
@@ -219,7 +252,7 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
                             ? mission.matchedNames.join(" ♥ ")
                             : "매칭 대기중"
                           }
-                        </Text>
+        </Text>
                       </View>
                      <Text style={styles.missionDate}>{formatDate(mission.completedAt)}</Text>
                      <View style={styles.missionDescription}>
@@ -233,42 +266,61 @@ export default function MyPageScreen({ navigation }: MyPageScreenProps) {
             ) : (
               <View style={{ alignItems: 'center', paddingVertical: 40 }}>
                 <Ionicons name="calendar-outline" size={40} color="#ccc" />
-                <Text style={{ marginTop: 10, fontSize: 16, color: '#666' }}>아직 완료된 미션이 없어요</Text>
-                <Text style={{ marginTop: 5, fontSize: 14, color: '#999' }}>미션을 완료하면 여기에 기록됩니다!</Text>
+                <Text style={{ marginTop: 10, fontSize: 16, color: '#666', fontFamily: 'Ongeulip' }}>아직 완료된 미션이 없어요</Text>
+                <Text style={{ marginTop: 5, fontSize: 14, color: '#999', fontFamily: 'Ongeulip' }}>미션을 완료하면 여기에 기록됩니다!</Text>
               </View>
             )}
           </View>
-        </View>
+      </View>
 
-        {/* 매칭 상대 없으면 설문 버튼 */}
-        {matchedNames.length === 0 && (
-          <View style={{ alignItems: 'center', paddingVertical: 20 }}>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#FF9898',
-                paddingHorizontal: 30,
-                paddingVertical: 15,
-                borderRadius: 25,
-                shadowColor: '#E08B8B',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 8,
-              }}
-              onPress={() => {
-                if (isSurveyCompleted) {
-                  Alert.alert("알림", "이미 설문조사를 완료했습니다.", [
-                    { text: "확인" },
-                  ]);
-                } else {
-                  navigation.navigate("MbtiScreen");
-                }
-              }}
-            >
-              <Text style={styles.writeButtonMainText}>설문시작하기</Text>
-            </TouchableOpacity>
+      {/* 매칭 상대 없고 설문이 완료되지 않은 경우에만 설문 버튼 표시 */}
+      {matchedNames.length === 0 && !isSurveyCompleted && (
+          <View style={{ alignItems: 'center', paddingVertical: 10, marginTop: -30 }}>
+            <SubmitButton
+              title="설문시작하기"
+              onPress={() => navigation.navigate("MbtiScreen")}
+              buttonColor="#FF9898"
+              shadowColor="#E08B8B"
+              width={300}
+              height={50}
+              // paddingHorizontal={30}
+              // paddingVertical={15}
+            />
+        </View>
+      )}
+
+      {/* 설문이 완료된 경우 안내 메시지 표시 */}
+      {matchedNames.length === 0 && isSurveyCompleted && (
+        <View style={{ alignItems: 'center', paddingVertical: 10, marginTop: -30 }}>
+          <View style={{ 
+            backgroundColor: '#f7f8fa', 
+            padding: 20, 
+            borderRadius: 10, 
+            alignItems: 'center',
+            width: 300
+          }}>
+            <Ionicons name="checkmark-circle" size={24} color="#50B889" />
+            <Text style={{ 
+              marginTop: 8, 
+              fontSize: 16, 
+              color: '#666', 
+              textAlign: 'center',
+              fontFamily: 'Ongeulip'
+            }}>
+              설문조사가 완료되었습니다
+            </Text>
+            <Text style={{ 
+              marginTop: 4, 
+              fontSize: 14, 
+              color: '#999', 
+              textAlign: 'center',
+              fontFamily: 'Ongeulip'
+            }}>
+              매칭 결과를 기다려주세요
+            </Text>
           </View>
-        )}
+        </View>
+      )}
       </ScrollView>
     </View>
   );

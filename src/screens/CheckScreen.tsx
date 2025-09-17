@@ -65,7 +65,6 @@ export default function CheckScreen({ navigation }: Props) {
         }));
       }
     };
-
     fetchSubGroupId();
   }, [teamId, userId, setSubGroupIdMap]);
 
@@ -149,6 +148,16 @@ export default function CheckScreen({ navigation }: Props) {
 
         setTimeout(() => {
           setMatchingStatus("done");
+          // 스택 초기화하고 HomeScreen으로 네비게이트
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: "HomeScreen",
+                params: { teamId: teamId! },
+              },
+            ],
+          });
         }, 2000);
       } else {
         alert("매칭이 시작되지 않았습니다.");
@@ -197,7 +206,7 @@ export default function CheckScreen({ navigation }: Props) {
         )}
       />
 
-      <Modal
+      {/* <Modal
         transparent
         visible={matchingStatus === "loading"}
         animationType="fade"
@@ -207,9 +216,9 @@ export default function CheckScreen({ navigation }: Props) {
             <Text style={styles.modalText}> 매칭 중입니다...</Text>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
 
-      <Modal
+      {/* <Modal
         transparent
         visible={matchingStatus === "done"}
         animationType="fade"
@@ -240,108 +249,46 @@ export default function CheckScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
 
-      <SubmitButton
-        title="매칭시작하기"
-        onPress={handleStartMatching}
-        style={{ marginBottom: 40 }}
-        buttonColor="#FF9898"
-        shadowColor="#E08B8B"
-      />
+      {/* 매칭시작하기 버튼 - 2명 이상일 때만 활성화 */}
+      {members.length >= 2 ? (
+        <SubmitButton
+          title="매칭시작하기"
+          onPress={handleStartMatching}
+          style={{ marginBottom: 40 }}
+          buttonColor="#FF9898"
+          shadowColor="#E08B8B"
+          width={360}
+        />
+      ) : (
+        <View style={{ 
+          alignItems: 'center', 
+          marginBottom: 40, 
+          padding: 20,
+          backgroundColor: '#f0f0f0',
+          borderRadius: 10,
+          marginHorizontal: 20
+        }}>
+          <Ionicons name="information-circle-outline" size={24} color="#666" />
+          <Text style={{ 
+            marginTop: 8, 
+            fontSize: 16, 
+            color: '#666', 
+            textAlign: 'center' 
+          }}>
+            매칭을 시작하려면 최소 2명이 필요합니다
+          </Text>
+          <Text style={{ 
+            marginTop: 4, 
+            fontSize: 14, 
+            color: '#999', 
+            textAlign: 'center' 
+          }}>
+            현재 {members.length}명이 있습니다
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     paddingHorizontal: 16,
-//     paddingTop: 70,
-//   },
-//   role: {
-//     textAlign: "center",
-//     fontSize: 16,
-//     fontWeight: "bold",
-//     marginBottom: 4,
-//   },
-//   count: {
-//     textAlign: "right",
-//     paddingTop: 10,
-//     marginBottom: 15,
-//     fontSize: 16,
-//     marginRight: 12,
-//   },
-//   listContainer: {
-//     borderRadius: 10,
-//     paddingBottom: 100,
-//   },
-//   listItem: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     paddingVertical: 12,
-//     paddingHorizontal: 16,
-//   },
-//   name: {
-//     flex: 1,
-//     fontSize: 16,
-//   },
-//   checkbox: {
-//     fontSize: 26,
-//     color: "purple",
-//   },
-//   button: {
-//     position: "absolute",
-//     bottom: 20,
-//     alignSelf: "center",
-//     backgroundColor: "#ff9494",
-//     paddingHorizontal: 100,
-//     paddingVertical: 14,
-//     borderRadius: 12,
-//     elevation: 2,
-//     marginBottom: 30,
-//   },
-//   buttonText: {
-//     color: "#fff",
-//     fontWeight: "bold",
-//   },
-//   modalBackground: {
-//     flex: 1,
-//     backgroundColor: "rgba(0, 0, 0, 0.5)",
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   modalBox: {
-//     backgroundColor: "white",
-//     padding: 30,
-//     borderRadius: 12,
-//     shadowColor: "#000",
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 4,
-//     elevation: 5,
-//   },
-//   modalText: {
-//     fontSize: 18,
-//     fontWeight: "bold",
-//   },
-//   modalButton: {
-//     backgroundColor: "#8de969",
-//     paddingHorizontal: 20,
-//     paddingVertical: 10,
-//     borderRadius: 8,
-//     marginTop: 10,
-//   },
-//   modalButtonText: {
-//     color: "#fff",
-//     fontWeight: "bold",
-//     fontSize: 16,
-//     textAlign: "center",
-//   },
-//   divider: {
-//     height: 1,
-//     backgroundColor: "#eee",
-//     marginHorizontal: 12,
-//     marginVertical: 4,
-//   },
-// });

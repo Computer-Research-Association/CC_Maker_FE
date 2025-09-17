@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   title: {
     color: "#fff",
     fontSize: 22,
-    fontWeight: "bold",
+    fontFamily: "Ongeulip",
     textAlign: "center",
   },
   buttons: {

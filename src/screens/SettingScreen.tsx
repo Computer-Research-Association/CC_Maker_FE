@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import creditModalStyles from "../styles/SettingScreen/CreditModalStyles";
 import inquiryModalStyles from "../styles/SettingScreen/InquiryModalStyles";
 import inviteCodeModalStyles from "../styles/SettingScreen/InviteModalStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 type SettingScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "SettingScreen">;
 };
@@ -38,23 +39,23 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
   useEffect(() => {
     console.log("현재 role:", role);
   }, [role]);
-
-  useEffect(() => {
+// 2) 매칭 시작 여부 체크: useEffect → useFocusEffect로 변경
+useFocusEffect(
+  useCallback(() => {
     const checkMatchingStatus = async () => {
+      if (!teamId) return;
       try {
-        const value = await AsyncStorage.getItem(
-          `@matching_started_team_${teamId}`
-        );
-        if (value === "true") {
-          setIsMatchingStarted(true);
-        }
+        const value = await AsyncStorage.getItem(`@matching_started_team_${teamId}`);
+        setIsMatchingStarted(value === "true");
       } catch (error) {
         console.warn("AsyncStorage 불러오기 실패", error);
       }
     };
 
-    if (teamId) checkMatchingStatus();
-  }, [teamId]);
+    checkMatchingStatus();
+    // 포커스될 때마다 재확인
+  }, [teamId])
+);
 
   const createInviteCode = async () => {
     try {
@@ -102,7 +103,7 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
         external
       />
 
-      <SettingItem label="알림 설정" onPress={() => {}} />
+      {/* <SettingItem label="알림 설정" onPress={() => {}} /> */}
       <SettingItem
         label="로그아웃"
         onPress={() => setLogoutModalVisible(true)}
@@ -131,11 +132,14 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
             />
           )}
 
-          <SettingItem
-            label="최소학점 설정"
-            onPress={() => setMinCreditModalVisible(true)}
-            external
-          />
+          
+{isMatchingStarted && ( // ★ 매칭 시작 이후에만 표시
+      <SettingItem
+        label="최소학점 설정"
+        onPress={() => setMinCreditModalVisible(true)}
+        external
+      />
+    )}
         </>
       )}
 
@@ -160,11 +164,11 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
             </View>
             <SubmitButton
               onPress={() => setModalVisible(false)}
-              title="취소"
+              title="확인"
               width={130}
               height={50}
-              buttonColor="#FF9898"
-              shadowColor="#E08B8B"
+              buttonColor="#bbb"
+              shadowColor="#aaa"
               style={{ marginTop: 2 }}
             >
               <Text style={inviteCodeModalStyles.closeText}>닫기</Text>
@@ -343,7 +347,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "Ongeulip",
     color: "#111",
   },
   arrow: {

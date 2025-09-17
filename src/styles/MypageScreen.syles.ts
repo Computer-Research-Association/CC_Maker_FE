@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from './GlobalStyles';
 
 const styles = StyleSheet.create({
   container: {
@@ -13,6 +14,9 @@ const styles = StyleSheet.create({
     right: 20,
     zIndex: 10,
     padding: 8,
+  },
+  settingIcon: {
+    // No additional styling needed for the icon itself
   },
 
   // 프로필 섹션
@@ -41,12 +45,11 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 12,
-    backgroundColor: "#e5e7eb",
     marginBottom: 8,
   },
   profileName: {
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     color: "#333",
     textAlign: "center",
   },
@@ -70,12 +73,11 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 12,
-    backgroundColor: "#e5e7eb",
     marginBottom: 8,
   },
   matchedProfileName: {
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     color: "#333",
     textAlign: "center",
   },
@@ -100,6 +102,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 20,
     padding: 20,
+    marginBottom: 30,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -113,7 +116,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#333",
     marginLeft: 8,
   },
@@ -136,6 +139,10 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginBottom: 20,
     position: "relative",
+  },
+  // 마지막 미션 아이템에 추가 여백
+  missionItemLast: {
+    marginBottom: 40,
   },
   missionIcon: {
     width: 40,
@@ -174,12 +181,13 @@ const styles = StyleSheet.create({
   },
   missionTitle: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#333",
     marginBottom: 4,
   },
   missionDate: {
     fontSize: 14,
+    fontFamily: FontFamily.regular,
     color: "#666",
     marginBottom: 8,
   },
@@ -189,6 +197,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 14,
+    fontFamily: FontFamily.regular,
     color: "#666",
     marginLeft: 6,
     flex: 1,
@@ -208,7 +217,7 @@ const styles = StyleSheet.create({
   },
   myName: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#333",
   },
   otherProfilesContainer: {
@@ -229,7 +238,7 @@ const styles = StyleSheet.create({
   },
   otherName: {
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     color: "#666",
   },
   noMatchText: {
@@ -251,7 +260,7 @@ const styles = StyleSheet.create({
   },
   selectedTab: {
     color: "#ff6b6b",
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   statusRow: {
     alignItems: "center",
@@ -268,7 +277,7 @@ const styles = StyleSheet.create({
   writeButtonMainText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
 });
 

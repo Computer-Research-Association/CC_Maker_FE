@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { FontFamily } from './GlobalStyles';
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -11,6 +12,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+  },
+
+  // 나가기 버튼 관련 스타일
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  logoutButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'transparent',
+  },
+  logoutIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#666',
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: FontFamily.semiBold,
+    textAlign: 'center',
   },
 
   teamCard: {
@@ -27,7 +55,7 @@ const styles = StyleSheet.create({
   },
   teamName: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   addCard: {
     width: windowWidth - 60, // 좌우 패딩 30씩으로 늘림
@@ -49,7 +77,7 @@ const styles = StyleSheet.create({
     color: "#111",
     fontSize: 20,
     textAlign: "center",
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     marginBottom: 16,
   },
   modalOverlay: {
@@ -81,21 +109,21 @@ const styles = StyleSheet.create({
   modalButtonText: {
     fontSize: 17,
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   // create 버튼
   createButton: {
     backgroundColor: "#ffd1d1",
     borderRadius: 12, // 둥글게
     marginBottom: 7, // 버튼 간격
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   // join 버튼
   joinButton: {
     backgroundColor: "#ffe3e1",
     borderRadius: 12,
     marginBottom: 10,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   cancelButton: {
     borderBottomWidth: 0,
@@ -105,7 +133,7 @@ const styles = StyleSheet.create({
     color: "#FF3B30",
     fontSize: 15,
     textAlign: "center",
-    fontWeight: "500",
+    fontFamily: FontFamily.medium,
   },
 });
 

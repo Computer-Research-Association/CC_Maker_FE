@@ -8,6 +8,11 @@ interface SignupParams {
   email: string;
   password: string;
   gender: "male" | "female";
+  privacyAgreementVersion?: string;
+  privacyAgreed?: boolean;
+  privacyAgreedAt?: string;
+  privacyAgreedMethod?: string;
+  privacyAgreedEnvironment?: string;
 }
 
 interface LoginParams {

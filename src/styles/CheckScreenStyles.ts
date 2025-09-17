@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from './GlobalStyles';
 
 const styles = StyleSheet.create({
   container: {
@@ -9,7 +10,7 @@ const styles = StyleSheet.create({
   role: {
     textAlign: "center",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     marginBottom: 4,
   },
   count: {
@@ -18,6 +19,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
     marginRight: 12,
+    fontFamily: "Ongeulip",
   },
   listContainer: {
     borderRadius: 10,
@@ -32,6 +34,7 @@ const styles = StyleSheet.create({
   name: {
     flex: 1,
     fontSize: 16,
+    fontFamily: "Ongeulip",
   },
   checkbox: {
     fontSize: 26,
@@ -50,7 +53,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   modalBackground: {
     flex: 1,
@@ -70,7 +73,7 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   modalButton: {
     backgroundColor: "#8de969",
@@ -81,7 +84,7 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     fontSize: 16,
     textAlign: "center",
   },

@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from './GlobalStyles';
 
 const BUTTON_WIDTH = 220;
 const BUTTON_HEIGHT = 56;
@@ -14,7 +15,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: "center",
     marginBottom: 24,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   horizontalGroup: {
     flexDirection: "row",
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 22,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   shadowWrapper: {
     alignItems: "center",
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
   submitText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
 });
 

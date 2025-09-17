@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from './GlobalStyles';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,7 +16,7 @@ const styles = StyleSheet.create({
   crown: {
     fontSize: 44,
     marginBottom: 2,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#ff6b6b",
     textShadowColor: "rgba(255, 107, 107, 0.3)",
     textShadowOffset: { width: 0, height: 2 },
@@ -23,12 +24,12 @@ const styles = StyleSheet.create({
   },
   myNameText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#222",
   },
   testNameText: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     color: "#222",
   },
   myCardBox: {
@@ -66,12 +67,12 @@ const styles = StyleSheet.create({
   },
   otherNameText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     color: "#444",
   },
   blueNameText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
     color: "#2196f3",
   },
   topCardBox: {
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
   },
   topNameText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
     color: "#ff5a5a",
   },
   divider: {
@@ -98,7 +99,91 @@ const styles = StyleSheet.create({
     height: 1.5,
     backgroundColor: "#e0e0e0", // 회색으로 변경
     marginVertical: 16,
-    alignSelf: "center",
+  },
+  // 매칭 대기 상태 스타일
+  matchingWaitContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  matchingIconContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "#ffe3ed",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 24,
+    shadowColor: "#ffb6c1",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  matchingIcon: {
+    width: 60,
+    height: 60,
+    tintColor: "#ff6b6b",
+  },
+  matchingTitleText: {
+    fontSize: 20,
+    fontFamily: FontFamily.bold,
+    color: "#222",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  matchingSubText: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+    lineHeight: 20,
+    fontFamily: "Ongeulip",
+  },
+  // Add missing styles
+  teamNameText: {
+    fontSize: 18,
+    fontFamily: FontFamily.semiBold,
+    color: "#333",
+    textAlign: "center",
+    maxWidth: 280,
+  },
+  progressCard: {
+    width: 320,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    padding: 18,
+    marginBottom: 14,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  topTeamCard: {
+    backgroundColor: "#FDF2F7",
+    borderColor: "#ffdeec",
+    shadowColor: "#ff5a5a",
+    shadowOpacity: 0.2,
+  },
+  myCard: {
+    backgroundColor: "#ffe3ed",
+    borderColor: "#ffb6c1",
+    shadowColor: "#ffb6c1",
+    shadowOpacity: 0.15,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontFamily: FontFamily.semiBold,
+    color: "#333",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  section: {
+    width: "100%",
+    alignItems: "center",
   },
 });
 

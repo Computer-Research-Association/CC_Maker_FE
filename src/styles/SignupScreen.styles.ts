@@ -1,16 +1,25 @@
 import { StyleSheet } from "react-native";
+import { FontFamily } from './GlobalStyles';
 
 const styles = StyleSheet.create({
   container: {
-    padding: 50,
     flex: 1,
     backgroundColor: "#fff",
+  },
+  contentContainer: {
+    padding: 50,
+    flexGrow: 1,
     justifyContent: "center",
   },
-  title: { fontSize: 24, marginBottom: 20, textAlign: "center" },
+  title: { 
+    fontSize: 24, 
+    marginBottom: 20, 
+    textAlign: "center",
+    fontFamily: FontFamily.bold,
+  },
   label: {
     marginBottom: 6,
-    fontWeight: "600",
+    fontFamily: FontFamily.semiBold,
   },
   input: {
     height: 48,
@@ -19,6 +28,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 8,
     fontSize: 16,
+    fontFamily: FontFamily.regular,
   },
   radioGroup: {
     flexDirection: "column",
@@ -47,7 +57,7 @@ const styles = StyleSheet.create({
   roundButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: FontFamily.bold,
   },
   emailRow: {
     flexDirection: "row",
@@ -65,6 +75,9 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 15,
     borderRightWidth: 0,
     backgroundColor: "rgba(255, 255, 255, 0.7)",
+    fontFamily: "Ongeulip",
+
+    
   },
   dropdownWrapper: {
     flex: 5,
@@ -83,11 +96,77 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 0,
     borderLeftWidth: 0,
     backgroundColor: "rgba(255, 255, 255, 0.7)",
+    
   },
   dropdownContainer: {
     borderWidth: 1,
     borderColor: "#ccc",
     zIndex: 1000,
+  },
+  // 개인정보 활용 동의서 관련 스타일
+  privacySection: {
+    marginBottom: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    borderRadius: 10,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  privacyHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  privacyTitle: {
+    fontSize: 16,
+    fontFamily: FontFamily.bold,
+    color: "#333",
+    flex: 1,
+  },
+  privacyContent: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: "#666",
+    marginBottom: 15,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: "#FF9898",
+    borderRadius: 4,
+    marginRight: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkboxChecked: {
+    backgroundColor: "#FF9898",
+  },
+  checkboxText: {
+    fontSize: 13,
+    color: "#333",
+    flex: 1,
+  },
+  checkboxError: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 5,
+  },
+  expandButton: {
+    alignSelf: "flex-end",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  expandButtonText: {
+    color: "#FF9898",
+    fontSize: 12,
+    textDecorationLine: "underline",
   },
 });
 

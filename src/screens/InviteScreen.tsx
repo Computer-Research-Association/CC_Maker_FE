@@ -19,12 +19,13 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
   const [step, setStep] = useState<1 | 2>(1);
   const { teamId, setTeamId } = useContext(TeamContext);
 
+  //초대코드 생성(백엔드에서 호출)
   const fetchInviteCode = async () => {
     try {
       setLoading(true);
-      console.log("🚀 fetchInviteCode 실행");
+      console.log(" fetchInviteCode 실행");
 
-      // 🔧 수정된 부분: auth_tokens에서 accessToken 추출
+      //  수정된 부분: auth_tokens에서 accessToken 추출
       const tokenData = await SecureStore.getItemAsync("auth_tokens");
       const accessToken = tokenData ? JSON.parse(tokenData).accessToken : null;
 
@@ -53,13 +54,14 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
       setLoading(false);
     }
   };
-
+  //초대코드 복사
   const copyToClipboard = async () => {
     if (teamCode) {
       await Clipboard.setStringAsync(teamCode);
       Alert.alert("복사 완료", "팀 코드가 복사되었습니다!");
     }
   };
+  //팀 생성
   const onCreateTeam = async () => {
     if (!teamName.trim()) {
       Alert.alert("입력 오류", "팀 이름을 입력해주세요.");
@@ -92,7 +94,8 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
     }
   };
 
-  const onStartPress = async () => {
+  //시작하기 버튼 클릭 시 팀 생성 후 홈화면으로 이동
+    const onStartPress = async () => {
      navigation.reset({
         index: 0,
         routes: [{ name: "MainHomeScreen" }],
