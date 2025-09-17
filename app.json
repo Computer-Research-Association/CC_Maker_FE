@@ -20,16 +20,26 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.losecow.ccgo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-secure-store"],
+    "plugins": [
+      "expo-secure-store"
+    ],
     "extra": {
       "eas": {
-        "projectId": "0dd3c2e0-12a8-4f01-9a79-a5a769850448"
+        "projectId": "32b65243-4cdd-4fdc-9e16-e72bfbabc993"
       }
+    },
+    "owner": "losecow",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/32b65243-4cdd-4fdc-9e16-e72bfbabc993"
     }
   }
 }
