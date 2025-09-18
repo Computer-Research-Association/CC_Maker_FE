@@ -1,145 +1,83 @@
-import api from "./apiClient";
-import * as SecureStore from "expo-secure-store";
+import { setTokens } from "./apiClient";
 import { LoginResponse } from "../navigation/types";
 
+//이놈도 나중에 공인 도메인 ip로 바꿔야함
+//지금은 cra와이파이로 고정해놓자
+const BASE_URL = "http://192.168.29.132:8080";
+
+//회원가입에 필요한 정보들
 interface SignupParams {
   name: string;
   birthdate: string;
   email: string;
   password: string;
   gender: "male" | "female";
-  privacyAgreementVersion?: string;
-  privacyAgreed?: boolean;
-  privacyAgreedAt?: string;
-  privacyAgreedMethod?: string;
-  privacyAgreedEnvironment?: string;
 }
 
+//로그인에 필요한 정보들
 interface LoginParams {
   email: string;
   password: string;
 }
 
-// ✅ 회원가입
+// 회원가입 함수
 export async function signup(params: SignupParams): Promise<any> {
   try {
-    console.log("📨 회원가입 요청:", params);
-    const response = await api.post("/api/user/register", params);
-    console.log("✅ 회원가입 성공:", response.data);
-    return response.data;
-  } catch (error: any) {
-    console.error("❌ 회원가입 에러:", error);
-    console.error("❌ 에러 상태:", error.response?.status);
-    console.error("❌ 에러 데이터:", error.response?.data);
-    console.error("❌ 에러 헤더:", error.response?.headers);
+    console.log("📨 회원가입 요청 시작:", params);
+    const response = await fetch(`${BASE_URL}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    });
 
-    // 서버에서 오는 구체적인 에러 메시지 처리
-    let errorMessage = "회원가입에 실패했습니다.";
+    const data = await response.json();
 
-    if (error.response?.data?.message) {
-      errorMessage = error.response.data.message;
-    } else if (error.response?.data?.error) {
-      errorMessage = error.response.data.error;
-    } else if (error.message) {
-      errorMessage = error.message;
+    if (!response.ok) {
+      throw new Error(data.message || "회원가입 실패");
     }
 
-    throw new Error(errorMessage);
+    console.log("✅ 회원가입 성공 응답:", data); //나중에 지우기
+    return data;
+  } catch (error) {
+    console.error("회원가입 에러:", error); //나중에 지우기
+    throw new Error("서버와 통신할 수 없습니다." + error);
   }
 }
 
-// ✅ 로그인
+// 로그인 함수 (토큰 저장 포함)
 export async function login({
   email,
   password,
 }: LoginParams): Promise<LoginResponse> {
-  console.log("🔐 로그인 API 호출 시작:", { email, password: "***" });
-  try {
-    console.log("📤 서버로 로그인 요청 전송...");
-    const response = await api.post("/api/auth/login", { email, password });
-    console.log("✅ 로그인 응답 받음:", response.status);
+  console.log("로그인 API 호출 시작:", { email, password });
 
-    // ✅ 서버 응답에서 토큰 추출
-    const { accessToken, refreshToken, data } = response.data;
-    console.log("🔑 토큰 추출:", {
-      hasAccessToken: !!accessToken,
-      hasRefreshToken: !!refreshToken,
-      hasData: !!data,
+  try {
+    const response = await fetch(`${BASE_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
 
-    if (!accessToken || !refreshToken) {
-      throw new Error("토큰이 응답에 없습니다.");
+    const responseBody = await response.text();
+    console.log("서버 응답 원문:", responseBody);
+
+    if (!responseBody) {
+      throw new Error("서버 응답이 없습니다.");
     }
 
-    // ✅ 보안 저장소에 토큰 저장
-    await SecureStore.setItemAsync(
-      "auth_tokens",
-      JSON.stringify({ accessToken, refreshToken })
-    );
+    if (!response.ok) {
+      const errorData = JSON.parse(responseBody) as { message?: string };
+      throw new Error(errorData.message || "로그인에 실패했습니다.");
+    }
 
-    console.log("✅ 토큰 저장 완료");
-    return data as LoginResponse;
+    const data = JSON.parse(responseBody) as LoginResponse;
+    console.log("로그인 성공 응답:", data);
+
+    await setTokens(data.accessToken, data.refreshToken ?? "");
+
+    return data;
   } catch (error: any) {
-    console.error("❌ 로그인 에러 발생");
-    console.error("❌ 에러 타입:", typeof error);
-    console.error("❌ 에러 객체:", error);
-    console.error("❌ 에러 응답:", error.response?.data);
-    console.error("❌ 에러 상태:", error.response?.status);
-    console.error("❌ 에러 메시지:", error.message);
-
-    // 서버에서 오는 구체적인 에러 메시지 처리
-    let errorMessage = "로그인에 실패했습니다.";
-
-    if (error.response?.data?.message) {
-      errorMessage = error.response.data.message;
-      console.log("📨 서버 에러 메시지:", errorMessage);
-    } else if (error.message) {
-      errorMessage = error.message;
-      console.log("📨 클라이언트 에러 메시지:", errorMessage);
-    }
-
-    console.log("📤 최종 에러 메시지 전달:", errorMessage);
-    throw new Error(errorMessage);
+    console.error("로그인 중 에러:", error);
+    throw new Error(error.message || "서버와 통신할 수 없습니다.");
   }
-}
-
-// ✅ 로그아웃
-export async function logout(navigation: any): Promise<void> {
-  try {
-    // ✅ 서버 로그아웃 요청 (Authorization 헤더에 refreshToken)
-    const tokenData = await SecureStore.getItemAsync("auth_tokens");
-    if (tokenData) {
-      const { refreshToken } = JSON.parse(tokenData);
-      await api.post("/api/auth/logout", null, {
-        headers: { Authorization: `Bearer ${refreshToken}` },
-      });
-      console.log("✅ 서버 로그아웃 완료");
-    }
-
-    // ✅ 클라이언트 저장된 토큰 삭제
-    await SecureStore.deleteItemAsync("auth_tokens");
-    console.log("🗑 토큰 삭제 완료");
-
-    // ✅ 로그인 화면으로 이동
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Login" }],
-    });
-  } catch (error) {
-    console.error("서버 로그아웃 실패:", error);
-    throw error;
-  }
-}
-
-// ✅ 인증이 필요한 API 호출
-export async function getUserInfo() {
-  const tokenData = await SecureStore.getItemAsync("auth_tokens");
-  if (!tokenData) throw new Error("토큰 없음");
-
-  const { accessToken } = JSON.parse(tokenData);
-  const response = await api.get("/api/user/info", {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-
-  return response.data;
 }

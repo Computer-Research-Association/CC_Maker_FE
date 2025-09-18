@@ -15,8 +15,6 @@ import styles from "../styles/LoginScreen.styles";
 import { TeamContext } from "../screens/TeamContext";
 import { UserContext } from "./UserContext"; // 경로 맞게 수정
 import { Ionicons } from "@expo/vector-icons"; // 비밀번호 토글
-import SubmitButton from "../component/SubmitButton";
-import CherryBlossomContainer from "../component/CherryBlossomContainer";
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
@@ -27,86 +25,28 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   const [email, setemail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { setTeamId, setSubGroupIdMap } = useContext(TeamContext);
-  const { setUserId, setName } = useContext(UserContext);
+  const { setUserId } = useContext(UserContext);
   const [secure, setSecure] = useState(true); // 비밀번호 토글
 
   const handleLogin = async () => {
     try {
       const response = await login({ email, password });
       Alert.alert("로그인 성공", "환영합니다!");
-
-      console.log(" 로그인 응답:", response);
-
       setUserId(response.userId);
-      setName(response.name);
       setTeamId(null);
       setSubGroupIdMap({});
-      //
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "MainHomeScreen" }],
-      });
+
+      navigation.navigate("MainHomeScreen");
     } catch (error: unknown) {
-      console.log(" 로그인 에러 발생:", error);
-      console.log("에러 타입:", typeof error);
-      console.log("에러 객체:", JSON.stringify(error, null, 2));
-      
-      let errorMessage = "로그인에 실패했어요.";
-      
-      if (error instanceof Error) {
-        const msg = error.message;
-        console.log("🔍 로그인 에러 메시지:", msg); // 디버깅용
-        
-        if (msg.includes("비밀번호") || msg.includes("password") || msg.includes("Password")) {
-          errorMessage = "비밀번호가 올바르지 않아요.";
-        } else if (msg.includes("이메일") || msg.includes("email") || msg.includes("Email")) {
-          errorMessage = "등록되지 않은 이메일이에요.";
-        } else if (msg.includes("계정") || msg.includes("account") || msg.includes("Account")) {
-          errorMessage = "계정을 찾을 수 없어요.";
-        } else if (msg.includes("인증") || msg.includes("authentication") || msg.includes("Authentication")) {
-          errorMessage = "이메일 또는 비밀번호가 올바르지 않아요.";
-        } else if (msg.includes("잘못") || msg.includes("incorrect") || msg.includes("Incorrect")) {
-          errorMessage = "이메일 또는 비밀번호가 올바르지 않아요.";
-        } else {
-          errorMessage = msg;
-        }
-      } else {
-        console.log("🚨 Error 인스턴스가 아님:", error);
-        errorMessage = "알 수 없는 오류가 발생했어요.";
-      }
-      
-      console.log("📱 최종 에러 메시지:", errorMessage);
-      Alert.alert("로그인 실패", errorMessage);
+      // 다시 공부 하기 =
+      const errorMessage =
+        error instanceof Error ? error.message : "알 수 없는 오류";
+      Alert.alert("로그인 실패", errorMessage); //팝업 에러 메세지
     }
   };
-  //
-
-  // const handleLogin = async () => {
-  //   try {
-  //     const response = await login({ email, password });
-
-  //     // ✅ 토큰 꺼내서 저장
-  //     const token = response.token; // 👉 이 부분은 백엔드 응답에 따라 조정 (아래 설명 참고)
-  //     await AsyncStorage.setItem("ACCESS_TOKEN", token);
-  //     console.log("✅ ACCESS_TOKEN 저장됨:", token);
-
-  //     Alert.alert("로그인 성공", "환영합니다!");
-  //     setUserId(response.userId);
-  //     setName(response.name);
-  //     setTeamId(null);
-  //     setSubGroupIdMap({});
-
-  //     navigation.navigate("MainHomeScreen");
-  //   } catch (error: unknown) {
-  //     const errorMessage =
-  //       error instanceof Error ? error.message : "알 수 없는 오류";
-  //     Alert.alert("로그인 실패", errorMessage);
-  //   }
-  // };
 
   return (
     <View style={styles.container}>
-      <CherryBlossomContainer />
       {/* <Image
         source={{
           uri: 'https://upload.wikimedia.org/wikipedia/sco/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/768px-Starbucks_Corporation_Logo_2011.svg.png',
@@ -136,7 +76,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         ]}
       >
         <TextInput
-          style={{ flex: 1 ,fontFamily:'Ongeulip'}}
+          style={{ flex: 1 }}
           placeholder="비밀번호"
           secureTextEntry={secure} // 위의 secure 상태값 사용
           value={password}
@@ -156,16 +96,9 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         {/* <Text style={styles.separator}>|</Text> */}
       </View>
 
-      <SubmitButton
-        title="로그인하기"
-        onPress={handleLogin}
-        buttonColor="#FF9898"
-        shadowColor="#E08B8B"
-        textColor="#fff"
-        width={350}
-        height={56}
-        style={{ marginTop: 5 }}
-      />
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>로그인하기</Text>
+      </TouchableOpacity>
     </View>
   );
 }

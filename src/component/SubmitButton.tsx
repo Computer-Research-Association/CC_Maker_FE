@@ -10,44 +10,14 @@ import {
 } from "react-native";
 
 type Props = {
-  title?: string;
+  title: string;
   onPress: (event: GestureResponderEvent) => void;
   style?: object;
   disabled?: boolean;
-  children?: React.ReactNode; // ✅ 이거 추가
-  width?: number;
-  height?: number;
-  buttonColor?: string;
-  shadowColor?: string;
-  paddingHorizontal?: number;
-  paddingVertical?: number;
-  positionStyle?: object;
-  textColor?: string;
 };
 
-export default function SubmitButton({
-  title,
-  onPress,
-  disabled,
-  style,
-  width = 220,
-  height = 56,
-  buttonColor,
-  shadowColor,
-  paddingHorizontal, // ← 이 줄 추가
-  paddingVertical,
-  positionStyle,
-  textColor,
-}: Props) {
+export default function SubmitButton({ title, onPress, disabled }: Props) {
   const yAnim = useRef(new Animated.Value(0)).current;
-
-  // console.log("SubmitButton props", {
-  //   title,
-  //   buttonColor,
-  //   shadowColor,
-  //   disabled,
-  //   textColor,
-  // });
 
   const handlePressIn = () => {
     Animated.timing(yAnim, {
@@ -66,19 +36,9 @@ export default function SubmitButton({
   };
 
   return (
-    <View style={[styles.shadowWrapper, style, { height: height + 8 }]}>
+    <View style={styles.shadowWrapper}>
       <View
-        style={[
-          styles.shadowLayer,
-          disabled && styles.disabledShadowLayer,
-          {
-            width,
-            height: height + 1.5,
-            borderRadius: 25,
-            backgroundColor: disabled ? "#aaa" : shadowColor,
-          },
-          style,
-        ]}
+        style={[styles.shadowLayer, disabled && styles.disabledShadowLayer]}
       />
       <Pressable
         onPressIn={handlePressIn}
@@ -89,60 +49,56 @@ export default function SubmitButton({
         <Animated.View
           style={[
             styles.submitButton,
-            {
-              width,
-              height,
-              borderRadius: 25,
-              transform: [{ translateY: yAnim }],
-              backgroundColor: disabled ? "#ccc" : buttonColor,
-              borderColor: disabled ? "#aaa" : shadowColor,
-              paddingHorizontal, // ← 이 줄 추가
-              paddingVertical,
-              textColor,
-            },
-            disabled && styles.disabledButton,
-            style,
+            disabled && styles.disabledButton, // ✅ 비활성화 스타일 추가
+            { transform: [{ translateY: yAnim }] },
           ]}
         >
-          <Text style={[styles.submitText, { color: textColor || "#fff" }]}>
-            {title}
-          </Text>
+          <Text style={styles.submitText}>{title}</Text>
         </Animated.View>
       </Pressable>
     </View>
   );
 }
 
+const BUTTON_WIDTH = 220;
+const BUTTON_HEIGHT = 56;
+
 const styles = StyleSheet.create({
   shadowWrapper: {
     alignItems: "center",
     marginTop: 40,
-    
+    height: BUTTON_HEIGHT + 8,
   },
   shadowLayer: {
     position: "absolute",
     top: 2,
-    // backgroundColor: "#B54D4D",
+    width: BUTTON_WIDTH,
+    height: BUTTON_HEIGHT + 1.5,
+    backgroundColor: "#B54D4D",
+    borderRadius: 999,
     zIndex: 0,
   },
   submitButton: {
-    // backgroundColor: "#FF9898",
+    width: BUTTON_WIDTH,
+    height: BUTTON_HEIGHT,
+    backgroundColor: "#FF9898",
+    borderRadius: 999,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,
     borderWidth: 2,
-    // borderColor: "#B54D4D",
+    borderColor: "#B54D4D",
   },
   submitText: {
-    // color: "#fff",
+    color: "#fff",
     fontSize: 16,
-    fontFamily: "Ongeulip",
+    fontWeight: "bold",
   },
   disabledButton: {
     backgroundColor: "#ccc",
     borderColor: "#aaa",
   },
   disabledShadowLayer: {
-    backgroundColor: "#999",
+    backgroundColor: "#999", // 회색으로 변경
   },
 });

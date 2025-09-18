@@ -11,7 +11,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { joinTeamByCode } from "../api/teamApi";
 import styles from "../styles/TeamMemberScreen.styles";
-import SubmitButton from "../component/SubmitButton";
+
 type JoinTeamScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "JoinScreen">;
 };
@@ -37,7 +37,6 @@ export default function JoinTeamScreen({ navigation }: JoinTeamScreenProps) {
       }
     }
   };
-  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>초대 코드로 팀 가입</Text>
@@ -47,15 +46,9 @@ export default function JoinTeamScreen({ navigation }: JoinTeamScreenProps) {
         onChangeText={setCode}
         style={styles.input}
       />
-      <SubmitButton
-        // style={styles.button}
-        onPress={handleJoinTeam}
-        title="팀 가입하기"
-        buttonColor="#FF9898"
-        shadowColor="#E08B8B"
-      >
+      <TouchableOpacity style={styles.button} onPress={handleJoinTeam}>
         <Text style={styles.buttonText}>팀 가입하기</Text>
-      </SubmitButton>
+      </TouchableOpacity>
     </View>
   );
 }

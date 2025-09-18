@@ -1,27 +1,283 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+// import React, { useContext, useEffect, useState } from "react";
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   TouchableOpacity,
+//   ScrollView,
+//   Alert,
+//   Modal,
+// } from "react-native";
+// import { RootStackParamList } from "../navigation/types";
+// import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+// import { TeamContext } from "../screens/TeamContext";
+// import api from "../api/apiClient";
+// import * as Clipboard from "expo-clipboard"; // 복사 기능 (Expo)
+
+// type SettingScreenProps = {
+//   navigation: NativeStackNavigationProp<RootStackParamList, "SettingScreen">;
+// };
+
+// export default function SettingsScreen({ navigation }: SettingScreenProps) {
+//   const { role, teamId } = useContext(TeamContext);
+//   const [inviteCode, setInviteCode] = useState<string | null>(null);
+//   const [modalVisible, setModalVisible] = useState(false); // ✅ 모달 상태
+//   const [inquiryModalVisible, setInquiryModalVisible] = useState(false);
+
+//   useEffect(() => {
+//     console.log("현재 role:", role);
+//   }, [role]);
+
+//   // ✅ 초대 코드 생성
+//   const createInviteCode = async () => {
+//     try {
+//       const response = await api.post("/api/invitecode/create", {
+//         teamId: teamId,
+//       });
+
+//       const code = response.data.inviteCode || response.data.code;
+//       setInviteCode(code);
+//       setModalVisible(true); // ✅ 모달 열기
+//     } catch (error) {
+//       console.error("초대 코드 생성 실패:", error);
+//       Alert.alert("오류", "초대 코드 생성 중 문제가 발생했습니다.");
+//     }
+//   };
+
+//   // ✅ 복사하기
+//   const copyToClipboard = async () => {
+//     if (inviteCode) {
+//       await Clipboard.setStringAsync(inviteCode);
+//       Alert.alert("복사 완료", "초대 코드가 클립보드에 복사되었습니다.");
+//     }
+//   };
+
+//   return (
+//     <ScrollView style={styles.container}>
+//       <Text style={styles.sectionTitle}>내 계정</Text>
+//       <SettingItem label="계정 관리" onPress={() => {}} />
+//       <SettingItem label="알림 설정" onPress={() => {}} />
+
+//       <Text style={styles.sectionTitle}>서비스</Text>
+//       <SettingItem
+//         label="문의하기"
+//         onPress={() => setInquiryModalVisible(true)}
+//         external
+//       />
+
+//       {role === "LEADER" && (
+//         <>
+//           <SettingItem
+//             label="초대 코드 생성"
+//             onPress={createInviteCode}
+//             external
+//           />
+//           <SettingItem
+//             label="매칭 시작하기"
+//             onPress={() => navigation.navigate("CheckScreen")}
+//             external
+//           />
+//           매칭시작하는것
+//           <SettingItem
+//             label="최소학점 설정"
+//             onPress={() => setInquiryModalVisible(true)}
+//             external
+//           />
+//         </>
+//       )}
+
+//       {/* ✅ 모달로 초대 코드 보여주기 */}
+//       <Modal
+//         animationType="none"
+//         transparent={true}
+//         visible={modalVisible}
+//         onRequestClose={() => setModalVisible(false)}
+//       >
+//         <View style={styles.modalOverlay}>
+//           <View style={styles.modalContent}>
+//             <Text style={styles.modalTitle}>초대 코드</Text>
+//             <Text style={styles.modalCode}>{inviteCode}</Text>
+
+//             <TouchableOpacity
+//               style={styles.copyButton}
+//               onPress={copyToClipboard}
+//             >
+//               <Text style={styles.copyText}>복사하기</Text>
+//             </TouchableOpacity>
+
+//             <TouchableOpacity
+//               onPress={() => setModalVisible(false)}
+//               style={styles.closeButton}
+//             >
+//               <Text style={styles.closeText}>닫기</Text>
+//             </TouchableOpacity>
+//           </View>
+//         </View>
+//       </Modal>
+//       <Modal
+//         animationType="none"
+//         transparent={true}
+//         visible={inquiryModalVisible}
+//         onRequestClose={() => setInquiryModalVisible(false)}
+//       >
+//         <View style={styles.modalOverlay}>
+//           <View style={styles.modalContent}>
+//             <Text style={styles.modalTitle}>문의하기</Text>
+//             <Text style={styles.modalCode}>
+//               문의는 아래 이메일로 보내주세요.{"\n"}
+//               📧 example@email.com
+//             </Text>
+
+//             <TouchableOpacity
+//               onPress={() => setInquiryModalVisible(false)}
+//               style={styles.closeButton}
+//             >
+//               <Text style={styles.closeText}>확인</Text>
+//             </TouchableOpacity>
+//           </View>
+//         </View>
+//       </Modal>
+//       <Modal
+//         animationType="none"
+//         transparent={true}
+//         visible={inquiryModalVisible}
+//         onRequestClose={() => setInquiryModalVisible(false)}
+//       >
+//         <View style={styles.modalOverlay}>
+//           <View style={styles.modalContent}>
+//             <Text style={styles.modalTitle}>최소 학점 설정</Text>
+//             <Text style={styles.modalCode}>
+//               문의는 아래 이메일로 보내주세요.{"\n"}
+//               📧 example@email.com
+//             </Text>
+
+//             <TouchableOpacity
+//               onPress={() => setInquiryModalVisible(false)}
+//               style={styles.closeButton}
+//             >
+//               <Text style={styles.closeText}>확인</Text>
+//             </TouchableOpacity>
+//           </View>
+//         </View>
+//       </Modal>
+//     </ScrollView>
+//   );
+// }
+
+// // 개별 설정 아이템 컴포넌트
+// type SettingItemProps = {
+//   label: string;
+//   onPress: () => void;
+//   external?: boolean;
+// };
+
+// function SettingItem({ label, onPress, external }: SettingItemProps) {
+//   return (
+//     <TouchableOpacity style={styles.item} onPress={onPress}>
+//       <Text style={styles.label}>{label}</Text>
+//       <Text style={styles.arrow}>{external ? "↗" : "›"}</Text>
+//     </TouchableOpacity>
+//   );
+// }
+
+// // 스타일
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#fff",
+//     paddingTop: 20,
+//     paddingHorizontal: 20,
+//   },
+//   sectionTitle: {
+//     color: "#888",
+//     fontSize: 14,
+//     marginTop: 24,
+//     marginBottom: 8,
+//   },
+//   item: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     paddingVertical: 14,
+//     borderBottomWidth: 1,
+//     borderBottomColor: "#eee",
+//   },
+//   label: {
+//     fontSize: 16,
+//     fontWeight: "bold",
+//     color: "#111",
+//   },
+//   arrow: {
+//     fontSize: 18,
+//     color: "#ccc",
+//   },
+
+//   // ✅ 모달 관련 스타일
+//   modalOverlay: {
+//     flex: 1,
+//     backgroundColor: "rgba(0,0,0,0.5)",
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   modalContent: {
+//     width: 280,
+//     backgroundColor: "white",
+//     padding: 24,
+//     borderRadius: 12,
+//     alignItems: "center",
+//   },
+//   modalTitle: {
+//     fontSize: 18,
+//     fontWeight: "bold",
+//     marginBottom: 12,
+//   },
+//   modalCode: {
+//     fontSize: 20,
+//     fontWeight: "bold",
+//     color: "#333",
+//     marginBottom: 16,
+//   },
+//   copyButton: {
+//     paddingVertical: 8,
+//     paddingHorizontal: 16,
+//     backgroundColor: "#009bff",
+//     borderRadius: 6,
+//   },
+//   copyText: {
+//     color: "#fff",
+//     fontWeight: "bold",
+//   },
+//   closeButton: {
+//     marginTop: 12,
+//     paddingHorizontal: 16,
+//     paddingVertical: 8,
+//   },
+//   closeText: {
+//     color: "#888",
+//   },
+// });
+
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
+  StyleSheet,
   TouchableOpacity,
   ScrollView,
   Alert,
   Modal,
-  TextInput,
-  StyleSheet,
+  TextInput, // ✅ 추가: TextInput 사용
 } from "react-native";
 import { RootStackParamList } from "../navigation/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { TeamContext } from "../screens/TeamContext";
 import api from "../api/apiClient";
-import * as Clipboard from "expo-clipboard";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import SubmitButton from "../component/SubmitButton";
-// 분리된 스타일 파일
-import creditModalStyles from "../styles/SettingScreen/CreditModalStyles";
-import inquiryModalStyles from "../styles/SettingScreen/InquiryModalStyles";
-import inviteCodeModalStyles from "../styles/SettingScreen/InviteModalStyles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
+import * as Clipboard from "expo-clipboard"; // 복사 기능 (Expo)
+
+// ⭐ SettingScreenProps 타입 정의
+
+// ⭐ SettingsScreen 컴포넌트 시작
+
 type SettingScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "SettingScreen">;
 };
@@ -31,35 +287,20 @@ export default function SettingsScreen({ navigation }: SettingScreenProps) {
   const [inviteCode, setInviteCode] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [inquiryModalVisible, setInquiryModalVisible] = useState(false);
+
+  // ⭐ 최소 학점 모달 상태 추가
   const [minCreditModalVisible, setMinCreditModalVisible] = useState(false);
   const [minScore, setMinScore] = useState("");
-  const [isMatchingStarted, setIsMatchingStarted] = useState(false);
-  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   useEffect(() => {
     console.log("현재 role:", role);
   }, [role]);
-// 2) 매칭 시작 여부 체크: useEffect → useFocusEffect로 변경
-useFocusEffect(
-  useCallback(() => {
-    const checkMatchingStatus = async () => {
-      if (!teamId) return;
-      try {
-        const value = await AsyncStorage.getItem(`@matching_started_team_${teamId}`);
-        setIsMatchingStarted(value === "true");
-      } catch (error) {
-        console.warn("AsyncStorage 불러오기 실패", error);
-      }
-    };
-
-    checkMatchingStatus();
-    // 포커스될 때마다 재확인
-  }, [teamId])
-);
 
   const createInviteCode = async () => {
     try {
-      const response = await api.post("/api/invitecode/create", { teamId });
+      const response = await api.post("/api/invitecode/create", {
+        teamId: teamId,
+      });
       const code = response.data.inviteCode || response.data.code;
       setInviteCode(code);
       setModalVisible(true);
@@ -76,6 +317,7 @@ useFocusEffect(
     }
   };
 
+  // ⭐ 최소 학점 저장 함수 추가
   const saveMinScore = async () => {
     const parsedScore = parseInt(minScore, 10);
     if (isNaN(parsedScore) || parsedScore < 0) {
@@ -87,28 +329,19 @@ useFocusEffect(
         minScore: parsedScore,
       });
       Alert.alert("성공", "최소 학점이 저장되었습니다.");
-      setMinCreditModalVisible(false);
+      setMinCreditModalVisible(false); // ⭐ 저장 후 모달 닫기
     } catch (error) {
       console.error("최소 학점 저장 실패:", error);
       Alert.alert("오류", "최소 학점 저장에 실패했습니다.");
     }
   };
 
+  // ⭐ JSX 반환 시작
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.sectionTitle}>내 계정</Text>
-      <SettingItem
-        label="계정 관리"
-        onPress={() => navigation.navigate("AccountSettings")}
-        external
-      />
-
-      {/* <SettingItem label="알림 설정" onPress={() => {}} /> */}
-      <SettingItem
-        label="로그아웃"
-        onPress={() => setLogoutModalVisible(true)}
-      />
-
+      <SettingItem label="계정 관리" onPress={() => {}} />
+      <SettingItem label="알림 설정" onPress={() => {}} />
       <Text style={styles.sectionTitle}>서비스</Text>
       <SettingItem
         label="문의하기"
@@ -122,185 +355,106 @@ useFocusEffect(
             onPress={createInviteCode}
             external
           />
-          {!isMatchingStarted && (
-            <SettingItem
-              label="매칭 시작하기"
-              onPress={() => {
-                navigation.navigate("CheckScreen");
-              }}
-              external
-            />
-          )}
-
-          
-{isMatchingStarted && ( // ★ 매칭 시작 이후에만 표시
-      <SettingItem
-        label="최소학점 설정"
-        onPress={() => setMinCreditModalVisible(true)}
-        external
-      />
-    )}
+          <SettingItem
+            label="매칭 시작하기"
+            onPress={() => navigation.navigate("CheckScreen")}
+            external
+          />
+          // ⭐ 최소 학점 설정 버튼 추가
+          <SettingItem
+            label="최소학점 설정"
+            onPress={() => setMinCreditModalVisible(true)}
+            external
+          />
         </>
       )}
-
-      {/* 초대 코드 모달 */}
+      // ⭐ 초대 코드 모달
       <Modal
-        animationType="fade"
+        animationType="none"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={inviteCodeModalStyles.modalOverlay}>
-          <View style={inviteCodeModalStyles.modalContent}>
-            <Text style={inviteCodeModalStyles.modalTitle}>초대 코드</Text>
-            <View style={inviteCodeModalStyles.codeBox}>
-              <Text style={inviteCodeModalStyles.codeText}>{inviteCode}</Text>
-              <TouchableOpacity
-                onPress={copyToClipboard}
-                style={inviteCodeModalStyles.iconButton}
-              >
-                <Ionicons name="copy-outline" size={24} color="#555" />
-              </TouchableOpacity>
-            </View>
-            <SubmitButton
-              onPress={() => setModalVisible(false)}
-              title="확인"
-              width={130}
-              height={50}
-              buttonColor="#bbb"
-              shadowColor="#aaa"
-              style={{ marginTop: 2 }}
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>초대 코드</Text>
+            <Text style={styles.modalCode}>{inviteCode}</Text>
+
+            <TouchableOpacity
+              style={styles.copyButton}
+              onPress={copyToClipboard}
             >
-              <Text style={inviteCodeModalStyles.closeText}>닫기</Text>
-            </SubmitButton>
+              <Text style={styles.copyText}>복사하기</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              style={styles.closeButton}
+            >
+              <Text style={styles.closeText}>닫기</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
-
-      {/* 문의하기 모달 */}
+      // ⭐ 문의하기 모달
       <Modal
         animationType="none"
         transparent={true}
         visible={inquiryModalVisible}
         onRequestClose={() => setInquiryModalVisible(false)}
       >
-        <View style={inquiryModalStyles.modalOverlay}>
-          <View style={inquiryModalStyles.modalContent}>
-            <Text style={inquiryModalStyles.modalTitle}>문의하기</Text>
-            <Text style={inquiryModalStyles.modalCode}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>문의하기</Text>
+            <Text style={styles.modalCode}>
               문의는 아래 이메일로 보내주세요.
             </Text>
-            <Text style={inquiryModalStyles.modalCodeEmail}>
-              📧 example@email.com
-            </Text>
-
-            <SubmitButton
-              title="확인"
-              buttonColor="#bbb"
-              width={130}
-              height={50}
-              shadowColor="#aaa"
+            <Text style={styles.modalCodeEmail}>📧 example@email.com</Text>
+            <TouchableOpacity
               onPress={() => setInquiryModalVisible(false)}
-              style={{ marginTop: 2 }}
-
-              // style={inquiryModalStyles.closeButton}
-            ></SubmitButton>
+              style={styles.closeButton}
+            >
+              <Text style={styles.closeText}>확인</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
-
-      {/* 최소 학점 모달 */}
+      // ⭐ 최소 학점 모달 추가
       <Modal
         animationType="none"
         transparent={true}
         visible={minCreditModalVisible}
         onRequestClose={() => setMinCreditModalVisible(false)}
       >
-        <View style={creditModalStyles.modalOverlay}>
-          <View style={creditModalStyles.modalContent}>
-            <Text style={creditModalStyles.modalTitle}>최소 학점 설정</Text>
-            <Text style={creditModalStyles.modalCode}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>최소 학점 설정</Text>
+            <Text style={styles.modalCode}>
               원하는 최소 학점을 입력해주세요
             </Text>
+
             <TextInput
-              style={creditModalStyles.input}
+              style={styles.input}
               placeholder="예: 30"
               keyboardType="numeric"
               value={minScore}
               onChangeText={setMinScore}
             />
-            <View style={creditModalStyles.buttonRow}>
-              <SubmitButton
-                title="취소"
-                buttonColor="#bbb"
-                width={130}
-                height={50}
-                shadowColor="#aaa"
-                onPress={() => setMinCreditModalVisible(false)}
-                style={{ marginTop: 2 }}
-                // style={creditModalStyles.cancelButton}
-              ></SubmitButton>
-              <SubmitButton
-                title="확인"
-                width={130}
-                height={50}
-                buttonColor="#FF9898"
-                shadowColor="#E08B8B"
-                // style={creditModalStyles.confirmButton}
-                onPress={saveMinScore}
-                style={{ marginTop: 2 }}
-              ></SubmitButton>
-            </View>
-          </View>
-        </View>
-      </Modal>
-      {/*로그아웃모달 */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={logoutModalVisible}
-        onRequestClose={() => setLogoutModalVisible(false)}
-      >
-        <View style={inquiryModalStyles.modalOverlay}>
-          <View style={inquiryModalStyles.modalContent}>
-            <Text style={inquiryModalStyles.modalTitle}>
-              로그아웃 하시겠습니까?
-            </Text>
-            <View style={creditModalStyles.buttonRow}>
-              <SubmitButton
-                title="아니오"
-                width={130}
-                height={50}
-                buttonColor="#bbb"
-                shadowColor="#aaa"
-                onPress={() => setLogoutModalVisible(false)}
-                style={{ marginTop: 2 }}
-              />
-              <SubmitButton
-                title="예"
-                width={130}
-                height={50}
-                buttonColor="#FF9898"
-                shadowColor="#E08B8B"
-                onPress={async () => {
-                  try {
-                    // ✅ AsyncStorage 초기화
-                    await AsyncStorage.removeItem("accessToken");
-                    await AsyncStorage.removeItem("refreshToken");
-                    await AsyncStorage.removeItem("userId");
 
-                    // ✅ 네비게이션 스택 초기화 후 Login으로 이동
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: "Login" }],
-                    });
-                  } catch (error) {
-                    Alert.alert("오류", "로그아웃 중 문제가 발생했습니다.");
-                    console.error(error);
-                  }
-                }}
-                style={{ marginTop: 2 }}
-              />
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setMinCreditModalVisible(false)}
+              >
+                <Text style={styles.closeText}>취소</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.confirmButton}
+                onPress={saveMinScore}
+              >
+                <Text style={styles.closeText}>확인</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -308,6 +462,14 @@ useFocusEffect(
     </ScrollView>
   );
 }
+
+// ⭐ SettingItem 컴포넌트 정의
+
+type SettingItemProps = {
+  label: string;
+  onPress: () => void;
+  external?: boolean;
+};
 
 function SettingItem({ label, onPress, external }: SettingItemProps) {
   return (
@@ -318,11 +480,7 @@ function SettingItem({ label, onPress, external }: SettingItemProps) {
   );
 }
 
-type SettingItemProps = {
-  label: string;
-  onPress: () => void;
-  external?: boolean;
-};
+// ⭐ 스타일 정의
 
 const styles = StyleSheet.create({
   container: {
@@ -347,11 +505,95 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontFamily: "Ongeulip",
+    fontWeight: "bold",
     color: "#111",
   },
   arrow: {
     fontSize: 18,
     color: "#ccc",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    width: 280,
+    backgroundColor: "white",
+    padding: 24,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 12,
+  },
+  modalCode: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 16,
+  },
+  modalCodeEmail: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 16,
+  },
+  copyButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: "#ff9494",
+    borderRadius: 6,
+  },
+  copyText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  closeButton: {
+    marginTop: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: "#ff9494",
+    borderRadius: 5,
+  },
+  closeText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  // ⭐ 최소 학점 입력 필드 스타일 추가
+  input: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 6,
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 20,
+    backgroundColor: "#fff",
+  },
+  // ⭐ 버튼 행 스타일 추가
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  cancelButton: {
+    flex: 1,
+    marginRight: 5,
+    padding: 10,
+    backgroundColor: "#ccc",
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  confirmButton: {
+    flex: 1,
+    marginLeft: 5,
+    padding: 10,
+    backgroundColor: "#FF9494",
+    borderRadius: 5,
+    alignItems: "center",
   },
 });

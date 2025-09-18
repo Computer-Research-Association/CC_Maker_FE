@@ -6,16 +6,14 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
 } from "react-native";
 import { RadioButton } from "react-native-paper";
 import { ItemType } from "react-native-dropdown-picker";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import DropDownPicker from "react-native-dropdown-picker";
-import { login, signup } from "../api/authApi"; // api 함수 import
+import { signup } from "../api/authApi"; // api 함수 import
 import styles from "../styles/SignupScreen.styles";
-import LoginScreen from "./LoginScreen";
 
 type SignupScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Signup">;
@@ -49,63 +47,6 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   ]);
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [confirmPasswordError, setConfirmPasswordError] = useState<string>("");
-
-  // 개인정보 활용 동의서 관련 상태
-  const [privacyAgreed, setPrivacyAgreed] = useState<boolean>(false);
-  const [privacyError, setPrivacyError] = useState<string>("");
-  const [privacyExpanded, setPrivacyExpanded] = useState<boolean>(false);
-  const [privacyContent, setPrivacyContent] = useState<string>("");
-  const [privacyVersion, setPrivacyVersion] = useState<string>("");
-  const [isLoadingPrivacy, setIsLoadingPrivacy] = useState<boolean>(true);
-
-  // 백엔드에서 개인정보 동의서 불러오기
-  const loadPrivacyAgreement = async () => {
-    try {
-      setIsLoadingPrivacy(true);
-      const response = await fetch(
-        "http://3.39.54.128:8080/api/user/privacy-agreement/current"
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setPrivacyContent(data.content);
-        setPrivacyVersion(data.version);
-      } else {
-        console.error("개인정보 동의서 로드 실패:", response.status);
-        // 에러 시 기본 내용 사용
-        setPrivacyContent(
-          "개인정보 동의서를 불러올 수 없습니다. 잠시 후 다시 시도해주세요."
-        );
-        setPrivacyVersion("v1.0");
-      }
-    } catch (error) {
-      console.error("개인정보 동의서 로드 에러:", error);
-      // 에러 시 기본 내용 사용
-      setPrivacyContent(
-        "개인정보 동의서를 불러올 수 없습니다. 잠시 후 다시 시도해주세요."
-      );
-      setPrivacyVersion("v1.0");
-    } finally {
-      setIsLoadingPrivacy(false);
-    }
-  };
-
-  // 컴포넌트 마운트 시 개인정보 동의서 로드
-  React.useEffect(() => {
-    loadPrivacyAgreement();
-  }, []);
-
-  // 개인정보 동의 체크박스 토글
-  const togglePrivacyAgreement = () => {
-    setPrivacyAgreed(!privacyAgreed);
-    if (privacyError) {
-      setPrivacyError("");
-    }
-  };
-
-  // 개인정보 동의서 확장/축소 토글
-  const togglePrivacyExpanded = () => {
-    setPrivacyExpanded(!privacyExpanded);
-  };
 
   //년월일 검사기
   const validateFullDate = (y: string, m: string, d: string) => {
@@ -196,50 +137,13 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
       return;
     }
 
-    if (password !== confirmPassword) {
-      Alert.alert("입력 오류", "비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
-    // 개인정보 동의 확인
-    if (!privacyAgreed) {
-      setPrivacyError("개인정보 수집 및 이용에 동의해 주세요.");
-      return;
-    }
-
     try {
-      console.log("📤 회원가입 데이터 전송:", {
-        name,
-        birthdate,
-        email,
-        password: "***",
-        gender,
-        privacyAgreementVersion: privacyVersion,
-        privacyAgreed: privacyAgreed,
-        privacyAgreedAt: new Date().toISOString(),
-        privacyAgreedMethod: "회원가입",
-        privacyAgreedEnvironment: "APP",
-      });
-      const result = await signup({
-        name,
-        birthdate,
-        email,
-        password,
-        gender,
-        privacyAgreementVersion: privacyVersion,
-        privacyAgreed: privacyAgreed,
-        privacyAgreedAt: new Date().toISOString(),
-        privacyAgreedMethod: "회원가입",
-        privacyAgreedEnvironment: "APP",
-      });
-      console.log("✅ 회원가입 성공:", result);
+      //log 남기기 나중에 지우기
+      const result = await signup({ name, birthdate, email, password, gender });
       Alert.alert("회원가입 성공", "로그인 화면으로 이동합니다.");
       navigation.navigate("Login");
+      console.log("서버 응답:", result);
     } catch (error: any) {
-      console.error("❌ 회원가입 에러:", error);
-      console.error("❌ 에러 타입:", typeof error);
-      console.error("❌ 에러 메시지:", error.message);
-      console.error("❌ 에러 응답:", error.response?.data);
       Alert.alert("회원가입 실패", error.message || "서버 오류");
     }
   };
@@ -247,12 +151,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
   const onlyNumber = (text: string) => text.replace(/[^0-9]/g, ""); //선택사항 나중에 지우기
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}
-      nestedScrollEnabled={true}
-    >
+    <View style={styles.container}>
       <Text style={styles.title}>회원가입</Text>
 
       <Text style={styles.label}>이름</Text>
@@ -340,23 +239,8 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
           style={styles.dropdown}
           dropDownContainerStyle={styles.dropdownContainer}
           containerStyle={styles.dropdownWrapper}
-          zIndex={99999}
-          zIndexInverse={99999}
-          listMode="SCROLLVIEW"
-          scrollViewProps={{
-            nestedScrollEnabled: true,
-            showsVerticalScrollIndicator: false,
-          }}
-          flatListProps={{
-            nestedScrollEnabled: true,
-          }}
-          closeAfterSelecting={true}
-          closeOnBackPressed={true}
-          textStyle={{
-            fontFamily: "Ongeulip",
-            fontSize: 16,
-            color: "#333",
-          }}
+          zIndex={1000}
+          zIndexInverse={3000}
         />
       </View>
       {emailError ? (
@@ -430,7 +314,7 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
               status={gender === "male" ? "checked" : "unchecked"}
               onPress={() => setGender("male")}
             />
-            <Text style={{ fontFamily: "Ongeulip" }}>남성</Text>
+            <Text>남성</Text>
           </View>
           <View style={styles.radioOption}>
             <RadioButton
@@ -438,63 +322,14 @@ export default function SignupScreen({ navigation }: SignupScreenProps) {
               status={gender === "female" ? "checked" : "unchecked"}
               onPress={() => setGender("female")}
             />
-            <Text style={{ fontFamily: "Ongeulip" }}>여성</Text>
+            <Text>여성</Text>
           </View>
         </View>
-      </View>
-
-      {/* 개인정보 활용 동의서 */}
-      <View style={styles.privacySection}>
-        <View style={styles.privacyHeader}>
-          <Text style={styles.privacyTitle}>개인정보 수집 및 이용 동의</Text>
-          <TouchableOpacity
-            style={styles.expandButton}
-            onPress={togglePrivacyExpanded}
-          >
-            <Text style={styles.expandButtonText}>
-              {privacyExpanded ? "접기" : "더보기"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {privacyExpanded && (
-          <View>
-            {isLoadingPrivacy ? (
-              <Text style={styles.privacyContent}>
-                개인정보 동의서를 불러오는 중...
-              </Text>
-            ) : (
-              <Text style={styles.privacyContent}>{privacyContent}</Text>
-            )}
-          </View>
-        )}
-
-        <View style={styles.checkboxContainer}>
-          <TouchableOpacity
-            style={[styles.checkbox, privacyAgreed && styles.checkboxChecked]}
-            onPress={togglePrivacyAgreement}
-          >
-            {privacyAgreed && (
-              <Text
-                style={{ color: "white", fontSize: 14, fontFamily: "Ongeulip" }}
-              >
-                ✓
-              </Text>
-            )}
-          </TouchableOpacity>
-          <Text style={styles.checkboxText}>
-            개인정보 수집 및 이용에 동의합니다. (필수)
-          </Text>
-        </View>
-
-        {privacyError ? (
-          <Text style={styles.checkboxError}>{privacyError}</Text>
-        ) : null}
       </View>
 
       <TouchableOpacity style={styles.roundButton} onPress={handleSignup}>
         <Text style={styles.roundButtonText}>회원가입</Text>
       </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 }

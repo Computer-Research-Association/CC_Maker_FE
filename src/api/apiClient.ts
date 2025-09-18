@@ -1,44 +1,90 @@
+// src/api/apiClient.ts
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-import * as SecureStore from "expo-secure-store";
-import { API_BASE_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = API_BASE_URL;
+//이놈 나중에 공인 도메인/ip로 변경해야한다
+//지금은 cra와이파이로 고정해놓자
+const BASE_URL = "http://192.168.29.132:8080";
 
+const ACCESS_TOKEN_KEY = "ACCESS_TOKEN";
+const REFRESH_TOKEN_KEY = "REFRESH_TOKEN";
 
 const api = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
-  withCredentials: true,
 });
+
+let accessToken = "";
+let refreshToken = "";
+
+/**
+ * 앱 시작 시 AsyncStorage에서 토큰을 불러와 메모리 변수에 세팅
+ */
+async function initializeTokens(): Promise<void> {
+  try {
+    accessToken = (await AsyncStorage.getItem(ACCESS_TOKEN_KEY)) ?? "";
+    refreshToken = (await AsyncStorage.getItem(REFRESH_TOKEN_KEY)) ?? "";
+  } catch (e) {
+    console.error("토큰 초기화 중 오류 발생:", e);
+    accessToken = "";
+    refreshToken = "";
+  }
+}
+// 모듈 로드 시 자동 실행 (필요 시 앱 진입점에서 명시 호출로 변경 가능)
+initializeTokens();
+
+/**
+ * 새로운 액세스/리프레시 토큰 저장
+ */
+export async function setTokens(
+  newAccessToken: string,
+  newRefreshToken: string
+): Promise<void> {
+  try {
+    accessToken = newAccessToken;
+    refreshToken = newRefreshToken;
+    await AsyncStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken);
+    await AsyncStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
+  } catch (e) {
+    console.error("토큰 저장 중 오류 발생:", e);
+  }
+}
+
+/**
+ * 토큰 삭제 (로그아웃 시 호출)
+ */
+export async function clearTokens(): Promise<void> {
+  try {
+    accessToken = "";
+    refreshToken = "";
+    await AsyncStorage.removeItem(ACCESS_TOKEN_KEY);
+    await AsyncStorage.removeItem(REFRESH_TOKEN_KEY);
+  } catch (e) {
+    console.error("토큰 삭제 중 오류 발생:", e);
+  }
+}
+
+/**
+ * 로그아웃 처리 함수 (앱 상황에 맞게 구현 필요)
+ */
+async function handleLogout() {
+  await clearTokens();
+  // TODO: 네비게이션 초기화, 로그인 화면 이동, 사용자 알림 등 추가 구현
+  console.log("사용자 로그아웃 처리 필요");
+}
 
 interface RetryAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
 }
 
-// ✅ 요청 인터셉터: 저장된 Access Token을 Authorization 헤더에 추가
+// 요청 인터셉터: 모든 요청에 Authorization 헤더로 액세스 토큰 붙임
 api.interceptors.request.use(
-  async (config) => {
-    // 로그인과 회원가입 요청에는 토큰을 추가하지 않음
-    const isAuthRequest =
-      config.url?.includes("/api/auth/login") ||
-      config.url?.includes("/api/user/register") ||
-      config.url?.includes("/api/auth/register") ||
-      config.url?.includes("/api/auth/signup");
-
-    if (!isAuthRequest) {
-      const tokenData = await SecureStore.getItemAsync("auth_tokens");
-      if (tokenData) {
-        const { accessToken } = JSON.parse(tokenData);
-        if (accessToken) {
-          config.headers["Authorization"] = `Bearer ${accessToken}`;
-          console.log("📤 요청 시 Authorization 추가:", accessToken);
-        }
-      }
-    } else {
-      console.log("🔐 인증 요청 - 토큰 제외:", config.url);
+  (config) => {
+    if (accessToken && config.headers) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
-
-    console.log("🔼 요청 URL:", `${config.baseURL}${config.url}`);
+    const fullUrl = (config.baseURL ?? "") + (config.url ?? "");
+    console.log("🔼 요청 URL:", fullUrl);
     console.log("🔼 요청 헤더:", config.headers);
     console.log("🔼 요청 바디:", config.data);
     return config;
@@ -46,47 +92,70 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ 응답 인터셉터: 로그인/갱신 시 서버에서 내려준 토큰 저장
-api.interceptors.response.use(
-  async (response: AxiosResponse) => {
-    console.log("⬇️ 응답 상태:", response.status);
+/**
+ * 리프레시 토큰으로 액세스 토큰 갱신
+ * @throws {Error} 리프레시 토큰 없거나 갱신 실패 시 예외 발생
+ */
+async function refreshAccessToken(): Promise<void> {
+  if (!refreshToken) throw new Error("리프레시 토큰이 없습니다.");
 
-    if (response.data?.accessToken && response.data?.refreshToken) {
-      await SecureStore.setItemAsync(
-        "auth_tokens",
-        JSON.stringify({
-          accessToken: response.data.accessToken,
-          refreshToken: response.data.refreshToken,
-        })
-      );
-      console.log("✅ 토큰 저장됨:", response.data.accessToken);
+  try {
+    const response = await axios.post(`${BASE_URL}/api/auth/refresh`, null, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+      withCredentials: true, // 서버에서 쿠키를 내려보내도록 허용 (선택 사항)
+    });
+
+    const newAccessToken = response.data.accessToken;
+    const newRefreshToken = response.data.refreshToken;
+
+    await setTokens(newAccessToken, newRefreshToken);
+  } catch (err) {
+    console.error("🔁 토큰 갱신 실패:", err);
+    throw err;
+  }
+}
+
+// 401 응답 시 토큰 갱신 및 요청 재시도 처리
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void;
+  reject: (error: any) => void;
+}> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
     } else {
-      console.log("⚠️ 응답에 토큰 없음");
+      prom.resolve(token);
     }
+  });
+  failedQueue = [];
+};
 
-    return response;
-  },
+api.interceptors.response.use(
+  (response: AxiosResponse) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as RetryAxiosRequestConfig;
 
-    // 로그인과 회원가입 API 호출 시에는 토큰 갱신을 시도하지 않음
-    if (
-      originalRequest.url?.includes("/api/auth/login") ||
-      originalRequest.url?.includes("/api/user/register") ||
-      originalRequest.url?.includes("/api/auth/register")
-    ) {
-      console.log(
-        "🔐 인증 API 에러 - 토큰 갱신 시도하지 않음:",
-        originalRequest.url
-      );
-      return Promise.reject(error);
-    }
-
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
+        // 토큰 갱신 중이면 대기열에 추가
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        }).then(() => api(originalRequest));
+        })
+          .then((token) => {
+            if (originalRequest.headers && token) {
+              originalRequest.headers["Authorization"] = `Bearer ${
+                token as string
+              }`;
+            }
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
       }
 
       originalRequest._retry = true;
@@ -94,11 +163,14 @@ api.interceptors.response.use(
 
       try {
         await refreshAccessToken();
-        processQueue(null);
+        processQueue(null, accessToken);
+        if (originalRequest.headers) {
+          originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
+        }
         return api(originalRequest);
       } catch (err) {
-        processQueue(err);
-        console.log("❌ 세션 만료 → 로그아웃 필요");
+        processQueue(err, null);
+        await handleLogout();
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -109,57 +181,5 @@ api.interceptors.response.use(
   }
 );
 
-// ✅ Refresh Token으로 Access Token 갱신
-async function refreshAccessToken(): Promise<void> {
-  try {
-    const tokenData = await SecureStore.getItemAsync("auth_tokens");
-    if (!tokenData) throw new Error("저장된 토큰 없음");
-
-    const { refreshToken } = JSON.parse(tokenData);
-
-    const response = await api.post("/api/auth/refresh", null, {
-      headers: { Authorization: `Bearer ${refreshToken}` },
-    });
-
-    if (response.data?.accessToken && response.data?.refreshToken) {
-      await SecureStore.setItemAsync(
-        "auth_tokens",
-        JSON.stringify({
-          accessToken: response.data.accessToken,
-          refreshToken: response.data.refreshToken,
-        })
-      );
-      console.log("✅ 토큰 갱신 성공");
-    }
-  } catch (err) {
-    console.error("🔁 토큰 갱신 실패:", err);
-    throw err;
-  }
-}
-
-// ✅ 초기 토큰 갱신 (앱 시작 시 호출)
-export async function initializeTokens(): Promise<void> {
-  try {
-    await refreshAccessToken();
-    console.log("✅ 초기 토큰 갱신 성공");
-  } catch (error) {
-    console.error("❌ 초기 토큰 갱신 실패:", error);
-    throw error;
-  }
-}
-
-let isRefreshing = false;
-let failedQueue: Array<{
-  resolve: (value?: unknown) => void;
-  reject: (error: any) => void;
-}> = [];
-
-const processQueue = (error: any) => {
-  failedQueue.forEach((prom) => {
-    if (error) prom.reject(error);
-    else prom.resolve();
-  });
-  failedQueue = [];
-};
-
 export default api;
+export { initializeTokens };

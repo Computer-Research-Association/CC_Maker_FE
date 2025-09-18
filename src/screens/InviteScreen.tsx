@@ -1,13 +1,13 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/apiClient";
 import { RootStackParamList } from "../navigation/types";
 import * as Clipboard from "expo-clipboard";
 import styles from "../styles/TeamLeaderScreen.styles";
 import { TeamContext } from "./TeamContext";
-import SubmitButton from "../component/SubmitButton";
+
 type InviteScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "InviteScreen">;
 };
@@ -19,18 +19,12 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
   const [step, setStep] = useState<1 | 2>(1);
   const { teamId, setTeamId } = useContext(TeamContext);
 
-  //초대코드 생성(백엔드에서 호출)
   const fetchInviteCode = async () => {
     try {
       setLoading(true);
-      console.log(" fetchInviteCode 실행");
+      console.log("🚀 fetchInviteCode 실행");
 
-      //  수정된 부분: auth_tokens에서 accessToken 추출
-      const tokenData = await SecureStore.getItemAsync("auth_tokens");
-      const accessToken = tokenData ? JSON.parse(tokenData).accessToken : null;
-
-      console.log("정상적으로 작동하는토큰 :", accessToken);
-
+      const accessToken = await AsyncStorage.getItem("ACCESS_TOKEN");
       if (!accessToken) {
         Alert.alert("로그인 필요", "로그인 후 이용해주세요.");
         setLoading(false);
@@ -54,14 +48,13 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
       setLoading(false);
     }
   };
-  //초대코드 복사
+
   const copyToClipboard = async () => {
     if (teamCode) {
       await Clipboard.setStringAsync(teamCode);
       Alert.alert("복사 완료", "팀 코드가 복사되었습니다!");
     }
   };
-  //팀 생성
   const onCreateTeam = async () => {
     if (!teamName.trim()) {
       Alert.alert("입력 오류", "팀 이름을 입력해주세요.");
@@ -94,12 +87,8 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
     }
   };
 
-  //시작하기 버튼 클릭 시 팀 생성 후 홈화면으로 이동
-    const onStartPress = async () => {
-     navigation.reset({
-        index: 0,
-        routes: [{ name: "MainHomeScreen" }],
-      });
+  const onStartPress = async () => {
+    navigation.navigate("MainHomeScreen");
   };
 
   return (
@@ -117,55 +106,39 @@ export default function InviteScreen({ navigation }: InviteScreenProps) {
             placeholderTextColor="#ccc"
           />
 
-          <SubmitButton
-            // style={styles.Button}
-            onPress={onCreateTeam}
-            title="팀 생성하기"
-            buttonColor="#FFFFFF"
-            shadowColor="#ddd"
-            textColor="#808080"
-          >
-            {/* <Text style={styles.laterButtonText}>팀 생성하기</Text> */}
-          </SubmitButton>
+          <TouchableOpacity style={styles.Button} onPress={onCreateTeam}>
+            <Text style={styles.laterButtonText}>팀 생성하기</Text>
+          </TouchableOpacity>
         </>
       )}
       {step === 2 && (
         <>
-          <SubmitButton
-            title="팀코드 생성하기"
-            // style={styles.Button}
-            buttonColor="#FFFFFF"
-            shadowColor="#ddd"
+          <TouchableOpacity
+            style={styles.Button}
             onPress={fetchInviteCode}
             disabled={loading}
-            textColor="#808080"
           >
             <Text style={styles.laterButtonText}>
               {loading ? "생성 중..." : "팀 코드 생성"}
             </Text>
-          </SubmitButton>
+          </TouchableOpacity>
 
           {teamCode !== "" && (
             <View style={{ alignItems: "center" }}>
               <Text style={styles.codeText}>생성된 팀 코드: {teamCode}</Text>
-              <SubmitButton
-                title="코드복사하기"
-                buttonColor="#FF9898"
-                shadowColor="#E08B8B"
-                // style={styles.copyButton}
+              <TouchableOpacity
+                style={styles.copyButton}
                 onPress={copyToClipboard}
               >
-                {/* <Text style={styles.copyButtonText}>코드 복사하기</Text> */}
-              </SubmitButton>
+                <Text style={styles.copyButtonText}>코드 복사하기</Text>
+              </TouchableOpacity>
 
-              <SubmitButton
-                title="시작하기"
-                buttonColor="#FF9898"
-                shadowColor="#E08B8B"
+              <TouchableOpacity
+                style={styles.startButton}
                 onPress={onStartPress}
               >
                 <Text style={styles.startButtonText}>시작하기</Text>
-              </SubmitButton>
+              </TouchableOpacity>
             </View>
           )}
         </>

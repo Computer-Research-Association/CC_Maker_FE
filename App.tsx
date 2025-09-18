@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { initializeTokens } from "./src/api/apiClient";
 import { RootStackParamList } from "./src/navigation/types";
-import * as Font from "expo-font";
-import { View, Text } from "react-native";
 
 import HomeScreen from "./src/screens/HomeScreen";
 import BottomTabNavigator from "./src/function/BottomTabNavigator";
@@ -18,109 +17,99 @@ import JoinScreen from "./src/screens/JoinScreen";
 import login from "./src/screens/LoginScreen";
 import QuestionScreen from "./src/screens/QuestionScreen";
 import signup from "./src/screens/SignupScreen";
+
 import { TeamProvider } from "./src/screens/TeamContext";
 import CheckScreen from "./src/screens/CheckScreen";
-import AccountSettings from "./src/screens/AccountSettings";
+
+
 // 새로 만든 UserContext import
 import { UserProvider } from "./src/screens/UserContext";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    async function loadFonts() {
-      await Font.loadAsync({
-        Ongeulip: require("./assets/fonts/온글잎 박다현체.ttf"),
-      });
-      setFontsLoaded(true);
-    }
-
-    loadFonts();
+    const init = async () => {
+      await initializeTokens();
+      setIsReady(true);
+    };
+    init();
   }, []);
 
-  if (!fontsLoaded) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>폰트 로딩 중...</Text>
-      </View>
-    );
+  if (!isReady) {
+    return null;
   }
 
   return (
     <NavigationContainer>
       <UserProvider>
-        <TeamProvider>
-          <Stack.Navigator initialRouteName="Login">
-            <Stack.Screen
-              name="Login"
-              component={login}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Signup"
-              component={signup}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MainHomeScreen"
-              component={MainHomeScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomeScreen"
-              component={BottomTabNavigator}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="InviteScreen"
-              component={InviteScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="JoinScreen"
-              component={JoinScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MbtiScreen"
-              component={MBTISelector}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MypageScreen"
-              component={MyPageScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="MissionScreen"
-              component={MissionScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="QuestionScreen"
-              component={QuestionScreen}
-              initialParams={{ index: 0 }}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SettingScreen"
-              component={SettingsScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="CheckScreen"
-              component={CheckScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AccountSettings"
-              component={AccountSettings}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </TeamProvider>
+      <TeamProvider>
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen
+            name="Login"
+            component={login}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Signup"
+            component={signup}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="MainHomeScreen"
+            component={MainHomeScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="HomeScreen"
+            component={BottomTabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="InviteScreen"
+            component={InviteScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="JoinScreen"
+            component={JoinScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="MbtiScreen"
+            component={MBTISelector}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="MypageScreen"
+            component={MyPageScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="MissionScreen"
+            component={MissionScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="QuestionScreen"
+            component={QuestionScreen}
+            initialParams={{ index: 0 }}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SettingScreen"
+            component={SettingsScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CheckScreen"
+            component={CheckScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </TeamProvider>
       </UserProvider>
     </NavigationContainer>
   );

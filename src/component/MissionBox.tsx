@@ -50,12 +50,9 @@ const styles = StyleSheet.create({
   },
   refreshText: {
     fontSize: 16,
-    fontFamily: "Ongeulip",
   },
   text: {
     textAlign: "center",
     fontSize: 14,
-    fontFamily: "Ongeulip",
-    color: "#333",
   },
 });

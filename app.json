@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ccgo",
-    "slug": "ccgo",
+    "name": "login",
+    "slug": "login",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,35 +20,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "package": "com.losecow.ccgo"
+      "edgeToEdgeEnabled": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-secure-store",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "usesCleartextTraffic": true
-          }
-        }
-      ],
-      "expo-updates"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "32b65243-4cdd-4fdc-9e16-e72bfbabc993"
-      }
-    },
-    "owner": "losecow",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/32b65243-4cdd-4fdc-9e16-e72bfbabc993"
     }
   }
 }

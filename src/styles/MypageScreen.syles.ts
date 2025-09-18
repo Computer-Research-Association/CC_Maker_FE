@@ -1,283 +1,125 @@
 import { StyleSheet } from "react-native";
-import { FontFamily } from './GlobalStyles';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f7f8fa",
-  },
-  
-  // 설정 버튼
-  settingButton: {
-    position: "absolute",
-    top: 60,
-    right: 20,
-    zIndex: 10,
-    padding: 8,
-  },
-  settingIcon: {
-    // No additional styling needed for the icon itself
+    backgroundColor: "#fff",
+    paddingTop: 100,
   },
 
-  // 프로필 섹션
-  profileSection: {
-    paddingTop: 100,
-    paddingBottom: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-  },
   profileContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-    width: "100%",
-    maxWidth: 400,
-    alignSelf: "center",
-  },
-  profileBlock: {
-    alignItems: "center",
-    flex: 0,
-    width: 100,
-  },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-  profileName: {
-    fontSize: 15,
-    fontFamily: FontFamily.semiBold,
-    color: "#333",
-    textAlign: "center",
-  },
-  heartContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 10,
-  },
-  heartIcon: {
-    width: 24,
-    height: 24,
+    justifyContent: "space-between",
+    alignItems: "center", // ✅ 수직 중앙 맞추기
+    paddingHorizontal: 40,
+    paddingTop: 40,
   },
 
-  // 매칭된 사람 프로필 (더 크게)
-  matchedProfileBlock: {
-    alignItems: "center",
-    flex: 0,
-    width: 100,
-  },
-  matchedAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-  matchedProfileName: {
-    fontSize: 15,
-    fontFamily: FontFamily.semiBold,
-    color: "#333",
-    textAlign: "center",
-  },
-
-  // 여러 명 매칭된 멤버들 컨테이너 0812
-  matchedMembersContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 0,
-    alignSelf: "center",
-  },
-  matchedMemberItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  // 미션 히스토리 섹션
-  missionHistorySection: {
-    backgroundColor: "#fff",
-    marginHorizontal: 20,
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontFamily: FontFamily.bold,
-    color: "#333",
-    marginLeft: 8,
-  },
-
-  // 타임라인
-  timelineContainer: {
-    position: "relative",
-  },
-  timelineLine: {
-    position: "absolute",
-    left: 20,
-    top: 0,
-    bottom: 0,
-    width: 2,
-    backgroundColor: "#ff6b6b",
-    opacity: 0.3,
-  },
-  missionItem: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 20,
-    position: "relative",
-  },
-  // 마지막 미션 아이템에 추가 여백
-  missionItemLast: {
-    marginBottom: 40,
-  },
-  missionIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 16,
-    zIndex: 2,
-  },
-  completedIcon: {
-    backgroundColor: "#ff6b6b",
-  },
-  pendingIcon: {
-    backgroundColor: "#e5e7eb",
-  },
-  missionCard: {
-    flex: 1,
-    padding: 16,
-    borderRadius: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  completedCard: {
-    backgroundColor: "#fdf2f7",
-    borderLeftWidth: 3,
-    borderLeftColor: "#ff6b6b",
-  },
-  pendingCard: {
-    backgroundColor: "#f9fafb",
-    borderLeftWidth: 3,
-    borderLeftColor: "#d1d5db",
-  },
-  missionTitle: {
-    fontSize: 14,
-    fontFamily: FontFamily.bold,
-    color: "#333",
-    marginBottom: 4,
-  },
-  missionDate: {
-    fontSize: 14,
-    fontFamily: FontFamily.regular,
-    color: "#666",
-    marginBottom: 8,
-  },
-  missionDescription: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  descriptionText: {
-    fontSize: 14,
-    fontFamily: FontFamily.regular,
-    color: "#666",
-    marginLeft: 6,
-    flex: 1,
-  },
-
-  // 기존 스타일들 (필요시 사용)
+  // ✅ 본인 프로필
   myProfileBlock: {
     alignItems: "center",
-    marginBottom: 20,
   },
+
   myAvatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#e5e7eb",
-    marginBottom: 10,
-  },
-  myName: {
-    fontSize: 18,
-    fontFamily: FontFamily.bold,
-    color: "#333",
-  },
-  otherProfilesContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    flexWrap: "wrap",
-  },
-  otherProfileBlock: {
-    alignItems: "center",
-    marginHorizontal: 15,
-  },
-  otherAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "#e5e7eb",
+    width: 120,
+    height: 120,
+    backgroundColor: "#ccc",
+    borderRadius: 12,
     marginBottom: 8,
   },
+
+  myName: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  // ✅ 나머지 프로필 컨테이너 (세로 evenly)
+  otherProfilesContainer: {
+    justifyContent: "center", // ✅ 아예 중앙 정렬
+    alignItems: "center", // ✅ 텍스트 포함 중앙
+    gap: 12, // ✅ RN 0.71+ 또는 아래처럼 대체
+  },
+
+  otherProfileBlock: {
+    alignItems: "center",
+  },
+
+  otherAvatar: {
+    width: 80,
+    height: 80,
+    backgroundColor: "#ddd",
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+
   otherName: {
     fontSize: 14,
-    fontFamily: FontFamily.semiBold,
-    color: "#666",
+  },
+
+  // ✅ 기존 탭, 버튼 영역 유지
+  tabRow: {
+    flexDirection: "row",
+    marginTop: 24,
+    borderBottomWidth: 1,
+    borderColor: "#ccc",
+    paddingHorizontal: 20,
+  },
+
+  tabText: {
+    marginRight: 16,
+    paddingBottom: 6,
+    fontSize: 14,
+    color: "#888",
+  },
+
+  selectedTab: {
+    borderBottomWidth: 2,
+    borderColor: "#000",
+    color: "#000",
+    fontWeight: "bold",
+  },
+
+  statusRow: {
+    marginTop: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+  },
+
+  statusText: {
+    fontSize: 12,
+    color: "#555",
+  },
+
+  emptyNoteContainer: {
+    marginTop: 80,
+    alignItems: "center",
+  },
+
+  writeButtonMain: {
+    backgroundColor: "#007bff",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 20,
+  },
+
+  writeButtonMainText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  settingIcon: {
+    position: "absolute",
+    top: -40,
+    right: 10,
+    zIndex: 999,
+    padding: 13,
   },
   noMatchText: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#999",
     textAlign: "center",
     marginTop: 20,
-  },
-  tabRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 20,
-  },
-  tabText: {
-    fontSize: 16,
-    color: "#666",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  selectedTab: {
-    color: "#ff6b6b",
-    fontFamily: FontFamily.bold,
-  },
-  statusRow: {
-    alignItems: "center",
-    marginBottom: 30,
-  },
-  statusText: {
-    fontSize: 14,
-    color: "#666",
-  },
-  emptyNoteContainer: {
-    alignItems: "center",
-    marginTop: 40,
-  },
-  writeButtonMainText: {
-    color: "#fff",
-    fontSize: 16,
-    fontFamily: FontFamily.bold,
   },
 });
 
