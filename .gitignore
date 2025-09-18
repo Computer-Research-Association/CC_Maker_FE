@@ -35,3 +35,18 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# 환경설정/빌드 산출물
+node_modules/
+.expo/
+.npx/
+
+# 환경변수/설정파일 (IP나 키 노출 위험)
+app.json
+eas.json
+
+# OS/IDE 캐시
+.DS_Store
+*.log
+*.tmp
+
